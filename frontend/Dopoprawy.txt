@@ -1,0 +1,4 @@
+1. Serwisy i podzial na Admin/User
+2. Wywalanie Serwisow z FE?
+3. BE - zostawienie puyblicznych teminal events tylko
+4. rozpisanie sposobu pisania apki i calego jej ukladu.

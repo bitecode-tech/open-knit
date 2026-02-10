@@ -1,0 +1,9 @@
+rootProject.name = 'internal-java-be-modules'
+include(
+        "modules:identity",
+        "modules:_common",
+        "modules:ai",
+        "modules:payment",
+        "modules:transaction",
+        "modules:wallet"
+)

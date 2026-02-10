@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@source "../**/*.{js,ts,jsx,tsx}";
+
+:root {
+    --text-xs: 12px;
+    --text-sm: 14px;
+    --text-lg: 18px;
+    --primary: #5c5ce6;
+    --border: #e5e7eb;
+    --card: #ffffff;
+    --radius: 8px;
+    --footer-height: 82px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Inter", "Segoe UI", sans-serif;
+    color: #031735;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+    border-radius: 999px;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.config-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+}
+
+@media (min-width: 768px) {
+    .config-grid {
+        gap: 48px;
+        align-items: stretch;
+    }
+
+    .config-grid {
+        grid-template-columns: 360px minmax(0, 1fr) minmax(0, 1fr);
+    }
+}

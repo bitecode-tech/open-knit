@@ -1,0 +1,115 @@
+.bg-oxford-blue {
+    background-color: #031735 !important;
+}
+
+.hover-bg-oxford-blue:hover {
+    background-color: #031735 !important;
+}
+
+.hover-bg-mandarine:hover {
+    background-color: #FF4128 !important;
+}
+
+.text-oxford-blue {
+    color: #031735 !important;
+}
+
+.text-light-neutral {
+    color: #F2F2F2 !important;
+}
+
+.hover-text-light-neutral:hover {
+    color: #F2F2F2 !important;
+}
+
+.border-oxford-blue {
+    border-color: #031735 !important;
+}
+
+.chat-scroll {
+    overscroll-behavior: contain;
+}
+
+/* Prevent browser scroll anchoring from pinning to input in Firefox */
+.scroll-anchor-none {
+    overflow-anchor: none;
+}
+
+.scroll-anchor-auto {
+    overflow-anchor: auto;
+}
+
+/* Typing indicator bubble (Messenger/WhatsApp style) */
+.typing-bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #E5E7EB; /* gray-200 */
+    color: #374151; /* gray-700 */
+    border-radius: 16px;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    background: #6B7280; /* gray-500 */
+    border-radius: 50%;
+    animation: typing-bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: 0ms;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 200ms;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 400ms;
+}
+
+@keyframes typing-bounce {
+    0%, 80%, 100% {
+        transform: scale(0.5);
+        opacity: 0.4;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.recording-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: #ef4444;
+    display: inline-block;
+}
+
+.recording-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    background: #ef4444;
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+    animation: recording-pulse 1.5s infinite;
+    display: inline-block;
+}
+
+@keyframes recording-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}

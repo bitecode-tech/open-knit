@@ -1,0 +1,6 @@
+resilience4j:
+  ratelimiter:
+    instances:
+      ai-chat-open:
+        limit-for-period: 15
+        limit-refresh-period: 60s

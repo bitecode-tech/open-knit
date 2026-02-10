@@ -1,0 +1,21 @@
+services:
+  backend-app:
+    extends:
+      file: backend/docker-compose.yml
+      service: app
+
+  postgres:
+    extends:
+      file: backend/docker-compose.yml
+      service: postgres
+
+  frontend-app:
+    extends:
+      file: frontend/docker-compose.yml
+      service: app
+
+volumes:
+  pg17-vector-data:
+  gradle-cache:
+  pnpm-store:
+  node-modules:

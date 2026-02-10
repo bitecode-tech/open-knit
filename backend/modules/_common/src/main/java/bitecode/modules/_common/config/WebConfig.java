@@ -1,0 +1,15 @@
+package bitecode.modules._common.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    public static String PATH_PREFIX = "/api";
+
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        configurer.addPathPrefix(PATH_PREFIX, c -> true); // Apply prefix to all controllers
+    }
+}

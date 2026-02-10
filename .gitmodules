@@ -1,0 +1,6 @@
+[submodule "backend"]
+	path = backend
+	url = git@github.com:bitecode-tech/internal-java-be-modules.git
+[submodule "frontend"]
+	path = frontend
+	url = git@github.com:bitecode-tech/internal-react-modules.git

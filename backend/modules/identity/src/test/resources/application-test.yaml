@@ -1,0 +1,59 @@
+spring:
+  config:
+    import: classpath:config/application-test.yaml
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test-client-id
+            client-secret: test-client-secret
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            scope: openid, email, profile
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
+
+bitecode:
+  app:
+    user:
+      password-reset:
+        forgotten-password-link-url-path: /reset-forgot-password
+      user-invite-url-path: /user-invite-url
+      confirm-email-url-path: /confirm-email-url
+  security:
+    jwt:
+      secret-key: dsadsad1231324dsadsad1231324dsadsad1231324dsadsad1231324dsadsad1231324dsadsad1231324
+      access-token-expiration: 900000
+      refresh-token-expiration: 604800000
+      short-refresh-token-expiration: 60000
+    no-auth-urls:
+      GET:
+        - /oauth2/authorization/**
+        - /login/oauth2/code/**
+      POST:
+        - /api/users
+        - /api/users/passwords/recovery/**
+        - /api/users/confirmations/**
+        - /api/oauth/login
+        - /api/oauth/logout
+        - /api/oauth/refresh-token
+        - /api/oauth/tokens/access
+        - /api/payments/webhooks/stripe
+      OPTIONS:
+        - /oauth2/authorization/**
+        - /login/oauth2/code/**
+
+totp:
+  secret:
+    length: 128
+    key: test-key
+  code:
+    length: 8
+  time:
+    period: 30
+    discrepancy: 2
+  issuer: bitecode.test

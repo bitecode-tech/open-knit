@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+      target: dev
+    ports:
+        - "3030:8080"
+    container_name: frontend-app-test
+    working_dir: /app
+    command: sh -lc "echo '[frontend] http://localhost:3030'; pnpm dev --host 0.0.0.0 --port 8080"
+    volumes:
+      - ./:/app
+      - pnpm-store:/pnpm-store
+      - node-modules:/app/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: true
+      PNPM_STORE_DIR: /pnpm-store
+
+volumes:
+  pnpm-store:
+  node-modules:

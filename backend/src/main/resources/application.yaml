@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: modules
+  threads:
+    virtual:
+      enabled: true
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
+  data:
+    rest:
+      base-path: api
+      default-page-size: 10
+      detection-strategy: annotated
+  config:
+    import:
+      - classpath:application-identity.yaml
+      - classpath:application-ai.yaml
+      - classpath:application-payment.yaml
+      - classpath:application-transaction.yaml
+      - classpath:application-wallet.yaml
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILE:LOCAL}
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+    create-schemas: true
+  jackson:
+    property-naming-strategy: LOWER_CAMEL_CASE
+    default-property-inclusion: NON_NULL
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/internal-modules}
+    username: ${SPRING_DATASOURCE_USERNAME:test}
+    password: ${SPRING_DATASOURCE_PASSWORD:test}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    hikari:
+      maximum-pool-size: ${SPRING_DATASOURCE_POOL_SIZE:10}
+      minimum-idle: ${SPRING_DATASOURCE_MIN_POOL_IDLE_SIZE:5}
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+    jpa:
+      hibernate:
+        ddl-auto: validate
+  mail:
+    host: ${SPRING_MAIL_HOST}
+    port: ${SPRING_MAIL_PORT}
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+
+bitecode:
+  app:
+    backend-url: ${BITECODE_APP_BACKEND_URL:localhost:8080}
+    frontend-url: ${BITECODE_APP_FRONTEND_URL:localhost:3030}
+
+logging:
+  level:
+    org.springframework.jdbc.core: info
+    org.hibernate.SQL: info
+    org.springframework.web: info
+    org.springframework.boot.web.servlet.error: info
+    org.springframework.test: info
+    org.springframework.security: DEBUG
+    org.springframework.security.web.FilterChainProxy: info
+    bitecode.modules: DEBUG
+
+
+

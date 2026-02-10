@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome</title>
+</head>
+<body>
+<h2>Hello, <span th:text="${username}"></span>!</h2>
+<p>Your password reset link is valid for 15 minutes</p>
+<p>Your MFA code:</p>
+<p th:text="${code}"></p>
+<p>Regards, <br> Bitecode</p>
+</body>
+</html>

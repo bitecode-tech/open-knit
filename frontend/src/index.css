@@ -1,0 +1,79 @@
+@import url("https://use.typekit.net/yka6aeg.css");
+@import "tailwindcss";
+
+@plugin "flowbite-react/plugin/tailwindcss";
+@source "../.flowbite-react/class-list.json";
+
+html {
+    @apply antialiased;
+    font-family: 'Inter', sans-serif;
+}
+
+/* uses our font import*/
+@theme {
+    --font-new-atten: 'new-atten', 'sans-serif';
+    --font-new-spirit: 'new-spirit', 'sans-serif';
+}
+
+@theme {
+    --color-primary-50: #EBEEFF;
+    --color-primary-100: #E3E7FF;
+    --color-primary-200: #C4CBFF;
+    --color-primary-300: #A6ADFF;
+    --color-primary-400: #787FFF;
+    --color-primary-500: #5C5CE6;
+    --color-primary-600: #635BFF;
+    --color-primary-700: #4236C2;
+    --color-primary-800: #3B2AA8;
+    --color-primary-900: #29187A;
+
+    --color-secondary-50: var(--color-gray-50);
+    --color-secondary-100: var(--color-gray-100);
+    --color-secondary-200: var(--color-gray-200);
+    --color-secondary-300: var(--color-gray-300);
+    --color-secondary-400: var(--color-gray-400);
+    --color-secondary-500: var(--color-gray-500);
+    --color-secondary-600: var(--color-gray-600);
+    --color-secondary-700: var(--color-gray-700);
+    --color-secondary-800: var(--color-gray-800);
+    --color-secondary-900: var(--color-gray-900);
+
+    --color-gray-50: #FAFBFC;
+    --color-gray-100: #F2F3F5;
+    --color-gray-200: #E4E6EB;
+    --color-gray-300: #D0D5DB;
+    --color-gray-400: #9DA4B0;
+    --color-gray-500: #6B7380;
+    --color-gray-600: #4C5563;
+    --color-gray-700: #374252;
+    --color-gray-800: #1F2938;
+    --color-gray-900: #031735;
+}
+
+@layer utilities {
+    .animate-pingOnce {
+        @apply animate-[pingOnce_0.8s_ease-out_forwards];
+    }
+}
+
+@keyframes pingOnce {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* Hide scrollbars but keep scrollability */
+.hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}

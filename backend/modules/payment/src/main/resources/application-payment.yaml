@@ -1,0 +1,8 @@
+bitecode:
+  app:
+    payment:
+      provider:
+        stripe:
+          api-key: ${BITECODE_APP_PAYMENT_STRIPE_API_KEY}
+          signature-secret: ${BITECODE_APP_PAYMENT_STRIPE_SIGNATURE_SECRET}
+          payment-success-url-path: ${BITECODE_APP_PAYMENT_STRIPE_REDIRECT_URL_PATH}

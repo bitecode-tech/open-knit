@@ -1,0 +1,57 @@
+{
+  "account": null,
+  "api_version": "2025-04-30.basil",
+  "context": null,
+  "created": 1748528995,
+  "data": {
+    "previous_attributes": {
+      "currency": null
+    },
+    "object": {
+      "id": "cus_SOvJv8bo33Qh0g",
+      "object": "customer",
+      "address": {
+        "city": null,
+        "country": "GB",
+        "line1": null,
+        "line2": null,
+        "postal_code": "BBBBBB",
+        "state": null
+      },
+      "balance": 0,
+      "created": 1748528995,
+      "currency": "pln",
+      "default_source": null,
+      "delinquent": false,
+      "description": null,
+      "discount": null,
+      "email": "customer@example.com",
+      "invoice_prefix": "JRJGWCQB",
+      "invoice_settings": {
+        "custom_fields": null,
+        "default_payment_method": null,
+        "footer": null,
+        "rendering_options": null
+      },
+      "livemode": false,
+      "metadata": {},
+      "name": "test babwe",
+      "phone": null,
+      "preferred_locales": [
+        "en-US"
+      ],
+      "shipping": null,
+      "tax_exempt": "none",
+      "test_clock": null
+    }
+  },
+  "id": "evt_1RU7T04RffDXhxvP8itEpw6Q",
+  "livemode": false,
+  "object": "event",
+  "pending_webhooks": 2,
+  "request": {
+    "id": null,
+    "idempotency_key": "36604ed9-c29a-489e-880a-054274c52339"
+  },
+  "type": "customer.updated"
+}

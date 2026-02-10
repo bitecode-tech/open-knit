@@ -1,0 +1,126 @@
+{
+  "account": null,
+  "api_version": "2025-04-30.basil",
+  "context": null,
+  "created": 1748528998,
+  "data": {
+    "previous_attributes": null,
+    "object": {
+      "id": "cs_test_a1TYiXoAYeNMQfpEGYXNmVbiRsAJs5O6AgAjuVxnnzcBGAs9pL48XBFZHi",
+      "object": "checkout.session",
+      "adaptive_pricing": null,
+      "after_expiration": null,
+      "allow_promotion_codes": null,
+      "amount_subtotal": 13333,
+      "amount_total": 13333,
+      "automatic_tax": {
+        "enabled": false,
+        "liability": null,
+        "provider": null,
+        "status": null
+      },
+      "billing_address_collection": null,
+      "cancel_url": "http://localhost:3000/user/dashboard?subscriptionCreated=true",
+      "client_reference_id": null,
+      "client_secret": null,
+      "collected_information": {
+        "shipping_details": null
+      },
+      "consent": null,
+      "consent_collection": null,
+      "created": 1748528968,
+      "currency": "pln",
+      "currency_conversion": null,
+      "custom_fields": [],
+      "custom_text": {
+        "after_submit": null,
+        "shipping_address": null,
+        "submit": null,
+        "terms_of_service_acceptance": null
+      },
+      "customer": "cus_SOvJv8bo33Qh0g",
+      "customer_creation": "always",
+      "customer_details": {
+        "address": {
+          "city": null,
+          "country": "GB",
+          "line1": null,
+          "line2": null,
+          "postal_code": "BBBBBB",
+          "state": null
+        },
+        "email": "customer@example.com",
+        "name": "test babwe",
+        "phone": null,
+        "tax_exempt": "none",
+        "tax_ids": []
+      },
+      "customer_email": "customer@example.com",
+      "discounts": [],
+      "expires_at": 1748615367,
+      "invoice": "in_1RU7Sz4RffDXhxvPolHNeLgw",
+      "invoice_creation": null,
+      "livemode": false,
+      "locale": null,
+      "metadata": {
+        "subscriptionPlanId": "d960b6a7-6719-4d97-94aa-f713c839d841",
+        "userId": "a1a38f1b-b14b-4806-afa5-58af58c1d1fa"
+      },
+      "mode": "subscription",
+      "payment_intent": null,
+      "payment_link": null,
+      "payment_method_collection": "always",
+      "payment_method_configuration_details": {
+        "id": "pmc_1RU6NX4RffDXhxvPsNTYzEYR",
+        "parent": null
+      },
+      "payment_method_options": {
+        "card": {
+          "request_three_d_secure": "automatic"
+        }
+      },
+      "payment_method_types": [
+        "card",
+        "link"
+      ],
+      "payment_status": "paid",
+      "permissions": null,
+      "phone_number_collection": {
+        "enabled": false
+      },
+      "recovered_from": null,
+      "saved_payment_method_options": {
+        "allow_redisplay_filters": [
+          "always"
+        ],
+        "payment_method_remove": "disabled",
+        "payment_method_save": null
+      },
+      "setup_intent": null,
+      "shipping_address_collection": null,
+      "shipping_cost": null,
+      "shipping_options": [],
+      "status": "complete",
+      "submit_type": null,
+      "subscription": "sub_1RU7Sz4RffDXhxvPa4pZlz4Z",
+      "success_url": "http://localhost:3000/user/dashboard?subscriptionCreated=true",
+      "total_details": {
+        "amount_discount": 0,
+        "amount_shipping": 0,
+        "amount_tax": 0
+      },
+      "ui_mode": "hosted",
+      "url": null,
+      "wallet_options": null
+    }
+  },
+  "id": "evt_1RU7T04RffDXhxvP5HkDrunf",
+  "livemode": false,
+  "object": "event",
+  "pending_webhooks": 2,
+  "request": {
+    "id": null,
+    "idempotency_key": null
+  },
+  "type": "checkout.session.completed"
+}

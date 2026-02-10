@@ -1,0 +1,22 @@
+FROM amazoncorretto:21-alpine3.18 AS dev
+WORKDIR /workspace
+RUN apk add --no-cache bash
+RUN mkdir -p /root/.gradle && \
+    printf "org.gradle.daemon=true\n" >> /root/.gradle/gradle.properties
+
+COPY . .
+RUN chmod +x ./gradlew
+
+CMD ["sh", "./gradlew", "bootRun", "--continuous"]
+
+FROM amazoncorretto:21-alpine3.18 AS build
+WORKDIR /app
+COPY . .
+RUN chmod +x ./gradlew
+RUN ./gradlew clean build -x test --no-daemon
+
+FROM amazoncorretto:21-alpine3.18 AS runner
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
+EXPOSE 8080
+CMD ["java", "-jar", "app.jar"]

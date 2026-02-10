@@ -1,0 +1,69 @@
+spring:
+  test:
+    database:
+      replace: none
+  threads:
+    virtual:
+      enabled: true
+  application:
+    name: modules
+  data:
+    rest:
+      base-path: api
+      default-page-size: 10
+      detection-strategy: annotated
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: NON_NULL
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/internal-modules}
+    username: ${SPRING_DATASOURCE_USERNAME:test}
+    password: ${SPRING_DATASOURCE_PASSWORD:test}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    hikari:
+      maximum-pool-size: ${SPRING_DATASOURCE_POOL_SIZE:10}
+      minimum-idle: ${SPRING_DATASOURCE_MIN_POOL_IDLE_SIZE:5}
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+    jpa:
+      hibernate:
+        ddl-auto: validate
+  mail:
+    host: invalid
+    port: 0
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+
+bitecode:
+  app:
+    backend-url: http://localhost:8080
+    frontend-url: http://localhost:3000
+
+logging:
+  level:
+    org.springframework.jdbc.core: debug
+    org.hibernate.SQL: debug
+    org.springframework.web: debug
+    org.springframework.boot.web.servlet.error: debug
+    org.springframework.test: debug
+    org.springframework.security: DEBUG
+    bitecode.modules: DEBUG
+
+notification:
+  scheduler:
+    delay: 15000

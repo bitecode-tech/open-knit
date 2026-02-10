@@ -1,0 +1,36 @@
+{
+  "name": "app-scaffolder",
+  "version": "0.1.0",
+  "description": "app scaffolder",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node dist/build-cache.js",
+    "build:ui": "cd ui && pnpm run build && pnpm run build:server",
+    "dev:server": "tsx src/server.ts",
+    "dev:ui": "pnpm --prefix ui run dev",
+    "dev:all": "concurrently -k -s first -n backend,ui -c blue,magenta \"pnpm run dev:server\" \"pnpm run dev:ui\"",
+    "scaffold": "node script.js",
+    "start": "node dist/script.js",
+    "start:all": "node dist/launcher.js",
+    "start:server": "node dist/server.js"
+  },
+  "devDependencies": {
+    "@types/archiver": "^7.0.0",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.2.10",
+    "@types/react-dom": "^19.2.3",
+    "@types/yauzl": "^2.10.3",
+    "concurrently": "^9.0.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "express": "^4.21.2",
+    "tsconfig-paths": "^4.2.0",
+    "yauzl": "^2.10.0"
+  }
+}

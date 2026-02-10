@@ -1,0 +1,30 @@
+{
+  "name": "scaffolder-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server/index.ts",
+    "build": "vike build",
+    "build:server": "tsc -p tsconfig.node.json",
+    "start": "node dist/ssr-server/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "http-proxy-middleware": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "vike": "latest",
+    "vike-react": "latest"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "latest",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.13.10",
+    "@vitejs/plugin-react": "latest",
+    "tailwindcss": "latest",
+    "tsx": "latest",
+    "typescript": "^5.8.2",
+    "vite": "latest"
+  }
+}

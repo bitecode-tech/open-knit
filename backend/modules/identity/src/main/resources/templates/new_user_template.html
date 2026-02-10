@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Complete Your Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .code-box {
+            background-color: #f1f1f1;
+            padding: 12px;
+            border-radius: 5px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Welcome <span th:text="${username}">User</span>!</h2>
+
+    <p>Thank you for signing up. To activate your account and complete your registration, please use the confirmation code below or click the button:</p>
+
+    <p><strong>Your Confirmation Code:</strong></p>
+    <div class="code-box">
+        <span th:text="${code}">123456</span>
+    </div>
+
+    <!-- Optional: Show temp password if present -->
+    <div th:if="${tempPwd}">
+        <strong>Your Temporary Password:</strong>
+        <div class="code-box" th:text="${tempPwd}">temp-password</div>
+    </div>
+
+    <p>
+        <a th:href="${link}" class="button">Activate My Account</a>
+    </p>
+
+    <p>If the button doesn’t work, you can manually copy and paste the following link into your browser:</p>
+    <p><a th:href="${link}" th:text="${link}">https://yourapp.com/register</a></p>
+
+    <p>We're excited to have you join us. Let’s get started!</p>
+
+    <div class="footer">
+        Best regards,<br/>
+        The Bitecode Team
+    </div>
+</div>
+</body>
+</html>

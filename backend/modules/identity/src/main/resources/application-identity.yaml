@@ -1,0 +1,71 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${SPRING_GOOGLE_OAUTH2_CLIENT_ID:dummy}
+            client-secret: ${SPRING_GOOGLE_OAUTH2_CLIENT_SECRET:dummy}
+            redirect-uri: ${BITECODE_APP_BACKEND_URL}/login/oauth2/code/google
+            scope: openid, email, profile
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
+
+bitecode:
+  app:
+    user:
+      password-reset:
+        forgotten-password-link-url-path: ${BITECODE_APP_RESET_PASSWORD_URL_PATH:/reset-forgot-password}
+      user-invite-url-path: ${BITECODE_APP_USER_INVITE_URL_PATH:/register}
+      confirm-email-url-path: ${BITECODE_APP_CONFIRM_EMAIL_URL_PATH:/verify-account}
+  security:
+    jwt:
+      secret-key: ${BITECODE_JWT_SECRET_KEY:dsadsad1231324dsadsad1231324dsadsad1231324dsadsad1231324dsadsad1231324dsadsad1231324}
+      access-token-expiration: ${BITECODE_JWT_ACCESS_TOKEN_EXP:15}  # 15 minutes
+      refresh-token-expiration: ${BITECODE_JWT_REFRESH_TOKEN_EXP:525600}  # 365 days
+      short-refresh-token-expiration: ${BITECODE_JWT_REFRESH_TOKEN_EXP:60}  # 60 minutes
+    no-auth-urls:
+      GET:
+        - /oauth2/authorization/**
+        - /login/oauth2/code/**
+        - /api/open/**
+      POST:
+        - /api/users
+        - /api/users/passwords/recovery/**
+        - /api/users/confirmations/**
+        - /api/oauth/login
+        - /api/oauth/logout
+        - /api/oauth/refresh-token
+        - /api/oauth/tokens/access
+        - /api/payments/webhooks/stripe
+        - /api/chatkit/session
+        - /api/open/**
+      PATCH:
+        - /api/open/**
+      PUT:
+        - /api/open/**
+      DELETE:
+        - /api/open/**
+      OPTIONS:
+        - /oauth2/authorization/**
+        - /login/oauth2/code/**
+        - /api/open/**
+        - /api/chatkit/session
+    cors:
+      allowed-origins: ${BITECODE_CORS_ALLOWED_ORIGINS:}
+      allowed-methods: [ "GET","POST","PUT","PATCH","DELETE","OPTIONS" ]
+      allowed-headers: [ "*" ]
+
+totp:
+  secret:
+    length: 128
+  code:
+    length: 6
+  time:
+    period: 30
+    discrepancy: 2
+  issuer: bitecode.test

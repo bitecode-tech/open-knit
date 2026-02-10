@@ -1,0 +1,34 @@
+.rdrCalendarWrapper {
+    font-family: 'Inter', sans-serif;
+}
+
+.rdrMonthAndYearPickers {
+    font-weight: 500 !important;
+}
+
+.rdrInRange,
+.rdrStartEdge,
+.rdrEndEdge {
+    background-color: var(--color-primary-500) !important;
+    color: white !important;
+}
+
+.rdrSelected,
+.rdrDayStartPreview,
+.rdrDayInPreview,
+.rdrDayEndPreview {
+    border-color: var(--color-primary-500) !important;
+}
+
+.rdrDayNumber ::after {
+    background-color: var(--color-primary-500) !important;
+}
+
+.rdrStaticRangeSelected {
+    color: var(--color-primary-500) !important;
+}
+
+.rdrInputRangeInput {
+    font-size: var(--text-xs);
+    width: 50px !important;
+}

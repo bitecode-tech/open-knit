@@ -1,0 +1,30 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "types": ["node", "vite-plugin-svgr/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["src/*"],
+      "@identity/*": [
+        "modules/identity/*"
+      ],
+      "@ai/*": [
+        "modules/ai/*"
+      ],
+      "@payment/*": [
+        "modules/payment/*"
+      ],
+      "@transaction/*": [
+        "modules/transaction/*"
+      ],
+      "@common/*": [
+        "modules/_common/*"
+      ]
+    },
+    "noUnusedLocals": false
+  }
+}

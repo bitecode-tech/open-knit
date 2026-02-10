@@ -1,0 +1,12 @@
+spring:
+  config:
+    import: classpath:config/application-test.yaml
+
+bitecode:
+  app:
+    payment:
+      provider:
+        stripe:
+          api-key: sk_test_123
+          signature-secret: test
+          payment-success-url-path: /success

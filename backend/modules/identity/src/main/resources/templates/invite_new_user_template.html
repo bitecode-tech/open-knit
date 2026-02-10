@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>You're Invited to Join Our App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .code-box {
+            background-color: #f1f1f1;
+            padding: 12px;
+            border-radius: 5px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Hello <span th:text="${username}">User</span>,</h2>
+    <p>You've been invited to join our platform. To complete your registration, please click the button to proceed:</p>
+
+    <p>
+        <a th:href="${link}" class="button">Complete Registration</a>
+    </p>
+
+    <p>If the button doesn't work, copy and paste this link into your browser:</p>
+    <p><a th:href="${link}" th:text="${link}">https://yourapp.com/register</a></p>
+
+    <p>We're excited to welcome you!</p>
+
+    <div class="footer">
+        Best regards,<br/>
+        The Bitecode Team
+    </div>
+</div>
+</body>
+</html>

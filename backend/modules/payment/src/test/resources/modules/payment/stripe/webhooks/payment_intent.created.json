@@ -1,0 +1,74 @@
+{
+  "account": null,
+  "api_version": "2025-04-30.basil",
+  "context": null,
+  "created": 1748528995,
+  "data": {
+    "previous_attributes": null,
+    "object": {
+      "id": "pi_3RU7Sx4RffDXhxvP0FyDEKXr",
+      "object": "payment_intent",
+      "amount": 13333,
+      "amount_capturable": 0,
+      "amount_details": {
+        "tip": {}
+      },
+      "amount_received": 0,
+      "application": null,
+      "application_fee_amount": null,
+      "automatic_payment_methods": null,
+      "canceled_at": null,
+      "cancellation_reason": null,
+      "capture_method": "automatic",
+      "client_secret": "pi_3RU7Sx4RffDXhxvP0FyDEKXr_secret_MvKrf2divBMmiq4COm6q6L2hQ",
+      "confirmation_method": "automatic",
+      "created": 1748528995,
+      "currency": "pln",
+      "customer": "cus_SOvJv8bo33Qh0g",
+      "description": "Subscription creation",
+      "last_payment_error": null,
+      "latest_charge": null,
+      "livemode": false,
+      "metadata": {},
+      "next_action": null,
+      "on_behalf_of": null,
+      "payment_method": null,
+      "payment_method_configuration_details": null,
+      "payment_method_options": {
+        "card": {
+          "installments": null,
+          "mandate_options": null,
+          "network": null,
+          "request_three_d_secure": "automatic"
+        },
+        "link": {
+          "persistent_token": null
+        }
+      },
+      "payment_method_types": [
+        "card",
+        "link"
+      ],
+      "processing": null,
+      "receipt_email": null,
+      "review": null,
+      "setup_future_usage": "off_session",
+      "shipping": null,
+      "source": null,
+      "statement_descriptor": null,
+      "statement_descriptor_suffix": null,
+      "status": "requires_payment_method",
+      "transfer_data": null,
+      "transfer_group": null
+    }
+  },
+  "id": "evt_3RU7Sx4RffDXhxvP01LytKUE",
+  "livemode": false,
+  "object": "event",
+  "pending_webhooks": 2,
+  "request": {
+    "id": null,
+    "idempotency_key": "36604ed9-c29a-489e-880a-054274c52339"
+  },
+  "type": "payment_intent.created"
+}

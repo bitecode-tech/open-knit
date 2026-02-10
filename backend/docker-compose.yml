@@ -1,0 +1,57 @@
+services:
+  app:
+    container_name: backend-app
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+      target: dev
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    working_dir: /workspace
+    volumes:
+      - gradle-cache:/root/.gradle
+    command: sh -lc "echo '[backend] http://localhost:8080'; ./gradlew bootRun --no-daemon"
+    develop:
+      watch:
+        - action: rebuild
+          path: Dockerfile-dev
+        - action: rebuild
+          path: build.gradle
+        - action: rebuild
+          path: settings.gradle
+        - action: sync+restart
+          path: .
+          target: /workspace
+          ignore:
+            - .git/
+            - .idea/
+            - .gradle/
+            - build/
+            - "**/build/"
+            - "**/.gradle/"
+            - "**/out/"
+    environment:
+      SPRING_MAIN_LAZY_INITIALIZATION: "true"
+      DEMO_INSERTS_ENABLED: "true"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/internal-modules
+
+  postgres:
+    container_name: pg17-vector
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: internal-modules
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg17-vector-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pg17-vector-data:
+  gradle-cache:

@@ -1,0 +1,46 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "types": ["vite-plugin-svgr/client"],
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["src/*"],
+      "@identity/*": [
+        "modules/identity/*"
+      ],
+      "@ai/*": [
+        "modules/ai/*"
+      ],
+      "@payment/*": [
+        "modules/payment/*"
+      ],
+      "@transaction/*": [
+        "modules/transaction/*"
+      ],
+      "@common/*": [
+        "modules/_common/*"
+      ]
+    }
+  },
+  "include": ["vite.config.ts"],
+}
