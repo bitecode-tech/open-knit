@@ -9,10 +9,11 @@ services:
       - "3000:3000"
       - "7070:7070"
     volumes:
-      - ./output:/app/output
       - ../backend:/backend:ro
       - ../frontend:/frontend:ro
       - ../.gitignore:/.gitignore:ro
       - ../AGENTS.md:/AGENTS.md:ro
       - ../docker-compose.yml:/docker-compose.yml:ro
       - ../README.md:/README.md:ro
+    tmpfs:
+      - /app/output

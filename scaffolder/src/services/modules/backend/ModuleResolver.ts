@@ -9,7 +9,10 @@ type ResolveOptions = {
 class ModuleResolver {
     resolve(requestedModuleNames: string[], root: string, options: ResolveOptions): ModuleSelectionResult {
         if (!fs.existsSync(root)) {
-            throw new Error(`Backend modules directory not found: ${root}`);
+            throw new Error(
+                `Backend modules directory not found: ${root}. ` +
+                "Set BACKEND_MODULES_ROOT (or BACKEND_ROOT/REPOSITORY_ROOT) to a mounted path containing backend/modules."
+            );
         }
 
         const availableModules = options.availableModules ?? this.loadAvailableModulesFromDisk(root);

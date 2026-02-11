@@ -82,11 +82,27 @@ class ScaffolderService {
     private resolvePaths(): PathsConfig {
         const scriptDirectory = __dirname;
         const scaffolderRoot = path.resolve(scriptDirectory, "..", "..");
-        const repositoryRoot = path.resolve(scaffolderRoot, "..");
-        const backendRoot = path.join(repositoryRoot, "backend");
-        const frontendRoot = path.join(repositoryRoot, "frontend");
-        const backendModulesRoot = path.join(backendRoot, "modules");
-        const frontendModulesRoot = path.join(frontendRoot, "modules");
+        const configuredRepositoryRoot = this.resolveConfiguredPath(process.env.REPOSITORY_ROOT);
+        const configuredBackendRoot = this.resolveConfiguredPath(process.env.BACKEND_ROOT);
+        const configuredFrontendRoot = this.resolveConfiguredPath(process.env.FRONTEND_ROOT);
+        const configuredBackendModulesRoot = this.resolveConfiguredPath(
+            process.env.BACKEND_MODULES_ROOT
+        );
+        const configuredFrontendModulesRoot = this.resolveConfiguredPath(
+            process.env.FRONTEND_MODULES_ROOT
+        );
+
+        const defaultRepositoryRoot = path.resolve(scaffolderRoot, "..");
+        const fallbackRepositoryRoot = this.isDirectory(path.join(scaffolderRoot, "backend")) &&
+            this.isDirectory(path.join(scaffolderRoot, "frontend"))
+            ? scaffolderRoot
+            : defaultRepositoryRoot;
+        const repositoryRoot = configuredRepositoryRoot ?? fallbackRepositoryRoot;
+        const backendRoot = configuredBackendRoot ?? path.join(repositoryRoot, "backend");
+        const frontendRoot = configuredFrontendRoot ?? path.join(repositoryRoot, "frontend");
+        const backendModulesRoot = configuredBackendModulesRoot ?? path.join(backendRoot, "modules");
+        const frontendModulesRoot =
+            configuredFrontendModulesRoot ?? path.join(frontendRoot, "modules");
         const outputRoot = path.join(scaffolderRoot, "output");
 
         return {
@@ -98,6 +114,28 @@ class ScaffolderService {
             frontendModulesRoot,
             outputRoot
         };
+    }
+
+    private resolveConfiguredPath(rawPath: string | undefined): string | null {
+        if (!rawPath) {
+            return null;
+        }
+        const trimmedPath = rawPath.trim();
+        if (!trimmedPath) {
+            return null;
+        }
+        if (path.isAbsolute(trimmedPath)) {
+            return trimmedPath;
+        }
+        return path.resolve(trimmedPath);
+    }
+
+    private isDirectory(directoryPath: string): boolean {
+        if (!fs.existsSync(directoryPath)) {
+            return false;
+        }
+        const stats = fs.statSync(directoryPath);
+        return stats.isDirectory();
     }
 
     private parseRequestedModules(args: string[], allowEmpty: boolean): string[] {

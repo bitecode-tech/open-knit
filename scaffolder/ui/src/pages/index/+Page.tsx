@@ -103,14 +103,16 @@ export default function Page() {
                 demoInsertsEnabled,
                 aiEnabled: false
             });
-            const url = window.URL.createObjectURL(blob);
+            const downloadUrl = window.URL.createObjectURL(blob);
             const anchor = document.createElement("a");
-            anchor.href = url;
+            anchor.href = downloadUrl;
             anchor.download = fileName;
             document.body.appendChild(anchor);
             anchor.click();
             anchor.remove();
-            window.URL.revokeObjectURL(url);
+            window.setTimeout(() => {
+                window.URL.revokeObjectURL(downloadUrl);
+            }, 30000);
         } catch {
             errorModal.open();
         } finally {

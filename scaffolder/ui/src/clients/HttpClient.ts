@@ -14,7 +14,7 @@ class HttpClient {
 
     async downloadScaffold(params: DownloadScaffoldParams): Promise<{ blob: Blob; fileName: string }> {
         const abortController = new AbortController();
-        const timeout = window.setTimeout(() => abortController.abort(), 30000);
+        const timeout = window.setTimeout(() => abortController.abort(), 180000);
         const query = new URLSearchParams();
         if (params.name.trim()) {
             query.set("name", params.name.trim());
