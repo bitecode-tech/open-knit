@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-FROM node:25-alpine3.22 AS build
+FROM node:22-alpine3.22 AS build
 RUN npm install -g pnpm@latest
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -16,7 +16,7 @@ RUN pnpm install --no-frozen-lockfile
 RUN pnpm run build
 RUN pnpm run build:server
 
-FROM node:25-alpine3.22 AS runner
+FROM node:22-alpine3.22 AS runner
 RUN npm install -g pnpm@latest
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
