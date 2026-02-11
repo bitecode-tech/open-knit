@@ -1,12 +1,12 @@
-# block
+# OpenKnit
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
 ![Spring Boot](https://img.shields.io/badge/Built%20with-Spring%20Boot-6DB33F?logo=springboot&logoColor=white)
 ![Vite](https://img.shields.io/badge/Built%20with-Vite-646CFF?logo=vite&logoColor=white)
-[![Chat on Discord](https://img.shields.io/badge/Chat-Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/YOUR_INVITE_CODE)
+[![Chat on Discord](https://img.shields.io/badge/Chat-Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/htTJuBmx)
 
-Modules is a modular platform for bootstrapping production-grade systems quickly.
+OpenKnit is a modular platform for bootstrapping production-grade systems quickly.
 It ships fullstack experience built on Spring Boot and React + Vite.
 You can assemble foundation of an enterprise system in minutes using domain based modules - lightweight, flexible and extensible.
 
