@@ -76,7 +76,16 @@ const handleScaffoldRequest: express.RequestHandler = async (req, res) => {
             args.push(`name=${nameParam}`);
         }
 
-        const zipFilePath = await scaffolderService.run(args, {cacheMode: "reuse"});
+        let zipFilePath: string;
+        try {
+            zipFilePath = await scaffolderService.run(args, {cacheMode: "reuse"});
+        } catch (cacheError) {
+            const cacheErrorMessage = cacheError instanceof Error ? cacheError.message : "";
+            if (!cacheErrorMessage.includes("Base cache missing")) {
+                throw cacheError;
+            }
+            zipFilePath = await scaffolderService.run(args, {cacheMode: "rebuild"});
+        }
         res.download(zipFilePath);
     } catch (error) {
         res.status(500).json({
@@ -88,13 +97,6 @@ const handleScaffoldRequest: express.RequestHandler = async (req, res) => {
 app.get("/api/scaffold", scaffoldRateLimiter, handleScaffoldRequest);
 app.get("/scaffold", scaffoldRateLimiter, handleScaffoldRequest);
 
-scaffolderService
-    .buildCache()
-    .catch((error: any) => {
-        console.error(error instanceof Error ? error.message : error);
-    })
-    .finally(() => {
-        app.listen(port, () => {
-            console.log(`[scaffolder] Server running on port ${port}`);
-        });
-    });
+app.listen(port, () => {
+    console.log(`[scaffolder] Server running on port ${port}`);
+});

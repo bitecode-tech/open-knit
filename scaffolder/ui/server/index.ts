@@ -6,8 +6,8 @@ import {createDevMiddleware, renderPage} from "vike/server";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const root = path.resolve(__dirname, "..");
 const isProd = process.env.NODE_ENV === "production";
+const appRoot = isProd ? path.resolve(__dirname, "..", "..") : path.resolve(__dirname, "..");
 
 const port = Number(process.env.PORT ?? 3000);
 const apiBaseUrl = process.env.SCAFFOLDER_API_URL ?? "http://127.0.0.1:7070";
@@ -25,10 +25,10 @@ async function startServer() {
     );
 
     if (!isProd) {
-        const {devMiddleware} = await createDevMiddleware({root});
+        const {devMiddleware} = await createDevMiddleware({root: appRoot});
         app.use(devMiddleware);
     } else {
-        app.use(express.static(path.join(root, "dist", "client")));
+        app.use(express.static(path.join(appRoot, "dist", "client")));
     }
 
     app.get("*", async (req, res, next) => {

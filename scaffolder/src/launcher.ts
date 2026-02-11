@@ -18,6 +18,7 @@ const uiProcess = spawn(
     [path.resolve(__dirname, "..", "ui", "dist", "ssr-server", "index.js")],
     {
         stdio: "inherit",
+        cwd: path.resolve(__dirname, "..", "ui"),
         env: {
             ...process.env,
             PORT: uiPort,
