@@ -1,5 +1,5 @@
 FROM node:25-alpine3.22 AS build
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN npm install -g pnpm@latest
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
@@ -15,7 +15,7 @@ RUN pnpm run build
 RUN pnpm run build:server
 
 FROM node:25-alpine3.22 AS runner
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN npm install -g pnpm@latest
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --prod --frozen-lockfile

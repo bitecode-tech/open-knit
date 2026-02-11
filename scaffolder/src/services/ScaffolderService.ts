@@ -154,28 +154,52 @@ class ScaffolderService {
 
     private readEnvValues(scaffolderRoot: string): Map<string, string> {
         const envPath = path.join(scaffolderRoot, ".env");
-        if (!fs.existsSync(envPath)) {
-            throw new Error(
-                "Missing .env file. BACKEND_ROOT_ITEMS, FRONTEND_ROOT_ITEMS, and REPO_ROOT_ITEMS are required."
-            );
-        }
-
-        const envContents = fs.readFileSync(envPath, "utf8");
-        const envLines = envContents.split(/\r?\n/);
         const envValues = new Map<string, string>();
 
-        for (const line of envLines) {
-            const trimmedLine = line.trim();
-            if (!trimmedLine || trimmedLine.startsWith("#")) {
-                continue;
+        if (fs.existsSync(envPath)) {
+            const envContents = fs.readFileSync(envPath, "utf8");
+            const envLines = envContents.split(/\r?\n/);
+            for (const line of envLines) {
+                const trimmedLine = line.trim();
+                if (!trimmedLine || trimmedLine.startsWith("#")) {
+                    continue;
+                }
+                const separatorIndex = trimmedLine.indexOf("=");
+                if (separatorIndex === -1) {
+                    continue;
+                }
+                const key = trimmedLine.slice(0, separatorIndex).trim();
+                const value = trimmedLine.slice(separatorIndex + 1).trim();
+                envValues.set(key, value);
             }
-            const separatorIndex = trimmedLine.indexOf("=");
-            if (separatorIndex === -1) {
-                continue;
+        }
+
+        const configKeys = [
+            "BACKEND_ROOT_ITEMS",
+            "FRONTEND_ROOT_ITEMS",
+            "REPO_ROOT_ITEMS",
+            "MODULE_ALIASES",
+            "AVAILABLE_MODULES",
+            "SCAFFOLDER_QUIET_LOGS"
+        ];
+
+        for (const configKey of configKeys) {
+            const processValue = process.env[configKey];
+            if (processValue !== undefined) {
+                envValues.set(configKey, processValue);
             }
-            const key = trimmedLine.slice(0, separatorIndex).trim();
-            const value = trimmedLine.slice(separatorIndex + 1).trim();
-            envValues.set(key, value);
+        }
+
+        const requiredConfigKeys = ["BACKEND_ROOT_ITEMS", "FRONTEND_ROOT_ITEMS", "REPO_ROOT_ITEMS"];
+        const missingConfigKeys = requiredConfigKeys.filter((requiredConfigKey) => {
+            const configValue = envValues.get(requiredConfigKey);
+            return !configValue || configValue.toLowerCase() === "null";
+        });
+
+        if (missingConfigKeys.length > 0) {
+            throw new Error(
+                `Missing required configuration: ${missingConfigKeys.join(", ")}. Provide via environment variables or .env file.`
+            );
         }
 
         return envValues;
@@ -184,7 +208,7 @@ class ScaffolderService {
     private parseBackendRootItems(envValues: Map<string, string>): Set<string> {
         const rootItemsValue = envValues.get("BACKEND_ROOT_ITEMS");
         if (!rootItemsValue || rootItemsValue.toLowerCase() === "null") {
-            throw new Error("BACKEND_ROOT_ITEMS is missing or empty in .env.");
+            throw new Error("BACKEND_ROOT_ITEMS is missing or empty in configuration.");
         }
 
         const rootItems = rootItemsValue
@@ -193,7 +217,7 @@ class ScaffolderService {
             .filter((value) => value.length > 0);
 
         if (rootItems.length === 0) {
-            throw new Error("BACKEND_ROOT_ITEMS is missing or empty in .env.");
+            throw new Error("BACKEND_ROOT_ITEMS is missing or empty in configuration.");
         }
 
         return new Set(rootItems);
@@ -202,7 +226,7 @@ class ScaffolderService {
     private parseRepoRootItems(envValues: Map<string, string>): Set<string> {
         const rootItemsValue = envValues.get("REPO_ROOT_ITEMS");
         if (!rootItemsValue || rootItemsValue.toLowerCase() === "null") {
-            throw new Error("REPO_ROOT_ITEMS is missing or empty in .env.");
+            throw new Error("REPO_ROOT_ITEMS is missing or empty in configuration.");
         }
 
         const rootItems = rootItemsValue
@@ -211,7 +235,7 @@ class ScaffolderService {
             .filter((value) => value.length > 0);
 
         if (rootItems.length === 0) {
-            throw new Error("REPO_ROOT_ITEMS is missing or empty in .env.");
+            throw new Error("REPO_ROOT_ITEMS is missing or empty in configuration.");
         }
 
         return new Set(rootItems);
@@ -220,7 +244,7 @@ class ScaffolderService {
     private parseFrontendRootItems(envValues: Map<string, string>): Set<string> {
         const rootItemsValue = envValues.get("FRONTEND_ROOT_ITEMS");
         if (!rootItemsValue || rootItemsValue.toLowerCase() === "null") {
-            throw new Error("FRONTEND_ROOT_ITEMS is missing or empty in .env.");
+            throw new Error("FRONTEND_ROOT_ITEMS is missing or empty in configuration.");
         }
 
         const rootItems = rootItemsValue
@@ -229,7 +253,7 @@ class ScaffolderService {
             .filter((value) => value.length > 0);
 
         if (rootItems.length === 0) {
-            throw new Error("FRONTEND_ROOT_ITEMS is missing or empty in .env.");
+            throw new Error("FRONTEND_ROOT_ITEMS is missing or empty in configuration.");
         }
 
         return new Set(rootItems);
@@ -263,7 +287,7 @@ class ScaffolderService {
     private parseAvailableModules(envValues: Map<string, string>): string[] {
         const availableModulesValue = envValues.get("AVAILABLE_MODULES");
         if (!availableModulesValue || availableModulesValue.toLowerCase() === "null") {
-            throw new Error("AVAILABLE_MODULES is missing or empty in .env.");
+            throw new Error("AVAILABLE_MODULES is missing or empty in configuration.");
         }
 
         const availableModules = availableModulesValue
@@ -272,7 +296,7 @@ class ScaffolderService {
             .filter((value) => value.length > 0);
 
         if (availableModules.length === 0) {
-            throw new Error("AVAILABLE_MODULES is missing or empty in .env.");
+            throw new Error("AVAILABLE_MODULES is missing or empty in configuration.");
         }
 
         return availableModules;

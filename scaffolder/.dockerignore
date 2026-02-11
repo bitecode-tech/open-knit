@@ -1,0 +1,16 @@
+node_modules
+dist
+output
+.git
+.gitignore
+.env
+.env.*
+
+# Frontend build artifacts/deps
+ui/node_modules
+ui/dist
+ui/.vite
+
+# OS/editor files
+.DS_Store
+Thumbs.db

@@ -36,7 +36,7 @@ You can assemble foundation of an enterprise system in minutes using domain base
 Modules include domain knowledge, patterns, and guidance that improve AI context and reduce mistakes.
 That makes AI a safer co-pilot for extending the system without breaking boundaries or reinventing the wheel.
 
-## Rapid bootstrap with real building blocks
+## Rapid bootstrap with domain and AI oriented modules
 
 Spin up a working app fast and add only the capabilities you need (auth, payments, transactions, wallets, and more).
 Each module delivers practical domain behavior and infrastructure wiring so your team can focus on product logic.
