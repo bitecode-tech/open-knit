@@ -3,8 +3,8 @@ dist
 output
 .git
 .gitignore
-.env
 .env.*
+!.env-template
 
 # Frontend build artifacts/deps
 ui/node_modules
