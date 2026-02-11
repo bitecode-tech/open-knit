@@ -4,16 +4,15 @@ RUN npm install -g pnpm@latest
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
-RUN --mount=type=bind,source=.env,target=/tmp/local.env,required=false \
-    if [ -f /tmp/local.env ]; then cp /tmp/local.env /app/.env; fi
+RUN --mount=type=bind,source=.,target=/context,readonly \
+    if [ -f /context/.env ]; then cp /context/.env /app/.env; fi
 COPY tsconfig.json ./
 COPY src ./src
 RUN pnpm exec tsc -p tsconfig.json
 
 WORKDIR /app/ui
-COPY ui/package.json ./
-RUN pnpm install --no-frozen-lockfile
 COPY ui ./ 
+RUN pnpm install --no-frozen-lockfile
 RUN pnpm run build
 RUN pnpm run build:server
 
@@ -22,14 +21,14 @@ RUN npm install -g pnpm@latest
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --prod --frozen-lockfile
-RUN --mount=type=bind,source=.env,target=/tmp/local.env,required=false \
-    if [ -f /tmp/local.env ]; then cp /tmp/local.env /app/.env; fi
+RUN --mount=type=bind,source=.,target=/context,readonly \
+    if [ -f /context/.env ]; then cp /context/.env /app/.env; fi
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/ui/dist ./ui/dist
 RUN mkdir -p /app/output
 
 WORKDIR /app/ui
-COPY ui/package.json ./
+COPY ui ./
 RUN pnpm install --prod --no-frozen-lockfile
 
 WORKDIR /app
