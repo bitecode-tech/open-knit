@@ -3,7 +3,7 @@ import {fileURLToPath} from "url";
 import express from "express";
 import {createProxyMiddleware} from "http-proxy-middleware";
 import {createDevMiddleware, renderPage} from "vike/server";
-import {installTimestampedConsole} from "./installTimestampedConsole";
+import {installTimestampedConsole} from "./installTimestampedConsole.js";
 
 installTimestampedConsole();
 
