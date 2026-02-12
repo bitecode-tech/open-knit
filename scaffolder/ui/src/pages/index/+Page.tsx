@@ -6,6 +6,7 @@ import ProjectMetadataSection from "@app/pages/index/components/ProjectMetadataS
 import SelectorSection from "@app/pages/index/components/SelectorSection";
 import ErrorModal from "@app/pages/index/components/ErrorModal";
 import ReadySystemsModal from "@app/pages/index/components/ReadySystemsModal";
+import SuccessModal from "@app/pages/index/components/SuccessModal";
 import {useErrorModal} from "@app/pages/index/hooks/useErrorModal";
 import {useReadySystemsModal} from "@app/pages/index/hooks/useReadySystemsModal";
 import HttpClient from "@app/clients/HttpClient";
@@ -18,6 +19,7 @@ export default function Page() {
     const [selectedOrder, setSelectedOrder] = useState<string[]>([]);
     const [unselectedOrder, setUnselectedOrder] = useState<string[]>([]);
     const [isDownloading, setIsDownloading] = useState(false);
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const errorModal = useErrorModal();
     const getSelectedSystemId = useCallback((): string | null => {
         const selectedIds = Array.from(selectedSystemIds);
@@ -62,6 +64,7 @@ export default function Page() {
             setUnselectedOrder([]);
             setSelectedSystemIds(new Set());
             errorModal.close();
+            setIsSuccessModalOpen(false);
             return;
         }
         const nextOptions = systemOptionsByConfiguration[selectedConfiguration] ?? [];
@@ -118,6 +121,7 @@ export default function Page() {
             return;
         }
         errorModal.close();
+        setIsSuccessModalOpen(false);
 
         if (selectedConfiguration === "ready-systems") {
             readySystemsModal.open();
@@ -146,6 +150,7 @@ export default function Page() {
             document.body.appendChild(anchor);
             anchor.click();
             anchor.remove();
+            setIsSuccessModalOpen(true);
             window.setTimeout(() => {
                 window.URL.revokeObjectURL(downloadUrl);
             }, 30000);
@@ -160,9 +165,16 @@ export default function Page() {
         <div className="bg-[#f2f2f2] min-h-screen md:h-[100dvh] flex flex-col items-center pt-12 md:overflow-hidden">
             <div className="flex flex-col items-start w-full max-w-[1333px] px-4 md:px-0 gap-12 flex-1 min-h-0">
                 <header className="flex flex-col gap-2 items-start max-w-[500px]">
-                    <p className="text-2xl font-normal uppercase tracking-[0.08em]" style={{color: "#374252"}}>
-                        Module builder
-                    </p>
+                    <div className="flex items-center gap-2">
+                        <img
+                            src="/open-knit-logo.png"
+                            alt="OpenKnit logo"
+                            className="h-6 w-auto object-contain"
+                        />
+                        <p className="text-2xl font-semibold tracking-[0.02em]" style={{color: "#374252"}}>
+                            OpenKnit
+                        </p>
+                    </div>
                     <h1>Compose your app in few clicks</h1>
                     <p className="font-normal" style={{color: "#374252"}}>
                         Pick the parts you need and download a ready-made fullstack (Java-Spring + React + Vite) app.
@@ -264,6 +276,12 @@ export default function Page() {
                 </div>
             </footer>
             <ErrorModal isOpen={errorModal.isOpen} onClose={errorModal.close}/>
+            <SuccessModal
+                isOpen={isSuccessModalOpen}
+                onClose={() => {
+                    setIsSuccessModalOpen(false);
+                }}
+            />
             <ReadySystemsModal
                 isOpen={readySystemsModal.isOpen}
                 email={readySystemsModal.email}
