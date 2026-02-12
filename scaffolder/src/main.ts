@@ -1,4 +1,7 @@
 import {loadEnvFile} from "./env/loadEnvFile";
+import {installTimestampedConsole} from "./logging/installTimestampedConsole";
+
+installTimestampedConsole();
 
 loadEnvFile();
 const scaffolderService = require("@/services/ScaffolderService").default;

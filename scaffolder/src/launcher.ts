@@ -1,6 +1,9 @@
 import path from "path";
 import {spawn} from "child_process";
 import {loadEnvFile} from "./env/loadEnvFile";
+import {installTimestampedConsole} from "./logging/installTimestampedConsole";
+
+installTimestampedConsole();
 
 loadEnvFile();
 

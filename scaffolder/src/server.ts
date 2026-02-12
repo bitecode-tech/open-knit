@@ -2,6 +2,9 @@ import path from "path";
 import {register} from "tsconfig-paths";
 import express from "express";
 import {loadEnvFile} from "./env/loadEnvFile";
+import {installTimestampedConsole} from "./logging/installTimestampedConsole";
+
+installTimestampedConsole();
 
 register({
     baseUrl: path.resolve(__dirname),
