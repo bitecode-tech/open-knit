@@ -12,24 +12,24 @@ You can assemble foundation of an enterprise system in minutes using domain base
 
 ## Use cases
 
-- Strong foundation for CRM or ERP systems that need modular domains and reliable infrastructure.
-- Ideal for subscription-gated products and B2B ordering flows.
-- Well-suited for B2C products that need fast go-to-market.
+- 🏢 Strong foundation for CRM or ERP systems that need modular domains and reliable infrastructure.
+- 💳 Ideal for subscription-gated products and B2B ordering flows.
+- 🚀 Well-suited for B2C products that need fast go-to-market.
 
 ## System highlights
 
-- One-command local environment via Docker Compose.
-- Module boundaries are strict, making future microservice extraction straightforward.
-- Start as a monolith for speed, split into microservices when needed.
-- Role-based access control with role-oriented APIs.
-- Multi-tenancy.
-- Audit events and change logs (for example, transaction event records) for traceability without full event-sourcing complexity.
-- Dockerfiles included for fast deployment.
-- Mobile-first UI approach for modern product experiences.
-- Designed to work well with AI-assisted development workflows.
-- Modern enterprise stack: Spring Boot, React + Vite, and PostgreSQL (with vector support).
-- Supports event-driven communication between backend modules.
-- Clear, well-commented code with baseline flows to help developers and AI understand the system.
+- 🐳 One-command local environment via Docker Compose.
+- 🧱 Module boundaries are strict, making future microservice extraction straightforward.
+- 🧩 Start as a monolith for speed, split into microservices when needed.
+- 🔐 Role-based access control with role-oriented APIs.
+- 🏬 Multi-tenancy.
+- 🧾 Audit events and change logs (for example, transaction event records) for traceability without full event-sourcing complexity.
+- 📦 Dockerfiles included for fast deployment.
+- 📱 Mobile-first UI approach for modern product experiences.
+- 🤖 Designed to work well with AI-assisted development workflows.
+- 🛠️ Modern enterprise stack: Spring Boot, React + Vite, and PostgreSQL (with vector support).
+- 🔄 Supports event-driven communication between backend modules.
+- 🧠 Clear, well-commented code with baseline flows to help developers and AI understand the system.
 
 ## Built for AI-assisted development
 
@@ -40,6 +40,44 @@ That makes AI a safer co-pilot for extending the system without breaking boundar
 
 Spin up a working app fast and add only the capabilities you need (auth, payments, transactions, wallets, and more).
 Each module delivers practical domain behavior and infrastructure wiring so your team can focus on product logic.
+
+## App screenshots
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="docs/screenshoots/Dashboard.jpg"><img src="docs/screenshoots/Dashboard.jpg" alt="Dashboard" width="210"></a><br>Dashboard
+    </td>
+    <td align="center">
+      <a href="docs/screenshoots/users.jpg"><img src="docs/screenshoots/users.jpg" alt="Users" width="210"></a><br>Users
+    </td>
+    <td align="center">
+      <a href="docs/screenshoots/transactiions.jpg"><img src="docs/screenshoots/transactiions.jpg" alt="Transactions" width="210"></a><br>Transactions
+    </td>
+    <td align="center">
+      <a href="docs/screenshoots/transaction-details.jpg"><img src="docs/screenshoots/transaction-details.jpg" alt="Transaction details" width="210"></a><br>Transaction details
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="docs/screenshoots/subscriptions.jpg"><img src="docs/screenshoots/subscriptions.jpg" alt="Subscriptions" width="210"></a><br>Subscriptions
+    </td>
+    <td align="center">
+      <a href="docs/screenshoots/ai-config.jpg"><img src="docs/screenshoots/ai-config.jpg" alt="AI config" width="210"></a><br>AI config
+    </td>
+    <td align="center">
+      <a href="docs/screenshoots/ai-assistant.jpg"><img src="docs/screenshoots/ai-assistant.jpg" alt="AI assistant" width="210"></a><br>AI assistant
+    </td>
+    <td></td>
+  </tr>
+</table>
+
+## Roadmap
+
+1. 🏗️ Build two white-label-ready systems based on the module architecture.
+2. 🤖 Focus on AI development experience with a fully agentic workflow.
+3. 🧩 Continuously expand the platform with more modules.
+4. ✅ Increase and maintain strong test coverage across backend and frontend modules.
 
 ## Quick start
 
@@ -54,14 +92,14 @@ Backend changes trigger quick restarts inside the container, and the frontend us
 Toggle demo data in your generated backend `.env`:
 
 - `DEMO_INSERTS_ENABLED=true` to seed demo data
-- `DEMO_INSERTS_USERS_PASSWORD=test123` and `INITIAL_INSERTS_USERS_PASSWORD=test123`
+- `DEMO_INSERTS_USERS_PASSWORD=test123`
 
 Backend changes trigger quick restarts inside the container, and the frontend uses Vite HMR.
 
 2. Open the app:
 
 - Backend: `http://localhost:8080`
-- Frontend: `http://localhost:3000`
+- Frontend: `http://localhost:3030`
 
 ## Important Environment secrets
 
@@ -91,7 +129,7 @@ example: `backend/modules/identity/.env-template`, `backend/modules/payment/.env
 ## Demo users
 
 Default demo users are created from `backend/modules/_common/src/main/resources/demo-inserts/user-email-reference.sql`.
-The default demo password is `test123` (controlled by `DEMO_INSERTS_USERS_PASSWORD` and `INITIAL_INSERTS_USERS_PASSWORD`).
+The default demo password is `test123` (controlled by `DEMO_INSERTS_USERS_PASSWORD`).
 
 | Email                         | Password  |
 |-------------------------------|-----------|

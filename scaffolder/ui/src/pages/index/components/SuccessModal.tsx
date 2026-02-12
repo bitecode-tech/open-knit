@@ -29,12 +29,22 @@ export default function SuccessModal({isOpen, onClose}: SuccessModalProps) {
                         Close
                     </button>
                 </div>
-                <p className="mt-3 font-normal" style={{color: "#374252"}}>
-                    To start just unpack zip, go to the root folder, and run:
-                </p>
-                <pre className="mt-4 rounded-[10px] bg-[#0f172a] text-[#e2e8f0] px-4 py-3 overflow-x-auto">
-                    <code className="text-sm">docker compose watch</code>
-                </pre>
+                <ol className="mt-4 list-decimal pl-5 space-y-3 font-normal" style={{color: "#374252"}}>
+                    <li>
+                        In your project root, run{" "}
+                        <code className="rounded bg-[#0f172a] text-[#e2e8f0] px-2 py-1 text-sm">docker compose watch</code>
+                    </li>
+                    <li>
+                        Open{" "}
+                        <code className="rounded bg-[#f1f5f9] text-[#0f172a] px-2 py-1 text-sm">http://localhost:3030</code>
+                    </li>
+                    <li>
+                        Log in with{" "}
+                        <code className="rounded bg-[#f1f5f9] text-[#0f172a] px-2 py-1 text-sm">admin@bitecode.tech</code>{" "}
+                        and password{" "}
+                        <code className="rounded bg-[#f1f5f9] text-[#0f172a] px-2 py-1 text-sm">test123</code>
+                    </li>
+                </ol>
                 <div className="mt-6 flex justify-end">
                     <button
                         type="button"
