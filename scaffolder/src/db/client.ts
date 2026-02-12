@@ -24,6 +24,15 @@ function getDatabaseUrl(): string {
     return databaseUrl;
 }
 
+export function getConfiguredDatabaseUrl(): string | null {
+    const rawDatabaseUrl = process.env.DATABASE_URL ?? process.env.database_url;
+    const databaseUrl = rawDatabaseUrl?.trim();
+    if (!databaseUrl) {
+        return null;
+    }
+    return databaseUrl;
+}
+
 export function getPool(): PoolLike {
     if (poolInstance) {
         return poolInstance;

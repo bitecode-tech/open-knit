@@ -16,6 +16,7 @@ const scaffolderService = require("@/services/ScaffolderService").default;
 const incrementDownloadCounters = require("./db/downloadCounterRepository").incrementDownloadCounters;
 const createWishlistEntry = require("./db/wishlistRepository").createWishlistEntry;
 const initializeDatabaseSchema = require("./db/bootstrap").initializeDatabaseSchema;
+const getConfiguredDatabaseUrl = require("./db/client").getConfiguredDatabaseUrl;
 
 const app = express();
 app.set("trust proxy", 1);
@@ -179,8 +180,26 @@ app.get("/api/scaffold", scaffoldRateLimiter, handleScaffoldRequest);
 app.get("/scaffold", scaffoldRateLimiter, handleScaffoldRequest);
 
 async function startServer() {
+    const configuredDatabaseUrl = getConfiguredDatabaseUrl();
+    if (!configuredDatabaseUrl) {
+        console.warn("[scaffolder] DATABASE_URL/database_url is not set. DB features are disabled.");
+    } else {
+        try {
+            const parsedUrl = new URL(configuredDatabaseUrl);
+            const databaseName = parsedUrl.pathname.replace(/^\/+/, "") || "(default)";
+            const maskedHost = parsedUrl.hostname || "(unknown-host)";
+            const maskedPort = parsedUrl.port ? `:${parsedUrl.port}` : "";
+            const maskedProtocol = parsedUrl.protocol.replace(":", "");
+            const dbTarget = `${maskedProtocol}://${maskedHost}${maskedPort}/${databaseName}`;
+            console.log(`[scaffolder] Database target: ${dbTarget}`);
+        } catch {
+            console.log("[scaffolder] Database target: <unparseable DATABASE_URL>");
+        }
+    }
+
     try {
         await initializeDatabaseSchema();
+        console.log("[scaffolder] Database schema bootstrap: OK");
     } catch (error) {
         console.error(
             "[scaffolder] Database bootstrap failed. Continuing without database-backed features:",
