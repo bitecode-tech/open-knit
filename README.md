@@ -1,10 +1,15 @@
-# OpenKnit
+<p align="center">
+  <img src="docs/logo/open-knit-logo.png" alt="OpenKnit logo" width="72">
+</p>
+<h1 align="center">OpenKnit</h1>
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
-![Spring Boot](https://img.shields.io/badge/Built%20with-Spring%20Boot-6DB33F?logo=springboot&logoColor=white)
-![Vite](https://img.shields.io/badge/Built%20with-Vite-646CFF?logo=vite&logoColor=white)
-[![Chat on Discord](https://img.shields.io/badge/Chat-Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/htTJuBmx)
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a>
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome"></a>
+  <img src="https://img.shields.io/badge/Built%20with-Spring%20Boot-6DB33F?logo=springboot&logoColor=white" alt="Built with Spring Boot">
+  <img src="https://img.shields.io/badge/Built%20with-Vite-646CFF?logo=vite&logoColor=white" alt="Built with Vite">
+  <a href="https://discord.gg/htTJuBmx"><img src="https://img.shields.io/badge/Chat-Discord-5865F2?logo=discord&logoColor=white" alt="Chat on Discord"></a>
+</p>
 
 OpenKnit is a modular platform for bootstrapping production-grade systems quickly.
 It ships fullstack experience built on Spring Boot and React + Vite.
