@@ -1,6 +1,9 @@
-import scaffolderService from "@/services/ScaffolderService";
+import {loadEnvFile} from "./env/loadEnvFile";
 
-scaffolderService.run(process.argv.slice(2)).catch((error) => {
+loadEnvFile();
+const scaffolderService = require("@/services/ScaffolderService").default;
+
+scaffolderService.run(process.argv.slice(2)).catch((error: unknown) => {
     console.error(error instanceof Error ? error.message : error);
     process.exit(1);
 });

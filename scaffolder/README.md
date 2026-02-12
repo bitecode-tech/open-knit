@@ -123,7 +123,17 @@ Useful endpoints:
 
 - `GET /health`
 - `GET /api/modules`
-- `GET /api/scaffold?modules=identity,payment,transaction&name=acme`
+- `GET /api/scaffold?modules=identity,payment,transaction&name=acme&counterName=subscription-access`
+- `POST /api/wishlist` with JSON body: `{"email":"user@example.com","systemName":"smart-invoicing"}`
+
+Database commands (Drizzle):
+
+- `pnpm run db:push` (apply current schema to PostgreSQL)
+- `pnpm run db:generate` (generate SQL migrations)
+
+Note:
+
+- On server startup, schema bootstrap runs automatically (`CREATE TABLE/INDEX IF NOT EXISTS`) using `DATABASE_URL`.
 
 ## 6. Run UI (development)
 
@@ -171,6 +181,7 @@ Configured in `scaffolder/.env`:
 - `CORS_ORIGIN`
 - `RATE_LIMIT_MAX`
 - `RATE_LIMIT_WINDOW_MS`
+- `DATABASE_URL`
 
 Server/runtime overrides:
 

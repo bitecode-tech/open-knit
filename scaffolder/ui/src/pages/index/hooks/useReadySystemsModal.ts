@@ -1,6 +1,12 @@
 import {useCallback, useState} from "react";
 
-export function useReadySystemsModal(onDone: () => void) {
+type SubmitWishlistCallback = (email: string) => Promise<void>;
+
+export function useReadySystemsModal(
+    onDone: () => void,
+    onSubmitWishlist: SubmitWishlistCallback,
+    onSubmitError: () => void
+) {
     const [isOpen, setIsOpen] = useState(false);
     const [email, setEmail] = useState("");
     const [isPending, setIsPending] = useState(false);
@@ -17,15 +23,20 @@ export function useReadySystemsModal(onDone: () => void) {
         onDone();
     }, [onDone]);
 
-    const submit = useCallback(() => {
+    const submit = useCallback(async () => {
         if (!emailIsValid || isPending) {
             return;
         }
+
         setIsPending(true);
-        window.setTimeout(() => {
+        try {
+            await onSubmitWishlist(email.trim());
             close();
-        }, 750);
-    }, [emailIsValid, isPending, close]);
+        } catch {
+            setIsPending(false);
+            onSubmitError();
+        }
+    }, [close, email, emailIsValid, isPending, onSubmitError, onSubmitWishlist]);
 
     return {
         isOpen,

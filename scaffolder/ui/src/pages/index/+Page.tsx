@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {bundleModules, configurationOptions, lockedModuleIds, moduleIdToBackendName, systemOptionsByConfiguration} from "@app/pages/index/data";
 import {DiscordIcon, GithubIcon} from "@app/pages/index/components/Icons";
 import ConfigurationSection from "@app/pages/index/components/ConfigurationSection";
@@ -19,13 +19,34 @@ export default function Page() {
     const [unselectedOrder, setUnselectedOrder] = useState<string[]>([]);
     const [isDownloading, setIsDownloading] = useState(false);
     const errorModal = useErrorModal();
-    const readySystemsModal = useReadySystemsModal(() => setSelectedConfiguration("bundles"));
+    const getSelectedSystemId = useCallback((): string | null => {
+        const selectedIds = Array.from(selectedSystemIds);
+        return selectedIds[0] ?? null;
+    }, [selectedSystemIds]);
+    const submitReadySystemsWishlist = useCallback(
+        async (email: string) => {
+            const selectedSystemId = getSelectedSystemId();
+            if (!selectedSystemId) {
+                throw new Error("Missing selected ready system");
+            }
+
+            await HttpClient.subscribeWishlist({
+                email,
+                systemName: selectedSystemId
+            });
+        },
+        [getSelectedSystemId]
+    );
+    const readySystemsModal = useReadySystemsModal(
+        () => setSelectedConfiguration("bundles"),
+        submitReadySystemsWishlist,
+        errorModal.open
+    );
     const isGenerateDisabled = selectedSystemIds.size === 0;
     const systemOptions = selectedConfiguration
         ? systemOptionsByConfiguration[selectedConfiguration] ?? []
         : [];
     const showSystems = Boolean(selectedConfiguration);
-    const selectedSystemIdsList = Array.from(selectedSystemIds);
     const isMultiSelect = selectedConfiguration === "modules";
     const lockedIds = new Set(selectedConfiguration === "modules" ? lockedModuleIds : []);
     const systemsTitle =
@@ -67,7 +88,10 @@ export default function Page() {
             return [];
         }
         if (selectedConfiguration === "bundles") {
-            const bundleId = Array.from(selectedSystemIds)[0];
+            const bundleId = getSelectedSystemId();
+            if (!bundleId) {
+                return [];
+            }
             return bundleModules[bundleId] ?? [];
         }
         if (selectedConfiguration === "modules") {
@@ -76,6 +100,17 @@ export default function Page() {
                 .filter((moduleName): moduleName is string => Boolean(moduleName));
         }
         return [];
+    };
+
+    const resolveCounterName = (): string | undefined => {
+        if (selectedConfiguration === "bundles") {
+            const bundleId = getSelectedSystemId();
+            if (!bundleId) {
+                return undefined;
+            }
+            return bundleId;
+        }
+        return undefined;
     };
 
     const handleGenerate = async () => {
@@ -101,7 +136,8 @@ export default function Page() {
                 name: projectName,
                 modules,
                 demoInsertsEnabled,
-                aiEnabled: false
+                aiEnabled: false,
+                counterName: resolveCounterName()
             });
             const downloadUrl = window.URL.createObjectURL(blob);
             const anchor = document.createElement("a");
@@ -235,7 +271,9 @@ export default function Page() {
                 emailIsValid={readySystemsModal.emailIsValid}
                 isPending={readySystemsModal.isPending}
                 onClose={readySystemsModal.close}
-                onSubmit={readySystemsModal.submit}
+                onSubmit={() => {
+                    void readySystemsModal.submit();
+                }}
             />
         </div>
     );

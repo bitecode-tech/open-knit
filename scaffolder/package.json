@@ -7,6 +7,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json && node dist/build-cache.js",
     "build:ui": "cd ui && pnpm run build && pnpm run build:server",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
     "dev:server": "tsx src/server.ts",
     "dev:ui": "pnpm --prefix ui run dev",
     "dev:all": "concurrently -k -s first -n backend,ui -c blue,magenta \"pnpm run dev:server\" \"pnpm run dev:ui\"",
@@ -23,13 +25,16 @@
     "@types/react-dom": "^19.2.3",
     "@types/yauzl": "^2.10.3",
     "concurrently": "^9.0.0",
+    "drizzle-kit": "^0.31.4",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.8.2"
   },
   "dependencies": {
     "archiver": "^7.0.1",
+    "drizzle-orm": "^0.44.6",
     "express": "^4.21.2",
+    "pg": "^8.16.3",
     "tsconfig-paths": "^4.2.0",
     "yauzl": "^2.10.0"
   }

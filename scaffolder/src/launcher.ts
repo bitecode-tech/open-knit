@@ -1,5 +1,8 @@
 import path from "path";
 import {spawn} from "child_process";
+import {loadEnvFile} from "./env/loadEnvFile";
+
+loadEnvFile();
 
 const backendPort = process.env.SCAFFOLDER_PORT ?? "7070";
 const uiPort = process.env.UI_PORT ?? "3000";

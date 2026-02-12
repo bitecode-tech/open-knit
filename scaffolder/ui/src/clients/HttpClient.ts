@@ -3,6 +3,12 @@ type DownloadScaffoldParams = {
     modules: string[];
     demoInsertsEnabled: boolean;
     aiEnabled: boolean;
+    counterName?: string;
+};
+
+type WishlistSubscriptionParams = {
+    email: string;
+    systemName: string;
 };
 
 class HttpClient {
@@ -21,6 +27,9 @@ class HttpClient {
         }
         if (params.modules.length > 0) {
             query.set("modules", params.modules.join(","));
+        }
+        if (params.counterName && params.counterName.trim()) {
+            query.set("counterName", params.counterName.trim());
         }
         query.set("demoInsertsEnabled", String(params.demoInsertsEnabled));
         query.set("aiEnabled", String(params.aiEnabled));
@@ -42,6 +51,23 @@ class HttpClient {
         const blob = await response.blob();
         const fileName = this.getFileName(response) ?? "scaffold.zip";
         return {blob, fileName};
+    }
+
+    async subscribeWishlist(params: WishlistSubscriptionParams): Promise<void> {
+        const response = await fetch(`${this.baseUrl}/wishlist`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: params.email.trim(),
+                systemName: params.systemName.trim()
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Wishlist subscription failed: ${response.status}`);
+        }
     }
 
     private getFileName(response: Response): string | null {
