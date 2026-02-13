@@ -27,6 +27,7 @@ const port = Number(process.env.PORT ?? 7070);
 const corsOrigin = process.env.CORS_ORIGIN ?? "*";
 const scaffoldRateLimitMax = Number(process.env.RATE_LIMIT_MAX ?? 3);
 const scaffoldRateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 30_000);
+const enableRateLimitDiagnostics = process.env.RATE_LIMIT_DIAGNOSTICS === "true";
 const wishlistRateLimitMax = 3;
 const wishlistRateLimitWindowMs = 30_000;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,18 +52,38 @@ app.use((req, res, next) => {
 
 function buildRateLimiter(maxRequests: number, windowMs: number, keyPrefix: string): express.RequestHandler {
     return (req, res, next) => {
-        const key = `${keyPrefix}:${req.ip ?? "unknown"}`;
+        const forwardedForHeaderValue = req.headers["x-forwarded-for"];
+        const cloudflareConnectingIpValue = req.headers["cf-connecting-ip"];
+        const firstForwardedForIp = Array.isArray(forwardedForHeaderValue)
+            ? forwardedForHeaderValue[0]
+            : String(forwardedForHeaderValue ?? "").split(",")[0]?.trim();
+        const cloudflareConnectingIp = Array.isArray(cloudflareConnectingIpValue)
+            ? cloudflareConnectingIpValue[0]
+            : String(cloudflareConnectingIpValue ?? "").trim();
+        const remoteSocketIp = req.socket.remoteAddress ?? "unknown";
+        const resolvedRequestIp = req.ip ?? "unknown";
+        const key = `${keyPrefix}:${resolvedRequestIp}`;
         const now = Date.now();
         const entry = rateLimitStore.get(key) ?? {timestamps: []};
         entry.timestamps = entry.timestamps.filter((timestamp) => now - timestamp <= windowMs);
 
         if (entry.timestamps.length >= maxRequests) {
+            if (enableRateLimitDiagnostics && keyPrefix === "scaffold-download") {
+                console.warn(
+                    `[scaffolder] rate-limit deny key=${key} req.ip=${resolvedRequestIp} cf-connecting-ip=${cloudflareConnectingIp || "-"} x-forwarded-for=${firstForwardedForIp || "-"} remote=${remoteSocketIp} count=${entry.timestamps.length} max=${maxRequests} windowMs=${windowMs}`
+                );
+            }
             res.status(429).json({error: "Too many requests"});
             return;
         }
 
         entry.timestamps.push(now);
         rateLimitStore.set(key, entry);
+        if (enableRateLimitDiagnostics && keyPrefix === "scaffold-download") {
+            console.log(
+                `[scaffolder] rate-limit allow key=${key} req.ip=${resolvedRequestIp} cf-connecting-ip=${cloudflareConnectingIp || "-"} x-forwarded-for=${firstForwardedForIp || "-"} remote=${remoteSocketIp} count=${entry.timestamps.length}/${maxRequests} windowMs=${windowMs}`
+            );
+        }
         next();
     };
 }
