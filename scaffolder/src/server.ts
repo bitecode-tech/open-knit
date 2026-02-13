@@ -38,6 +38,20 @@ type RateLimitEntry = {
 
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
+function normalizeIpAddress(ipAddress: string): string {
+    if (ipAddress.startsWith("::ffff:")) {
+        return ipAddress.slice(7);
+    }
+    return ipAddress;
+}
+
+function getFirstHeaderIp(headerValue: string | string[] | undefined): string {
+    if (Array.isArray(headerValue)) {
+        return String(headerValue[0] ?? "").trim();
+    }
+    return String(headerValue ?? "").split(",")[0]?.trim() ?? "";
+}
+
 app.use(express.json({limit: "16kb"}));
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", corsOrigin);
@@ -54,15 +68,13 @@ function buildRateLimiter(maxRequests: number, windowMs: number, keyPrefix: stri
     return (req, res, next) => {
         const forwardedForHeaderValue = req.headers["x-forwarded-for"];
         const cloudflareConnectingIpValue = req.headers["cf-connecting-ip"];
-        const firstForwardedForIp = Array.isArray(forwardedForHeaderValue)
-            ? forwardedForHeaderValue[0]
-            : String(forwardedForHeaderValue ?? "").split(",")[0]?.trim();
-        const cloudflareConnectingIp = Array.isArray(cloudflareConnectingIpValue)
-            ? cloudflareConnectingIpValue[0]
-            : String(cloudflareConnectingIpValue ?? "").trim();
+        const firstForwardedForIp = getFirstHeaderIp(forwardedForHeaderValue);
+        const cloudflareConnectingIp = getFirstHeaderIp(cloudflareConnectingIpValue);
         const remoteSocketIp = req.socket.remoteAddress ?? "unknown";
         const resolvedRequestIp = req.ip ?? "unknown";
-        const key = `${keyPrefix}:${resolvedRequestIp}`;
+        const rateLimitClientIpRaw = cloudflareConnectingIp || firstForwardedForIp || resolvedRequestIp;
+        const rateLimitClientIp = normalizeIpAddress(rateLimitClientIpRaw || "unknown");
+        const key = `${keyPrefix}:${rateLimitClientIp}`;
         const now = Date.now();
         const entry = rateLimitStore.get(key) ?? {timestamps: []};
         entry.timestamps = entry.timestamps.filter((timestamp) => now - timestamp <= windowMs);
@@ -70,7 +82,7 @@ function buildRateLimiter(maxRequests: number, windowMs: number, keyPrefix: stri
         if (entry.timestamps.length >= maxRequests) {
             if (enableRateLimitDiagnostics && keyPrefix === "scaffold-download") {
                 console.warn(
-                    `[scaffolder] rate-limit deny key=${key} req.ip=${resolvedRequestIp} cf-connecting-ip=${cloudflareConnectingIp || "-"} x-forwarded-for=${firstForwardedForIp || "-"} remote=${remoteSocketIp} count=${entry.timestamps.length} max=${maxRequests} windowMs=${windowMs}`
+                    `[scaffolder] rate-limit deny key=${key} req.ip=${resolvedRequestIp} limiter-ip=${rateLimitClientIp} cf-connecting-ip=${cloudflareConnectingIp || "-"} x-forwarded-for=${firstForwardedForIp || "-"} remote=${remoteSocketIp} count=${entry.timestamps.length} max=${maxRequests} windowMs=${windowMs}`
                 );
             }
             res.status(429).json({error: "Too many requests"});
@@ -81,7 +93,7 @@ function buildRateLimiter(maxRequests: number, windowMs: number, keyPrefix: stri
         rateLimitStore.set(key, entry);
         if (enableRateLimitDiagnostics && keyPrefix === "scaffold-download") {
             console.log(
-                `[scaffolder] rate-limit allow key=${key} req.ip=${resolvedRequestIp} cf-connecting-ip=${cloudflareConnectingIp || "-"} x-forwarded-for=${firstForwardedForIp || "-"} remote=${remoteSocketIp} count=${entry.timestamps.length}/${maxRequests} windowMs=${windowMs}`
+                `[scaffolder] rate-limit allow key=${key} req.ip=${resolvedRequestIp} limiter-ip=${rateLimitClientIp} cf-connecting-ip=${cloudflareConnectingIp || "-"} x-forwarded-for=${firstForwardedForIp || "-"} remote=${remoteSocketIp} count=${entry.timestamps.length}/${maxRequests} windowMs=${windowMs}`
             );
         }
         next();
