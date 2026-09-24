@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @AdminAccess
 @RequiredArgsConstructor
-@RequestMapping("/admin/ai/providers")
+@RequestMapping("/api/admin/ai/providers")
 public class AdminAiServicesProviderConfigurationController {
     private final AiServicesProviderConfigService providersService;
 

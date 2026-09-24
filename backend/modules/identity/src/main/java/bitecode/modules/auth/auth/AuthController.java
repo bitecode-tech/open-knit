@@ -32,7 +32,7 @@ public class AuthController {
     private EnvProfile activeProfile;
 
     public final static String REFRESH_TOKEN_COOKIE_NAME = "refreshTokenId";
-    public final static String PATH_MAPPING = "/oauth";
+    public final static String PATH_MAPPING = "/api/oauth";
     private final AuthService authService;
     private final AuthenticatedUserMapper mapper;
 

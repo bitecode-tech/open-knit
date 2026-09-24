@@ -24,7 +24,7 @@ import static bitecode.modules.auth.user.UserController.PATH_MAPPING;
 @RequestMapping(PATH_MAPPING)
 @RequiredArgsConstructor
 public class UserController {
-    public static final String PATH_MAPPING = "/users";
+    public static final String PATH_MAPPING = "/api/users";
 
     private final UserService userService;
     private final UserMapper userMapper;

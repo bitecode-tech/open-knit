@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @RestController
 @PermitAll
-@RequestMapping("/open/ai/agents")
+@RequestMapping("/api/open/ai/agents")
 @RequiredArgsConstructor
 public class OpenAiAgentController {
     private final AiChatService aiChatService;

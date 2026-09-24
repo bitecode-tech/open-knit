@@ -25,7 +25,7 @@ import java.util.UUID;
 @RestController
 @AdminAccess
 @RequiredArgsConstructor
-@RequestMapping("/admin/ai/agents")
+@RequestMapping("/api/admin/ai/agents")
 public class AdminAgentConfigurationController {
 
     private static final List<String> ALLOWED_TYPES = List.of(

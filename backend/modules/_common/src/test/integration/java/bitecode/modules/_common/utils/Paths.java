@@ -3,13 +3,11 @@ package bitecode.modules._common.utils;
 import bitecode.modules.auth.auth.AuthController;
 import bitecode.modules.auth.user.UserController;
 
-import static bitecode.modules._common.config.WebConfig.PATH_PREFIX;
-
 public interface Paths {
     // @formatter:off
     interface Auth {
-        String basePath = PATH_PREFIX + AuthController.PATH_MAPPING;
-        String adminBasePath = PATH_PREFIX + "/admin" + AuthController.PATH_MAPPING;
+        String basePath = AuthController.PATH_MAPPING;
+        String adminBasePath = "/api/admin/oauth";
 
         interface POST {
             String signIn = basePath + "/login";
@@ -22,7 +20,7 @@ public interface Paths {
     }
 
     interface User {
-        String basePath = PATH_PREFIX + UserController.PATH_MAPPING;
+        String basePath = UserController.PATH_MAPPING;
 
         interface GET {
 
@@ -45,14 +43,14 @@ public interface Paths {
         interface Provider {
             interface Stripe {
                 interface POST {
-                    String webhook = PATH_PREFIX + "/payments/webhooks/stripe";
+                    String webhook = "/api/payments/webhooks/stripe";
                 }
             }
         }
     }
 
     interface Notification {
-        String adminBasePath = PATH_PREFIX + "/admin";
+        String adminBasePath = "/api/admin";
         interface Admin {
 
             interface POST {

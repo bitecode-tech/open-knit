@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @AdminAccess
-@RequestMapping("/admin/ocr/providers")
+@RequestMapping("/api/admin/ocr/providers")
 public class AdminOcrProviderConfigController {
     private final OcrProviderConfigService ocrProviderConfigService;
 

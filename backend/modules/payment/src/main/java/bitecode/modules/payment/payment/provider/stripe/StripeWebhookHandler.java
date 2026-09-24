@@ -39,7 +39,7 @@ import java.util.function.Function;
 
 @Slf4j
 @RestController
-@RequestMapping("/payments/webhooks/stripe")
+@RequestMapping("/api/payments/webhooks/stripe")
 @RequiredArgsConstructor
 public class StripeWebhookHandler {
     private final StripeProperties properties;

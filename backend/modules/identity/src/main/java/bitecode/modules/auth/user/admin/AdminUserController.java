@@ -19,7 +19,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @AdminAccess
-@RequestMapping("/admin/users")
+@RequestMapping("/api/admin/users")
 @RequiredArgsConstructor
 public class AdminUserController {
     private final AdminUserService adminUserService;

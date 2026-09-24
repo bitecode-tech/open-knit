@@ -16,7 +16,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @AdminOrUserAccess
-@RequestMapping("/subscriptions")
+@RequestMapping("/api/subscriptions")
 @RequiredArgsConstructor
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;

@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RestController
 @AdminAccess
-@RequestMapping("/admin/ocr/results")
+@RequestMapping("/api/admin/ocr/results")
 public class AdminOcrController {
     private final OcrResultService ocrResultService;
 

@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/admin/transactions")
+@RequestMapping("/api/admin/transactions")
 @AdminAccess
 @RequiredArgsConstructor
 public class AdminTransactionController {

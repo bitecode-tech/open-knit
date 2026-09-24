@@ -40,7 +40,6 @@ Below is a full list of Java types in this module with brief purpose description
 - `JacksonObjectMapperConfig`: object mapper config holder (currently `@Bean` method commented out).
 - `QueryDslConfig`: exposes `JPAQueryFactory` bean.
 - `ThreadExecutorsConfig`: enables async support, configures MVC async executor/timeouts, and provides virtual-thread `ExecutorService`.
-- `WebConfig`: applies global `"/api"` path prefix to all controllers (`PATH_PREFIX` constant).
 
 #### Module bootstrapping config (`config/_modules`)
 

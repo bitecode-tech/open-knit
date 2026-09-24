@@ -16,7 +16,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @AdminAccess
-@RequestMapping("/admin/payments")
+@RequestMapping("/api/admin/payments")
 @RequiredArgsConstructor
 public class AdminPaymentController {
     private final PaymentService paymentService;

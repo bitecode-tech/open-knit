@@ -29,7 +29,7 @@ import java.util.UUID;
 
 @RestController
 @AdminOrUserAccess
-@RequestMapping("/ocr")
+@RequestMapping("/api/ocr")
 public class UserOcrController {
     private final OcrInstructionService ocrInstructionService;
     private final OcrResultService ocrResultService;

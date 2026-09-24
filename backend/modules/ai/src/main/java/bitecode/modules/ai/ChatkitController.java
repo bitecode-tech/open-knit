@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @PermitAll
-@RequestMapping("/chatkit")
+@RequestMapping("/api/chatkit")
 @RequiredArgsConstructor
 public class ChatkitController {
 

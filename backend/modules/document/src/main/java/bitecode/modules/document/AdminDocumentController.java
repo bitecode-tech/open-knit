@@ -29,7 +29,7 @@ import java.util.UUID;
 @RestController
 @AdminAccess
 @RequiredArgsConstructor
-@RequestMapping("/admin/documents")
+@RequestMapping("/api/admin/documents")
 public class AdminDocumentController {
     private final DocumentService documentService;
 

@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @AdminOrUserAccess
-@RequestMapping("/ai/agents/{uuid}/chat")
+@RequestMapping("/api/ai/agents/{uuid}/chat")
 @RequiredArgsConstructor
 public class UserAiChatController {
     private final AiChatService aiChatService;
