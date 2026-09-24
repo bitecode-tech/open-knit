@@ -241,7 +241,7 @@ export default function Page() {
                 </section>
             </div>
 
-            <footer className="bg-[var(--surface-subtle)] w-full mt-auto">
+            <footer className="relative bg-[var(--surface-subtle)] w-full mt-auto">
                 <div className="flex items-center justify-center h-[82px] px-20">
                     <div className="flex gap-2.5 items-center justify-center w-full flex-wrap">
                         <div className="flex flex-1 items-center justify-center">
@@ -280,6 +280,9 @@ export default function Page() {
                         </div>
                     </div>
                 </div>
+                <span className="absolute bottom-2 left-4 text-xs text-[var(--text-muted)]" aria-label={`Scaffolder version ${__SCAFFOLDER_VERSION__}`}>
+                    v{__SCAFFOLDER_VERSION__}
+                </span>
             </footer>
             <ErrorModal isOpen={errorModal.isOpen} onClose={errorModal.close}/>
             <SuccessModal
