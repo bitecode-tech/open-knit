@@ -18,7 +18,11 @@ export default function Layout({children}: { children: ReactNode }) {
         }`;
 
     return (
-        <div className="app-shell min-h-screen bg-[var(--background)] flex flex-col">
+        <div
+            className={`app-shell min-h-screen bg-[var(--background)] flex flex-col ${
+                generatorIsActive ? "md:h-dvh md:max-h-dvh md:overflow-hidden" : ""
+            }`}
+        >
             <nav className="w-full px-3 pt-3.5 md:px-4 md:pt-[18px]">
                 <div className="mx-auto flex min-h-16 max-w-[1333px] flex-wrap items-center justify-between gap-x-3 gap-y-3 md:flex-nowrap md:gap-6">
                     <a href="/" className="inline-flex items-center gap-3 min-w-0" aria-label="OpenKnit home">

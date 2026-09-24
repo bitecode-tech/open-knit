@@ -46,14 +46,13 @@
 }
 
 html {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 body {
     font-family: "Inter", "Segoe UI", sans-serif;
     color: var(--text-strong);
     margin: 0;
-    scrollbar-gutter: stable;
     background:
         radial-gradient(circle at top left, var(--white-transparent-90), var(--white-transparent-0) 32%),
         linear-gradient(180deg, var(--background-top) 0%, var(--background) 40%, var(--background-bottom) 100%);
