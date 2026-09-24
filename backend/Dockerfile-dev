@@ -1,19 +1,19 @@
+# syntax=docker/dockerfile:1.10
+
 FROM amazoncorretto:21-alpine3.18 AS dev
 WORKDIR /workspace
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash su-exec
+RUN mkdir -p /workspace/storage/documents
 RUN mkdir -p /root/.gradle && \
     printf "org.gradle.daemon=true\n" >> /root/.gradle/gradle.properties
 
-COPY . .
-RUN chmod +x ./gradlew
-
-CMD ["sh", "./gradlew", "bootRun", "--continuous"]
+CMD ["sh", "./scripts/dev-backend-watch.sh"]
 
 FROM amazoncorretto:21-alpine3.18 AS build
 WORKDIR /app
 COPY . .
 RUN chmod +x ./gradlew
-RUN ./gradlew clean build -x test --no-daemon
+RUN --mount=type=cache,target=/root/.gradle,sharing=locked ./gradlew bootJar -x test --no-daemon --build-cache --parallel
 
 FROM amazoncorretto:21-alpine3.18 AS runner
 WORKDIR /app

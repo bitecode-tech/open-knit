@@ -1,367 +1,145 @@
 # Backend Agent Guidance
 
-## Configuration
+This file is for repo-specific backend rules only. Use the shared skills for general Java/Spring guidance:
+`java-coding-standards`, `springboot-patterns`, `springboot-security`, and `springboot-verification`.
 
-- **Profiles:** use `EnvProfile` in `backend/modules/_common/src/main/java/bitecode/modules/_common/model/enums/EnvProfile.java`.
-- **Database:** PostgreSQL, schema-per-module, Flyway per module.
-- **Demo data flag:** `demo.inserts.enabled=true` (env: `DEMO_INSERTS_ENABLED=true`).
+## Project Rules
+
+- Profiles: use `EnvProfile` in `backend/modules/_common/src/main/java/bitecode/modules/_common/model/enums/EnvProfile.java`.
+- Database: PostgreSQL, schema-per-module, Flyway per module.
+- Demo inserts flag: `demo.inserts.enabled=true` (`DEMO_INSERTS_ENABLED=true`).
 
 ## Run Locally
 
-- **Docker Compose:** from `backend/` run `docker compose up -d`.
-- **App:** `./gradlew bootRun` (API on `http://localhost:8080`).
-- **Profiles:** set `SPRING_PROFILES_ACTIVE` (e.g., `LOCAL`, `DEV`, `STAGE`, `PROD`).
+- Linux: `cd backend && docker compose up app`
+- Windows/WSL: `cd backend && docker compose -f docker-compose-windows.yml watch app`
+- App: `cd backend && ./gradlew bootRun`
+- Profiles: set `SPRING_PROFILES_ACTIVE` to `LOCAL`, `DEV`, `STAGE`, or `PROD`.
+- The POSIX Gradle wrapper bootstraps Java 21 automatically when the current shell is on a different JDK. It caches that runtime under `~/.cache/open-knit/java-21` by default, or uses `OPENKNIT_JAVA21_HOME` when set.
 
-## Must Pass
+## Backend Container Workflow
 
-- `./gradlew test`
-- If you add or change integration tests in `src/integrationTest`, also run the relevant `integrationTest` task (for example `./gradlew :modules:document:integrationTest`).
-- If you add or change integration tests in `src/test/integration`, also run the relevant `integrationTest` task (for example `./gradlew :modules:document:integrationTest`).
-- No new failing migrations
-- No new dependencies unless explicitly requested
+- If you are making larger backend changes, stop the backend container before editing and start it again after the changes are done.
+- Treat anything bigger than touching one or two files with one or two-line edits as a larger backend change.
+- This rule applies especially to Flyway schema or migration changes.
+- Prefer:
+  - stop: `cd backend && docker compose stop app`
+  - start: `cd backend && docker compose up app`
+- On Windows/WSL, use the matching compose file when starting or stopping the backend container.
 
-## Typecheck (required)
+## Required Checks
 
-- ALWAYS run a compile/typecheck step before finishing any task that touches code in this directory.
-- Use this command (no unit tests):
-    - `./gradlew compileJava`
-- If you modify/add tests, also run only the specific tests you changed (e.g.):
-    - `./gradlew test --tests "bitecode.modules.transaction.TransactionPaymentTest"`
-    - `./gradlew :modules:<module>:integrationTest --tests "bitecode.modules.<module>.<ClassName>"`
+- Run `./gradlew test` before finishing backend code changes.
+- If you change integration tests, run the relevant `integrationTest` task for the affected module.
+- For lower-noise local test runs, prefer `--warning-mode=none` on Gradle commands.
+- Run `./gradlew compileJava` before finishing any backend code change.
+- Do not introduce new failing migrations.
+- Do not add new dependencies unless explicitly requested.
 
-## Formatting (mandatory)
+## Formatting
 
-- Source of truth: `./.editorconfig` (IntelliJ-exported). Read and follow it for all edits.
-- Key constraints (from `.editorconfig`):
-    - `indent_style=space`, `indent_size=4`, `tab_width=4`
-    - `ij_continuation_indent_size=8`
-    - `max_line_length=180` (do not introduce lines >180 unless unavoidable, e.g., URLs or long string literals)
-- Formatter tags are enabled:
-    - Respect `@formatter:off` … `@formatter:on` blocks; do not change formatting inside them.
-- Avoid formatting-only diffs:
-  - Do not reformat unrelated code. Limit formatting changes to the minimum required around the edited lines/files.
-- If a change causes widespread reformatting, revert the reformatting and re-apply only the functional change.
+- Follow `./.editorconfig`.
+- Key constraints: 4-space indent, continuation indent 8, max line length 180.
+- Respect `@formatter:off` and `@formatter:on`.
+- Avoid formatting-only diffs and unrelated reformatting.
 
-## Tests (example)
+## Test Layout
 
-- Separate unit and integration tests by source set:
-  - unit tests go in `src/test/unit`
-  - integration tests go in `src/test/integration`
-- Backend modules should use the shared Gradle `integrationTest` source set and task instead of mixing integration coverage into `src/test`.
-- Prefer module integration tests that extend module test base (e.g. `TransactionIntegrationTest`).
+- Unit tests: `src/test/unit`
+- Integration tests: `src/test/integration`
+- Prefer unit tests for most business rules, mappers, validators, branching logic, and pure service behavior because they are faster and cheaper to run.
+- Use integration tests when the behavior depends on Spring wiring, transactions, persistence, Flyway schema, security filters, controller contracts, module boundaries, or a real end-to-end flow.
+- Cover critical e2e paths with integration tests even when unit tests exist; unit tests are the default for speed, but they do not prove the full stack works together.
+- Keep integration tests focused on the smallest meaningful workflow that needs the framework or database, instead of duplicating every unit-test branch.
+- Use the shared `integrationTest` source set and task instead of mixing integration tests into `src/test`.
 - Keep unit-test resources under `src/test/unit/resources`.
-- Keep integration-test-only properties and resources under `src/test/integration/resources`.
-- Module-owned integration-test configuration should stay in the owning module. If another module needs it, publish that module's test resources as a test artifact and import a uniquely named file such as `application-identity-test.yaml` instead of duplicating properties across modules.
-- Example (event-driven transaction creation):
+- Keep integration-test resources under `src/test/integration/resources`.
+- Keep module-owned integration-test config in the owning module.
 
-```java
-package bitecode.modules.transaction;
+## DB Migrations
 
-import bitecode.modules._common.shared.payment.model.enums.PaymentGateway;
-import bitecode.modules._common.shared.payment.model.enums.PaymentStatus;
-import bitecode.modules._common.shared.payment.model.enums.PaymentType;
-import bitecode.modules._common.shared.payment.model.event.PaymentCreatedEvent;
-import bitecode.modules._common.shared.transaction.model.enums.TransactionDebitType;
-import bitecode.modules._common.shared.transaction.model.enums.TransactionStatus;
-import bitecode.modules._common.shared.transaction.model.enums.TransactionSubstatus;
-import bitecode.modules._common.shared.transaction.model.enums.TransactionType;
-import bitecode.modules.transaction._config.TransactionIntegrationTest;
-import bitecode.modules.transaction.repository.TransactionEventRepository;
-import bitecode.modules.transaction.repository.TransactionRepository;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.transaction.annotation.Transactional;
+- Flyway only.
+- Never modify applied migrations; add new files instead.
+- Treat baseline migrations such as `V1__*.sql` as immutable once used.
+- After a baseline exists, make schema changes only through new forward migrations.
+- Migration location: `src/main/resources/db/migration/<schema>/`.
+- Column order convention:
+  - `id` first
+  - `uuid` second when present
+  - entity-specific fields next, in entity order
+  - `created_date` and `updated_date` last
 
-import java.math.BigDecimal;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+## Module Boundaries
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
+- If module-to-module communication is needed, ask whether the user wants event-driven or direct facade usage.
+- Do not create new cross-module links unless explicitly asked.
+- Only shared modules: `identity` and `_common`.
+- Keep the system a modular monolith that can be split later.
 
-public class TransactionPaymentTest extends TransactionIntegrationTest {
-
-    @Autowired
-    TransactionRepository transactionRepository;
-
-    @Autowired
-    TransactionEventRepository transactionEventRepository;
-
-    @Autowired
-    ApplicationEventPublisher eventPublisher;
-
-    @Test
-    @Transactional
-    public void shouldCreateNewTransactionAfterReceivingPaymentConfirmedEvent() {
-        var userId = UUID.randomUUID();
-        var paymentId = UUID.randomUUID();
-        var paymentCreatedEvt = PaymentCreatedEvent.builder()
-                .userId(userId)
-                .paymentId(paymentId)
-                .amount(BigDecimal.valueOf(123.319))
-                .type(PaymentType.RECURRING)
-                .status(PaymentStatus.CONFIRMED)
-                .currency("pln")
-                .gateway(PaymentGateway.MOCK)
-                .build();
-
-        eventPublisher.publishEvent(paymentCreatedEvt);
-
-        var transactions = await()
-                .atMost(5, TimeUnit.SECONDS)
-                .until(() -> transactionRepository.findAllByUserId(userId), list -> !list.isEmpty());
-        assertThat(transactions.size(), is(1));
-
-        var txn = transactions.getFirst();
-
-        assertThat(txn, allOf(
-                hasProperty("userId", is(userId)),
-                hasProperty("type", is(TransactionType.SUBSCRIPTION_PAYMENT)),
-                hasProperty("status", is(TransactionStatus.COMPLETED)),
-                hasProperty("subStatus", is(TransactionSubstatus.DONE)),
-                hasProperty("debitTotal", is(BigDecimal.valueOf(123.32))),
-                hasProperty("debitType", is(TransactionDebitType.CARD)),
-                hasProperty("creditTotal", is(BigDecimal.valueOf(123.32))),
-                hasProperty("creditType", is(notNullValue())),
-                hasProperty("creditCurrency", is("pln"))
-        ));
-    }
-}
-```
-
-## DB Migration Policy
-
-- **Tooling:** Flyway only.
-- **Rule:** never modify applied migrations; always add new migration files.
-- **Location:** `src/main/resources/db/migration/<schema>/`.
-
-## Module Communication & Boundaries
-
-- **Decision required:** if module-to-module communication is needed, ask the user whether they want **event-driven** (more complex to maintain) or **direct service/facade** usage.
-- **Default communication:** domain events (publish/consume) only if the user chooses it.
-- **Allowed alternative:** explicit facades when the user chooses direct usage.
-- **Separation rule:** modules must stay isolated; do **not** create new cross-module links unless explicitly asked.
-- **Only shared modules:** `identity` (auth) and `_common`.
-- **Monolith goal:** modular monolith that can be split into services later (avoid hard coupling).
-
-## Module AGENTS.md Policy (required)
+## Module AGENTS Policy
 
 - Every backend module under `backend/modules/<module>/` must have its own `AGENTS.md`.
-- Module `AGENTS.md` structure and required sections must follow `backend/MODULE-AGENTS-MD-FORMAT.md`.
-- A module `AGENTS.md` must describe:
-  - what the module does
-  - core flows
-  - domain scope (entities, subdomains, and boundaries)
-- Any module change that affects these areas must include an explicit update to that module's `AGENTS.md` in the same change.
-- This documentation update is a required step for developing/extending a module (not optional follow-up).
+- Follow `backend/MODULE-AGENTS-MD-FORMAT.md`.
+- A module `AGENTS.md` must describe what the module does, its core flows, and its domain scope.
+- Update the module `AGENTS.md` in the same change when those areas change.
 
-## Backend Module Template (strict)
+## Backend Module Template
 
-- **Root:** `backend/modules/<module>/`
-- **Package:** `bitecode.modules.<module>/...`
-- **Required subpackages:**
+- Root: `backend/modules/<module>/`
+- Java package: `bitecode.modules.<module>/...`
+- Required subpackages:
   - `config/`
-  - `config/_modules/` (module init/seed/config entry points)
+  - `config/_modules/`
   - `model/`
+  - `model/mapper/` for MapStruct and DTO/entity mappers
+  - `scheduler/` for scheduled jobs and scheduler-specific orchestration
   - `repository/`
   - `service/`
-  - `handler/` (if command/event handlers are used)
-- **Resources:** `src/main/resources/db/migration/<schema>/...`
-- **Demo inserts:** `src/main/resources/demo-inserts/` (no extra subfolders)
+  - `handler/` if needed
+- Resources: `src/main/resources/db/migration/<schema>/...`
+- Demo inserts: `src/main/resources/demo-inserts/`
 
-## Audit Events
+## Adding A New Backend Module
 
-- Use existing command/event records for auditing (e.g., `transaction.transaction_event`).
-- Pattern: `COMMAND -> entity update`, then store event payload for traceability.
-- Do not introduce full event-sourcing/CQRS frameworks.
+- Add the module to `backend/settings.gradle`.
+- Add the module dependency to root `backend/build.gradle` so the app starts with it.
+- Create `backend/modules/<module>/build.gradle` and depend only on needed modules.
+- Create module `AGENTS.md` and keep it updated with scope, routes, flows, and boundaries.
+- Add a module config entry under `config/_modules/` for typed properties or module wiring.
+- Add Flyway config if the module owns a schema; store migrations under `src/main/resources/db/migration/<schema>/`.
+- Add `application-<module>.yaml` when the module owns config and import it from root `backend/src/main/resources/application.yaml`.
+- If the module exposes public or differently-authenticated endpoints, update identity security config inputs so the default JWT chain knows which routes are excluded.
+- Add integration tests for module ownership boundaries and auth behavior.
+- Register any new cross-module facade explicitly and update the owning module `AGENTS.md`.
 
-## Conventions
+## Auditing
 
-- No business logic in controllers.
-- Do not log secrets or tokens.
-- Controllers should not use `@Transactional`.
-- Repositories should not use `@Transactional` unless required for correctness.
-- Services are transaction boundaries.
-- Repositories are data access only.
-- Prefer constructor injection.
-- Public APIs return consistent error format.
-- No direct SQL execution from services/controllers/agents. Database access must go through:
-  - repository methods
-  - repository `@Query`
-  - QueryDSL queries (typically in custom repository implementations), especially for variant/dynamic queries that depend on optional parameters
-- **Configuration keys (searchability):**
-  - If a config value has a constant name (e.g., `DEMO_INSERTS_ENABLED`), always reference it by that constant throughout the codebase (no inline strings like `"demo.inserts.enabled"`).
-  - When adding a new config key, define a single canonical constant and use it everywhere.
-    Configuration keys
-## DTO / Lombok Patterns
+- Use existing command/event records for auditing.
+- Pattern: `COMMAND -> entity update -> store event payload`.
+- Do not introduce full event-sourcing or CQRS frameworks.
 
-- Prefer Java `record` for DTOs and commands when immutability is desired.
-- Use Lombok `@Builder` on records when you need fluent construction (events/commands).
-- For entities: use Lombok `@Getter`/`@Setter` and constructor injection in services.
-- Use MapStruct for mappers. Do not create manual Spring/component mapper classes for normal entity/DTO conversions when the mapping belongs in a mapper interface.
-- Prefer `@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)` and keep mapper-specific custom logic as MapStruct default methods when needed.
+## Repo-Specific Conventions
 
-### MapStruct Reference Example
+- Expose UUIDs only in public APIs, DTOs, and route params. Do not expose internal numeric IDs.
+- Use canonical config constants everywhere; do not inline config key strings.
+- Access the database through repository methods, repository `@Query`, or QueryDSL.
+- For plain dependency-injected Spring classes, prefer Lombok `@RequiredArgsConstructor` instead of a manual assignment-only constructor.
+- Prefer existing `_common` utilities and already included JDK/Spring libraries.
+- Do not add new dependencies unless requested.
 
-Use existing module patterns like [UserMapper](backend/modules/identity/src/main/java/bitecode/modules/auth/user/model/mapper/UserMapper.java) and [PaymentMapper](backend/modules/payment/src/main/java/bitecode/modules/payment/payment/model/mapper/PaymentMapper.java):
+## Concurrency And Locks
 
-```java
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        uses = {UserDataMapper.class}
-)
-public interface UserMapper {
+- Prefer DB constraints first.
+- For same-row updates, prefer optimistic locking.
+- For multi-step workflows, prefer atomic claim updates or row locks when needed.
+- Use distributed locks only if DB-based solutions are not enough.
+- `InMemoryLock` is only safe within a single JVM.
 
-    @Mapping(target = "emptyPassword", expression = "java(user.getPassword() == null)")
-    UserDetails toUserDetails(User user);
+## Endpoints And Roles
 
-    User toUser(SignUpRequest request);
-}
-```
-
-## Entities & IDs
-
-- Use `UuidBaseEntity` for externally exposed entities; use `BaseEntity` when UUID is not required.
-- Never expose internal numeric `id` in APIs; expose UUID only.
-- Single-item GET endpoints must use UUID in the route.
-- Entity basics: `@Entity`, `@Table(schema = "...")`, Lombok `@Getter/@Setter`, and quote reserved column names via `@Column(name = "\"type\"")` when needed.
-- Do not duplicate schema constraints in entity annotations when Flyway is the source of truth. Avoid `@Column(nullable = ...)`, length declarations, precision/scale, and similar schema-shaping annotations unless they are needed for a runtime mapping concern that is not already expressed by the schema.
-
-## Concurrency / Locks
-
-### Preferred order of solutions
-
-1) Enforce invariants at the DB level (unique/check constraints).
-2) For updates on the same entity/row: use optimistic locking (`@Version`) and handle `OptimisticLockException` (retry or 409, depending on endpoint semantics).
-3) For multi-step workflows: use an atomic DB “claim” step (e.g., status transition `PENDING -> PROCESSING` with `WHERE status='PENDING'`) or row locks (`SELECT ... FOR UPDATE`)
-   when necessary.
-4) If cross-instance mutual exclusion is required and cannot be expressed safely via DB constraints/claims/row locks, use a distributed lock (Redis). Do not add Redis or change
-   infra unless explicitly requested by the user.
-
-- **In-memory:** `InMemoryLock` coordinates only within a single JVM instance.
-- If deployment runs >1 instance (pods/servers, blue/green), **do not** use `InMemoryLock` for correctness.
-
-## Shared Utilities (use before writing custom code)
-
-- **Services:** cache (`CacheService`), email (`EmailService`), locking (`InMemoryLock`).
-- **Utils:** `AuthUtils`, `DateUtils`, `FileUtils`, `QueryDslUtils`, `RandomCodeGeneratorUtils`, `UrlUtils`.
-- Prefer existing `_common` utils, standard JDK/Spring features, and already included libraries (e.g., Guava).
-- Do not introduce new deps unless requested.
-
-## Endpoints & Roles
-
-- Every endpoint must declare/require its role(s).
+- Every endpoint must declare required role(s).
 - Keep role requirements explicit and module-scoped.
 
-## REST Controller Essentials
+## Worktree Notes
 
-- Use HTTP methods semantically (GET, POST, PUT, PATCH, DELETE).
-- Use resource‑oriented URIs (nouns, consistent casing); avoid verbs in paths.
-- Return correct status codes (200/201/204/400/401/403/404/409/500).
-- Use DTOs for request/response; never expose entities directly.
-- Handle errors consistently (single global handler + stable error shape).
-- Validate inputs at the boundary; never trust raw request data.
-- Prefer inline string literals in mapping annotations like `@RequestMapping("/documents")`. Extract them to constants only when the same mapping value is intentionally reused elsewhere and that shared reference should stay coupled in code.
-
-### Example (controller)
-
-```java
-@RestController
-@RequestMapping("/admin/transactions")
-class AdminTransactionController {
-
-    @GetMapping("/{uuid}")
-    public TransactionDto getOne(@PathVariable UUID uuid) {
-        return transactionService.getByUuid(uuid);
-    }
-
-    @PostMapping
-    public ResponseEntity<TransactionDto> create(@Valid @RequestBody CreateTransactionDto dto) {
-        var created = transactionService.create(dto);
-        return ResponseEntity.created(URI.create("/api/v1/transactions/" + created.uuid()))
-                .body(created);
-    }
-
-    @DeleteMapping("/{uuid}")
-    public ResponseEntity<Void> delete(@PathVariable UUID uuid) {
-        transactionService.delete(uuid);
-        return ResponseEntity.noContent().build();
-    }
-}
-```
-
-## Spring Boot Core Rules
-
-- **Main app class:** keep it minimal, annotated with `@SpringBootApplication` (no business logic in `main`).
-- **Stereotypes:** use `@RestController`, `@Service`, `@Repository`, `@Configuration`.
-- **Constructor injection only (Lombok):** dependencies are explicit and testable.
-- **Typed config:** prefer `@ConfigurationProperties` over scattered `@Value`.
-- **Profiles/conditional wiring:** use `@Profile` / `@ConditionalOnProperty` with `EnvProfile` constants.
-- **Scanning:** keep component scanning narrow (module packages only).
-- **Scheduling:** enable in config, use externalized intervals, handle errors.
-
-### Example (constructor injection)
-
-```java
-@Slf4j
-@Service
-@RequiredArgsConstructor
-class UserService {
-    private final UserRepository userRepository;
-}
-```
-
-## Scheduling (essentials)
-
-- Use configurable cron/intervals, preferably in environment variables, not hardcoded values.
-- Use @Scheduled(cron = "...")
-- Wrap scheduled logic in try/catch; do not let exceptions kill the app.
-- Failsafe batch processing: scheduled/batch jobs must be resilient per-record.
-- If processing a record fails, mark that record as `FAILED` and persist a failure reason (and timestamp) in the database.
-- Do not fail the whole batch because of a single record, unless explicitly required for consistency.
-- Prefer per-record transactions (or savepoints) so a single failure does not rollback other records.
-- If some steps are irreversible (e.g., external provider calls) and failure happens after partial execution, mark as `PARTIALLY_FAILED`, persist the error reason, and persist which steps were executed (e.g., step list / last successful step / provider reference IDs) in the database for replay/compensation.
-
-```java
-public record CreateTransactionDto(UUID userId, UUID paymentId, BigDecimal amount) {}
-public record TransactionDto(UUID uuid, UUID userId, BigDecimal amount, String status) {}
-```
-
-```java
-@ControllerAdvice
-class ApiExceptionHandler {
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorDto> notFound(NotFoundException ex) {
-        return ResponseEntity.status(404).body(new ErrorDto("NOT_FOUND", ex.getMessage()));
-    }
-}
-
-public record ErrorDto(String code, String message) {}
-```
-
-## Where to Put New Code
-
-- **Module-specific:** always in its module (`backend/modules/<module>/...`).
-- **App-level (non-module):** `backend/src` with clear domain separation.
-
-## Consistency Rules
-
-- Favor reuse of `_common` services/utilities.
-- Avoid cross-module references except `identity` and `_common`.
-- Keep modules clean and swappable for future service extraction.
-
-## Do Not Break
-
-- **Security:** never weaken auth/authorization, role checks, or token handling.
-- **Security changes:** do not alter security unless explicitly asked. If a change is required, ask the user twice and explain pros/cons and risks before proceeding.
-- **Backwards compatibility:** avoid breaking existing API contracts or events without user approval.
-- **DB migrations:** do not alter or reorder applied migrations; add new migrations only.
-
-## Security Notes
-
-- Never commit API keys or secrets.
-- Use environment variables for configuration.
-- Keep dependencies updated.
-- Review security advisories regularly.
+- If `AGENTS.worktree.md` exists in `backend/`, treat it as the local override for that worktree and follow the compose details it defines.

@@ -7,7 +7,7 @@ export interface SortOption {
 
 export interface PagedRequest<T> {
     requestData?: T[];
-    params?: {},
+    params?: Record<string, unknown>,
     page: {
         page: number;
         size: number;

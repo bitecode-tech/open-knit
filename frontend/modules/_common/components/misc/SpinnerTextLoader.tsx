@@ -29,7 +29,9 @@ export function SpinnerTextLoader({
         if (finishedSuccessfully) {
             setShowCheck(true);
             const timeout = setTimeout(() => {
-                onFinishedSuccessfully && onFinishedSuccessfully();
+                if (onFinishedSuccessfully) {
+                    onFinishedSuccessfully();
+                }
                 setShowCheck(false);
             }, 1000);
 

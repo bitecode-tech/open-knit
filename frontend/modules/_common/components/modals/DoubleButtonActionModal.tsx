@@ -44,6 +44,11 @@ export function DoubleButtonActionModal({
                                         }: ModalProps) {
     const [pendingActionOrCancel, setPendingActionOrCancel] = useState(false);
     const isDisabled = () => manual ? isPending : pendingActionOrCancel;
+    const closeModal = () => {
+        if (setShowModal) {
+            setShowModal(false);
+        }
+    };
 
     const onClick = (onFunction?: () => void) => {
         if (manual && onFunction) {
@@ -52,9 +57,7 @@ export function DoubleButtonActionModal({
             setPendingActionOrCancel(true);
             onFunction();
             setPendingActionOrCancel(false);
-            if (setShowModal) {
-                setShowModal(false);
-            }
+            closeModal();
         }
     }
 
@@ -88,7 +91,7 @@ export function DoubleButtonActionModal({
                     </GenericButton>
                     <GenericButton disabled={isDisabled()}
                                    color={cancelButtonColor}
-                                   onClick={() => onClick(onCancel)}
+                                   onClick={() => onCancel ? onClick(onCancel) : closeModal()}
                                    outline={cancelButtonOutline}>
                         {cancelButtonText}
                     </GenericButton>

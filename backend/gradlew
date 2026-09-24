@@ -102,6 +102,63 @@ die () {
     exit 1
 } >&2
 
+java_major_version_from_command () {
+    "$1" -version 2>&1 | sed -n 's/.*version "\(.*\)".*/\1/p' | sed 's/^1\.//' | awk -F. 'NR == 1 { print $1 }'
+}
+
+download_java21_home () {
+    cache_home="${OPENKNIT_JAVA21_HOME:-$HOME/.cache/open-knit/java-21}"
+    java_command="$cache_home/bin/java"
+
+    if [ -x "$java_command" ]; then
+        if [ "$(java_major_version_from_command "$java_command")" = "21" ]; then
+            printf '%s\n' "$cache_home"
+            return 0
+        fi
+    fi
+
+    case "$(uname -s)" in
+        Linux*) os_name="linux" ;;
+        Darwin*) os_name="mac" ;;
+        *) die "This wrapper can only bootstrap Java 21 on Linux or macOS. Set JAVA_HOME to a Java 21 installation instead." ;;
+    esac
+
+    case "$(uname -m)" in
+        x86_64 | amd64) arch_name="x64" ;;
+        aarch64 | arm64) arch_name="aarch64" ;;
+        *) die "Unsupported CPU architecture for automatic Java 21 bootstrap: $(uname -m)" ;;
+    esac
+
+    if command -v curl >/dev/null 2>&1; then
+        download_tool="curl"
+    elif command -v wget >/dev/null 2>&1; then
+        download_tool="wget"
+    else
+        die "Neither curl nor wget is available, so the wrapper cannot bootstrap Java 21 automatically."
+    fi
+
+    download_url="https://api.adoptium.net/v3/binary/latest/21/ga/${os_name}/${arch_name}/jdk/hotspot/normal/eclipse"
+    temp_dir=$(mktemp -d "${TMPDIR:-/tmp}/open-knit-java21.XXXXXX")
+    archive_file="$temp_dir/jdk21.tar.gz"
+
+    if [ "$download_tool" = "curl" ]; then
+        curl -fsSL "$download_url" -o "$archive_file"
+    else
+        wget -qO "$archive_file" "$download_url"
+    fi
+
+    rm -rf "$cache_home"
+    mkdir -p "$cache_home"
+    tar -xzf "$archive_file" -C "$cache_home" --strip-components=1
+    rm -rf "$temp_dir"
+
+    if [ "$(java_major_version_from_command "$cache_home/bin/java")" != "21" ]; then
+        die "Downloaded Java runtime does not look like Java 21: $cache_home"
+    fi
+
+    printf '%s\n' "$cache_home"
+}
+
 # OS specific support (must be 'true' or 'false').
 cygwin=false
 msys=false
@@ -138,8 +195,13 @@ else
         die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
 
 Please set the JAVA_HOME variable in your environment to match the
-location of your Java installation."
+        location of your Java installation."
     fi
+fi
+
+if [ "$(java_major_version_from_command "$JAVACMD")" != "21" ]; then
+    JAVA_HOME=$(download_java21_home)
+    JAVACMD="$JAVA_HOME/bin/java"
 fi
 
 # Increase the maximum file descriptors if we can.

@@ -10,6 +10,7 @@ interface GenericTablePaginationProps {
     onPageChange: (page: number) => void;
     onPageSizeChange: (pageSize: number) => void;
     mobile?: boolean
+    className?: string;
 }
 
 const pageSizeOptions = [10, 25, 50, 100];
@@ -22,7 +23,8 @@ function GenericTablePagination(
         totalElements,
         onPageChange,
         onPageSizeChange,
-        mobile
+        mobile,
+        className
     }: GenericTablePaginationProps) {
 
     const getCurrentRange = () => {
@@ -78,7 +80,7 @@ function GenericTablePagination(
     return (
         <>
             <nav
-                className={twMerge("flex flex-col items-start justify-between space-y-3 p-4 md:flex-row md:items-center md:space-y-0", mobile && "hidden md:flex")}
+                className={twMerge("flex flex-col items-start justify-between space-y-3 p-4 md:flex-row md:items-center md:space-y-0", mobile && "hidden md:flex", className)}
                 aria-label="Table navigation"
             >
                 <div className="flex items-center space-x-3">
@@ -120,7 +122,7 @@ function GenericTablePagination(
             </nav>
 
             <nav
-                className={twMerge("flex justify-between space-y-3 md:flex-row md:items-center md:space-y-0 py-2 px-4", mobile && "md:hidden")}
+                className={twMerge("flex justify-between space-y-3 md:flex-row md:items-center md:space-y-0 py-2 px-4", mobile && "md:hidden", className)}
                 aria-label="Table navigation"
             >
                 <span className="pt-4">

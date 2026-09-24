@@ -17,10 +17,15 @@ interface GenericTableProps<T, CsvType, MobileTemplate extends keyof MobileRowTe
     columns: ColumnDef<T>[]
     mobileRowTemplate?: MobileRowTemplate<MobileTemplate>
     data?: PagedResponse<T>;
+    showPagination?: boolean;
+    fitContainer?: boolean;
+    className?: string;
+    paginationClassName?: string;
     exportFilename?: string,
     headerSection?: React.ReactNode | string,
     tileFilters?: React.ReactNode,
     filters?: React.ReactNode,
+    actions?: React.ReactNode,
     csvExportKeys?: CsvType[];
     currentPageState: [number, Dispatch<SetStateAction<number>>],
     pageSizeState: [number, Dispatch<SetStateAction<number>>],
@@ -40,18 +45,6 @@ export function useGenericTablePagination(initialPage = 1, initialPageSize = 10)
     };
 }
 
-
-const SmallFilter = ({text, number, isSelected = false}: { text: string, number: string, isSelected?: boolean }) => {
-    return (
-        <div
-            className={`flex flex-col justify-center items-start p-2.5 rounded-lg gap-2 w-[235px] h-[66px] ${isSelected ? "outline outline-2 outline-offset-[-2px] outline-primary-500" : "outline outline-gray-200"}   `}>
-            <div className={`self-stretch justify-center text-sm ${isSelected ? "text-primary-500 font-semibold" : "text-gray-500"} leading-tight`}>{text}</div>
-            <div className={`justify-center ${isSelected ? "text-primary-500" : "text-gray-900"} text-sm font-semibold leading-tight`}>{number}</div>
-        </div>
-    );
-}
-
-
 function GenericTable<
     T extends object,
     CsvKeys extends NestedKeyOf<T> = never,
@@ -61,8 +54,13 @@ function GenericTable<
         columns,
         mobileRowTemplate,
         exportFilename,
+        showPagination = true,
+        fitContainer = false,
+        className,
+        paginationClassName,
         tileFilters,
         filters,
+        actions,
         headerSection,
         csvExportKeys,
         currentPageState,
@@ -121,9 +119,9 @@ function GenericTable<
     }
 
     return (
-        <div>
-            <div className="mx-auto max-w-screen-2xl">
-                <div className="relative bg-white">
+        <div className={className}>
+            <div className={twMerge("h-full", !fitContainer && "mx-auto max-w-screen-2xl")}>
+                <div className="relative flex h-full flex-col bg-white">
                     <div className="divide-y">
                         <div className="flex flex-col justify-between gap-y-4">
                             {headerSection && typeof headerSection === 'string'
@@ -140,6 +138,7 @@ function GenericTable<
                                     {filters}
                                 </div>
                                 <div className="flex md:ml-auto gap-1 mt-3 md:mt-0 w-full md:w-auto">
+                                    {actions}
                                     {isExportEnabled && <ActionButton onClick={handleCsvExport} icon={FileExportIcon}>Export CSV</ActionButton>}
                                     {/*<ActionButton icon={ChevronDownIcon} disabled>Edit columns</ActionButton>*/}
                                 </div>
@@ -147,7 +146,7 @@ function GenericTable<
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto mt-4">
+                    <div className="mt-4 flex-1 overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="hidden md:table-header-group bg-gray-50 text-xs uppercase text-gray-700">
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -198,15 +197,18 @@ function GenericTable<
                         </table>
                     </div>
 
-                    <GenericTablePagination
-                        currentPage={currentPage}
-                        onPageChange={handlePageChange}
-                        onPageSizeChange={handlePageSizeChange}
-                        pageSize={pageSize}
-                        totalElements={data?.page?.totalElements}
-                        totalPages={totalPages}
-                        mobile={!!mobileRowTemplate}
-                    />
+                    {showPagination && (
+                        <GenericTablePagination
+                            className={paginationClassName}
+                            currentPage={currentPage}
+                            onPageChange={handlePageChange}
+                            onPageSizeChange={handlePageSizeChange}
+                            pageSize={pageSize}
+                            totalElements={data?.page?.totalElements}
+                            totalPages={totalPages}
+                            mobile={!!mobileRowTemplate}
+                        />
+                    )}
                 </div>
             </div>
         </div>

@@ -6,16 +6,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.util.StringUtils;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,6 +38,8 @@ public class SimpleOpenAiClient {
     private static final String RESPONSES_ENDPOINT = "/responses";
     private static final String CHATKIT_SESSION_ENDPOINT = "/chatkit/sessions";
     private static final String CHATKIT_BETA_HEADER = "chatkit_beta=v1";
+    private static final int TOO_MANY_REQUESTS_RETRY_ATTEMPTS = 2;
+    private static final Duration TOO_MANY_REQUESTS_RETRY_DELAY = Duration.ofSeconds(45);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final WebClient webClient;
     private final String organizationId;
@@ -91,7 +97,8 @@ public class SimpleOpenAiClient {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
                 })
-                .onErrorMap(WebClientResponseException.class, this::toOpenAiException);
+                .retryWhen(openAiTooManyRequestsRetry())
+                .onErrorMap(this::shouldMapOpenAiException, this::toOpenAiException);
     }
 
     public Flux<StreamChunk> streamResponse(String model,
@@ -110,7 +117,8 @@ public class SimpleOpenAiClient {
                 .bodyValue(body)
                 .retrieve()
                 .bodyToFlux(String.class)
-                .onErrorMap(WebClientResponseException.class, this::toOpenAiException)
+                .retryWhen(openAiTooManyRequestsRetry())
+                .onErrorMap(this::shouldMapOpenAiException, this::toOpenAiException)
                 .flatMap(this::extractTextFromStream);
     }
 
@@ -286,7 +294,23 @@ public class SimpleOpenAiClient {
         });
     }
 
-    private RuntimeException toOpenAiException(WebClientResponseException exception) {
+    private boolean shouldMapOpenAiException(Throwable throwable) {
+        return throwable instanceof WebClientResponseException || throwable instanceof WebClientRequestException;
+    }
+
+    private RuntimeException toOpenAiException(Throwable throwable) {
+        var retryableException = OpenAiErrorClassifier.toRetryableException(throwable);
+        if (retryableException != null) {
+            log.warn("OpenAI request failed with retryable error: {}", retryableException.getMessage());
+            return retryableException;
+        }
+        if (throwable instanceof WebClientResponseException responseException) {
+            return toOpenAiResponseException(responseException);
+        }
+        return throwable instanceof RuntimeException runtimeException ? runtimeException : new RuntimeException(throwable);
+    }
+
+    private RuntimeException toOpenAiResponseException(WebClientResponseException exception) {
         var responseBody = exception.getResponseBodyAsString();
         if (StringUtils.hasText(responseBody)) {
             log.warn("OpenAI request failed with status {} and body {}", exception.getStatusCode(), responseBody);
@@ -294,6 +318,51 @@ public class SimpleOpenAiClient {
             log.warn("OpenAI request failed with status {}", exception.getStatusCode());
         }
         return exception;
+    }
+
+    private Retry openAiTooManyRequestsRetry() {
+        return Retry.from(retrySignals -> retrySignals.flatMap(retrySignal -> {
+            var throwable = retrySignal.failure();
+            if (!(throwable instanceof WebClientResponseException responseException)) {
+                return Mono.error(throwable);
+            }
+            if (responseException.getStatusCode().value() != 429 || retrySignal.totalRetries() >= TOO_MANY_REQUESTS_RETRY_ATTEMPTS) {
+                return Mono.error(throwable);
+            }
+
+            var delay = resolveRetryDelay(responseException);
+            log.warn(
+                    "OpenAI request was rate limited. Retrying attempt {}/{} after {} seconds",
+                    retrySignal.totalRetries() + 1,
+                    TOO_MANY_REQUESTS_RETRY_ATTEMPTS,
+                    delay.toSeconds()
+            );
+            return Mono.delay(delay).then();
+        }));
+    }
+
+    private Duration resolveRetryDelay(WebClientResponseException exception) {
+        var retryAfter = exception.getHeaders().getFirst(HttpHeaders.RETRY_AFTER);
+        if (!StringUtils.hasText(retryAfter)) {
+            return TOO_MANY_REQUESTS_RETRY_DELAY;
+        }
+        try {
+            return maxDelay(Duration.ofSeconds(Long.parseLong(retryAfter.trim())));
+        } catch (NumberFormatException ignored) {
+            try {
+                var retryAt = ZonedDateTime.parse(retryAfter.trim());
+                return maxDelay(Duration.between(ZonedDateTime.now(), retryAt));
+            } catch (DateTimeParseException ignoredAgain) {
+                return TOO_MANY_REQUESTS_RETRY_DELAY;
+            }
+        }
+    }
+
+    private Duration maxDelay(Duration retryAfterDelay) {
+        if (retryAfterDelay.isNegative() || retryAfterDelay.isZero()) {
+            return TOO_MANY_REQUESTS_RETRY_DELAY;
+        }
+        return retryAfterDelay.compareTo(TOO_MANY_REQUESTS_RETRY_DELAY) > 0 ? retryAfterDelay : TOO_MANY_REQUESTS_RETRY_DELAY;
     }
 
     public record StreamChunk(String text, String responseId) {

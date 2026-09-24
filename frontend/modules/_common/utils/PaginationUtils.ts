@@ -16,11 +16,11 @@ export const mapPage = <T, R>(resp: PagedResponse<T>, mappingFun: (elem: T) => R
         content: resp.content.map(mappingFun),
         page: resp.page
     }
-}
+};
 
-export function buildPagingParams<T>(req: PagedRequest<T>): Record<string, any> {
+export function buildPagingParams<T>(req: PagedRequest<T>): Record<string, unknown> {
     const {page, params} = req;
-    const out: Record<string, any> = {
+    const out: Record<string, unknown> = {
         page: page.page,
         size: page.size,
         ...params
@@ -33,11 +33,11 @@ export function buildPagingParams<T>(req: PagedRequest<T>): Record<string, any> 
     return out;
 }
 
-export function axiosRequestConfigOf<T>(req: PagedRequest<T>): AxiosRequestConfig<any> {
+export function axiosRequestConfigOf<T>(req: PagedRequest<T>): AxiosRequestConfig<Record<string, unknown>> {
     return {
         params: buildPagingParams(req),
         paramsSerializer: pagedParamsSerializer
     }
 }
 
-export const pagedParamsSerializer = (params: any) => qs.stringify(params, {arrayFormat: 'repeat'});
+export const pagedParamsSerializer = (params: Record<string, unknown>) => qs.stringify(params, {arrayFormat: 'repeat'});

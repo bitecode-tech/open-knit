@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    public static String PATH_PREFIX = "/api";
+    public static final String PATH_PREFIX = "/api";
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {

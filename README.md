@@ -86,20 +86,25 @@ Each module delivers practical domain behavior and infrastructure wiring so your
 
 ## Quick start
 
-1. Start the full dev environment with Docker Compose Watch (live sync + quick restarts):
+1. Start the full dev environment:
 
 ```bash
-docker compose logs -f --tail=200 --timestamps
+docker compose up
 ```
 
-Backend changes trigger quick restarts inside the container, and the frontend uses Vite HMR.
+On Windows/WSL, use Docker Compose Watch instead:
+
+```bash
+docker compose -f docker-compose-windows.yml watch
+```
+
+On Linux, backend changes trigger quick restarts inside the container through the backend watcher script, and the frontend uses Vite HMR.
+On Windows/WSL, Compose Watch syncs backend files into the container and restarts the app when needed.
 
 Toggle demo data in your generated backend `.env`:
 
 - `DEMO_INSERTS_ENABLED=true` to seed demo data
 - `DEMO_INSERTS_USERS_PASSWORD=test123`
-
-Backend changes trigger quick restarts inside the container, and the frontend uses Vite HMR.
 
 2. Open the app:
 

@@ -5,18 +5,19 @@ services:
       dockerfile: Dockerfile-dev
       target: dev
     ports:
-        - "3030:3030"
-    container_name: frontend-app-test
+      - "3030:3030"
+    container_name: open-knit-frontend
     working_dir: /app
     command: sh -lc "echo '[frontend] http://localhost:3030'; pnpm dev --host 0.0.0.0"
     volumes:
       - ./:/app
       - pnpm-store:/pnpm-store
       - node-modules:/app/node_modules
+      - vite-cache:/app/node_modules/.vite
     environment:
-      CHOKIDAR_USEPOLLING: true
       PNPM_STORE_DIR: /pnpm-store
 
 volumes:
   pnpm-store:
   node-modules:
+  vite-cache:

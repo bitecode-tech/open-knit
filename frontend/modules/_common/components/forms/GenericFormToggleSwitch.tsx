@@ -35,7 +35,7 @@ export function GenericFormToggleSwitch<T extends FieldValues, F extends Path<T>
         if (constantText) {
             return switchText;
         }
-        return !!field.value ? switchText?.true : switchText?.false
+        return field.value ? switchText?.true : switchText?.false
     }
 
     return (
@@ -54,14 +54,14 @@ export function GenericFormToggleSwitch<T extends FieldValues, F extends Path<T>
                     id={field.name as string}
                     {...toggleProps}
                     sizing="sm"
-                    checked={!!field.value}
+                    checked={Boolean(field.value)}
                     label={typeof children === 'string' ? children : undefined}
                     onChange={(checked: boolean) => {
                         field.onChange(checked)
                     }}
                 />
                 {children}
-                <div className={`${!!field.value ? "text-gray-900" : "text-gray-500"} text-sm font-medium leading-none`}>{getSwitchText()}</div>
+                <div className={`${field.value ? "text-gray-900" : "text-gray-500"} text-sm font-medium leading-none`}>{getSwitchText()}</div>
             </div>
             {errorMessage && (
                 <HelperText color="failure">

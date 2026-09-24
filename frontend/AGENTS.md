@@ -1,320 +1,72 @@
 ---
-description: "Inspired by https://github.com/gakeez/agents_md_collection"
+description: Frontend repo guidance for OpenKnit.
 ---
 
-# Modern React Project Development Guide
+# Frontend Agent Guidance
 
-## Project Overview
+Use the shared frontend skills for general React/TypeScript guidance:
+`typescript-coding-standards`, `react-patterns`, `design-system`, and `coding-standards`.
 
-This is a modern frontend project template based on React 19, TypeScript, and Vite. It's suitable for building high-performance Single Page Applications (SPA) with integrated
-modern development toolchain and best practices.
+## Repo Structure
 
-## Modules & Boundaries
+- Feature code lives in `modules/<module>/`.
+- Shared primitives, utilities, and cross-module UI live in `modules/_common/`.
+- App shell code that is not module-specific lives in `src/`.
+- Keep module boundaries explicit. Avoid cross-module imports unless the code is clearly shared.
+- Every frontend module under `frontend/modules/<module>/` should have its own `AGENTS.md`.
 
-- Feature code lives in `modules/<module>/...` and each module is treated as a separate unit.
-- Avoid cross-module dependencies unless the code is clearly shared; prefer `_common` for shared utilities and UI.
-- Module-specific UI, services, types, hooks, and pages belong inside the module.
-- App-level code that is not tied to a specific module (shell layout, global routes, entry points) lives in `src/`.
+## Stack
 
-## Tech Stack
+- React 19 + TypeScript + Vite
+- React Router v6
+- Axios for HTTP clients
+- Tailwind CSS and existing project UI components
+- ESLint and Prettier for code quality
 
-- **Frontend Framework**: React 19 + TypeScript
-- **Build Tool**: Vite
-- **Routing**: React Router v6
-- **Styling**: Tailwind CSS / Styled-components
-- **HTTP Client**: Axios
-- **Code Quality**: ESLint + Prettier
+## Run Locally
 
-## Project Structure
+- Install dependencies with `pnpm i`
+- Start dev server with `pnpm dev`
+- Typecheck with `pnpm run typecheck`
+- Lint with `pnpm lint`
+- Build only when explicitly needed with `pnpm build`
+- Preview with `pnpm preview`
 
-### Root (current)
+## Required Checks
 
-```
-frontend/
-├── public/                     # Static assets
-├── src/                        # App shell
-│   ├── assets/
-│   ├── components/
-│   │   └── admin/
-│   │       └── dashboard/
-│   ├── pages/
-│   │   └── admin/
-│   │       └── dashboard/
-│   ├── App.tsx
-│   ├── main.tsx
-│   ├── index.css
-│   └── vite-env.d.ts
-├── modules/....                    # Feature modules
-├── .editorconfig
-├── eslint.config.js
-├── index.html
-├── package.json
-├── pnpm-lock.yaml
-├── tailwind.config.js
-├── tsconfig.json
-├── tsconfig.app.json
-├── tsconfig.node.json
-└── vite.config.ts
-```
+- Run `pnpm run typecheck` before finishing any frontend code change.
+- Run `pnpm lint` when touching shared UI, hooks, routing, or anything that may affect formatting or hook correctness.
+- Do not run `pnpm build` as default verification unless the user explicitly asks for a production build.
+- When using Playwright screenshots, save them under a `temp/` directory because it is gitignored.
 
-### Module (generic)
+## Shared UI Policy
 
-```
-modules/<module-name>/
-├── clients/                   # HTTP clients
-├── components/                # UI components
-├── contexts/                  # React contexts (optional)
-├── hooks/                     # Custom hooks (optional)
-├── pages/                     # Route pages
-├── services/                  # Domain services
-├── types/                     # Types/models/DTOs
-├── utils/                     # Helpers (optional)
-└── _scaffolder/               # Module layout config
-```
+- Reuse `_common` primitives first.
+- If a control is broadly reusable and does not yet exist in `_common`, add it there instead of creating a feature-local duplicate.
+- Keep the reusable component catalog in `frontend/modules/_common/AGENTS.md` current when generic primitives are added, renamed, or removed.
+- Prefer project tokens and existing color semantics over ad hoc hard-coded values.
+- Main interactive controls should use the project `primary` palette unless the screen already relies on a different semantic color.
+- Any clickable element should use `cursor-pointer` unless there is a specific reason not to.
 
-## Development Guidelines
+## Preferred Shared Building Blocks
 
-### TypeScript checks (required)
+- Components: `GenericButton`, `GenericTable`, `GenericTablePagination`, `GenericModal`, `GenericSideModal`, `ActionModal`, `DoubleButtonActionModal`, `GenericFormTextInput`, `GenericFormSelectInput`, `GenericFormTextArea`, `GenericCheckbox`, `GenericFormToggleSwitch`, `GenericTooltip`, `GenericLink`, `ColoredLabel`, `Breadcrumbs`, `ActionsDropdown`, `GenericDropdownSelector`, `GenericSegmentedControl`, `GenericStateBadge`, `GenericContentModal`, `MarkdownRenderer`, `SpinnerTextLoader`, `SlotAnimatedNumber`, `ApplicationShell`, `ProtectedRoute`
+- Table helpers: `GenericTableSearchFilter`, `GenericTableDateFilter`, `GenericTableClearFilters`, `GenericTableMonthFilter`, `GenericTableActionButton`, `GenericTableClipboardCopy`, `GenericTableCurrencyCell`
+- Utils: `PaginationUtils`, `DateFormatterUtils`, `MoneyUtils`, `StringUtils`, `EnumUtils`, `CsvUtils`, `TypeUtils`, `RequestPollingUtils`
 
-- ALWAYS run a TypeScript typecheck before finishing any task that touches code in this directory.
-- Use this command and include any relevant errors or confirmations in your response:
-    - `pnpm run typecheck`
+## Module Rules
 
-### Component Development Standards
+- Keep module-specific UI, services, types, hooks, and pages inside the owning module.
+- Use `clients/` for HTTP clients and `services/` for module logic.
+- Keep shared types in `types/` and reusable components in the appropriate shared module.
+- Do not import backend-driven concerns directly from other frontend modules.
 
-1. **Function Components First**: Use function components and Hooks
-2. **TypeScript Types**: Define interfaces for all props
-3. **Type Placement**: Keep shared types/interfaces in separate files (e.g., `modules/<module>/types/`); only component prop types may live alongside the component.
-4. **Component Naming**: Use PascalCase, file name matches component name
-5. **Directory & File Naming**:
-    - Directories: kebab-case (e.g., `user-settings/`)
-    - Components: PascalCase (e.g., `UserSettings.tsx`)
-    - Utilities/helpers: camelCase (e.g., `formatCurrency.ts`, `dateUtils.ts`)
-5. **Prefer Common Building Blocks**: Use shared components and utilities from `modules/_common` before creating new ones.
-    - Components: `GenericButton`, `GenericTable`, `GenericTablePagination`, `GenericModal`, `GenericSideModal`, `ActionModal`,
-      `DoubleButtonActionModal`, `GenericFormTextInput`, `GenericFormSelectInput`, `GenericFormTextArea`, `GenericCheckbox`,
-      `GenericFormToggleSwitch`, `GenericTooltip`, `GenericLink`, `ColoredLabel`, `Breadcrumbs`, `ActionsDropdown`,
-      `MarkdownRenderer`, `SpinnerTextLoader`, `SlotAnimatedNumber`, `ApplicationShell`, `ProtectedRoute`
-    - Table helpers: `GenericTableSearchFilter`, `GenericTableDateFilter`, `GenericTableClearFilters`,
-      `GenericTableActionButton`, `GenericTableClipboardCopy`, `GenericTableCurrencyCell`
-    - Utils: `PaginationUtils`, `DateFormatterUtils`, `MoneyUtils`, `StringUtils`, `EnumUtils`, `CsvUtils`, `TypeUtils`
-4. **Single Responsibility**: Each component handles only one functionality
+## Notes For Changes
 
-```tsx
-// Example: Button Component
-interface ButtonProps {
-    variant: 'primary' | 'secondary' | 'danger';
-    size?: 'small' | 'medium' | 'large';
-    disabled?: boolean;
-    onClick?: () => void;
-    children: React.ReactNode;
-}
+- Update the owning module `AGENTS.md` when you change a module’s responsibilities, flows, or reusable surface.
+- Keep frontend changes aligned with the backend API shape for the matching module.
+- Prefer small, explicit components and clear data flow over extra abstraction.
 
-export const Button: React.FC<ButtonProps> = ({
-                                                  variant,
-                                                  size = 'medium',
-                                                  disabled = false,
-                                                  onClick,
-                                                  children
-                                              }) => {
-    return (
-            <button
-                    className={`btn btn-${variant} btn-${size}`}
-                    disabled={disabled}
-                    onClick={onClick}
-            >
-                {children}
-            </button>
-    );
-};
-```
+## Worktree Notes
 
-### API Service Standards
-
-```ts
-// modules/_common/config/AxiosConfig.ts (example)
-import {CreateAxiosDefaults} from "axios";
-
-const commonConfig: CreateAxiosDefaults = {
-    baseURL: (import.meta.env.VITE_BACKEND_URL || "http://localhost:8080") + "/api",
-    timeout: 15000,
-    withCredentials: true,
-};
-
-const adminBaseConfig: CreateAxiosDefaults = {
-    ...commonConfig,
-    baseURL: commonConfig.baseURL + "/admin",
-};
-
-export {commonConfig, adminBaseConfig};
-```
-
-```ts
-// modules/<module>/clients/http/<Client>.ts (example)
-import {AxiosInstance, AxiosResponse} from "axios";
-import {adminBaseConfig} from "@common/config/AxiosConfig.ts";
-import {PagedRequest} from "@common/model/PagedRequest.ts";
-import {PagedResponse} from "@common/model/PagedResponse.ts";
-import AuthService from "@identity/auth/services/AuthService.ts";
-import {axiosRequestConfigOf} from "@common/utils/PaginationUtils.ts";
-
-type Item = {
-    id: string;
-};
-
-class ExampleClient {
-    private axios: AxiosInstance;
-
-    constructor() {
-        this.axios = AuthService.createAuthenticatedClientInstance(adminBaseConfig, "/resource");
-    }
-
-    async list(page: PagedRequest<void>): Promise<AxiosResponse<PagedResponse<Item>>> {
-        return await this.axios.get<PagedResponse<Item>>("", axiosRequestConfigOf(page));
-    }
-}
-
-export default new ExampleClient();
-```
-
-## Routing Configuration
-
-```tsx
-// src/App.tsx (example)
-import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
-import {AuthProvider} from "@identity/auth/contexts/AuthContext.tsx";
-import {ProtectedRoute} from "@common/components/router/ProtectedRoute.tsx";
-import {AdminLayout} from "@app/components/admin/AdminLayout.tsx";
-
-function AppRoutesWithAuth() {
-    return (
-            <Routes>
-                {/* public auth routes */}
-                {/* ...login/register/forgot... */}
-
-                {/* protected admin area */}
-                <Route
-                        path="/admin/*"
-                        element={
-                            <ProtectedRoute>
-                                <AdminLayout/>
-                            </ProtectedRoute>
-                        }
-                />
-
-                {/* fallback */}
-                <Route path="*" element={<Navigate to="/login"/>}/>
-            </Routes>
-    );
-}
-
-function App() {
-    return (
-            <Router>
-                <Routes>
-                    {/* routes that never use AuthProvider */}
-                    {/*...*/}
-
-                    {/* main app */}
-                    <Route
-                            path="/*"
-                            element={
-                                <AuthProvider>
-                                    <AppRoutesWithAuth/>
-                                </AuthProvider>
-                            }
-                    />
-                </Routes>
-            </Router>
-    );
-}
-```
-
-```tsx
-// src/components/admin/AdminLayout.tsx (example)
-import {Navigate, useRoutes} from "react-router-dom";
-import {transactionsAdminLayoutConfig} from "@transaction/_scaffolder/TransactionsAdminLayoutConfig.tsx";
-import {paymentsAdminLayoutConfig} from "@payment/_scaffolder/PaymentsAdminLayoutConfig.tsx";
-
-const adminModuleConfigs = [transactionsAdminLayoutConfig, paymentsAdminLayoutConfig];
-
-export function AdminLayout() {
-    const routes = useRoutes([
-        {index: true, element: <Navigate to="dashboard" replace/>},
-        {path: "dashboard", element: <div>Dashboard</div>},
-        ...adminModuleConfigs.flatMap((moduleConfig) => moduleConfig.routes ?? []),
-    ]);
-
-    return routes;
-}
-```
-
-## Performance Optimization
-
-### Code Splitting
-
-```tsx
-import {lazy, Suspense} from 'react';
-
-const LazyComponent = lazy(() => import('./LazyComponent'));
-
-function App() {
-    return (
-            <Suspense fallback={<div>Loading...</div>}>
-                <LazyComponent/>
-            </Suspense>
-    );
-}
-```
-
-### Memory Optimization
-
-```tsx
-import {memo, useMemo, useCallback} from 'react';
-
-const ExpensiveComponent = memo(({data, onUpdate}) => {
-    const processedData = useMemo(() => {
-        return data.map(item => ({...item, processed: true}));
-    }, [data]);
-
-    const handleUpdate = useCallback((id) => {
-        onUpdate(id);
-    }, [onUpdate]);
-
-    return (
-            <div>
-                {processedData.map(item => (
-                        <div key={item.id} onClick={() => handleUpdate(item.id)}>
-                            {item.name}
-                        </div>
-                ))}
-            </div>
-    );
-});
-```
-
-## Common Issues
-
-### Issue 1: Vite Development Server Slow Startup
-
-**Solution**:
-
-- Check dependency pre-build cache
-- Use `npm run dev -- --force` to force rebuild
-- Optimize optimizeDeps configuration in vite.config.ts
-
-### Issue 2: TypeScript Type Errors
-
-**Solution**:
-
-- Ensure correct type definition packages are installed
-- Check tsconfig.json configuration
-- Use `npm run type-check` for type checking
-
-## Reference Resources
-
-- [React Official Documentation](https://react.dev/)
-- [Vite Official Documentation](https://vitejs.dev/)
-- [TypeScript Official Documentation](https://www.typescriptlang.org/)
-- [React Router Documentation](https://reactrouter.com/)
-- [Zustand Documentation](https://github.com/pmndrs/zustand)
+- If `AGENTS.worktree.md` exists in `frontend/`, treat it as the local override for that worktree and follow the compose details it defines.

@@ -83,7 +83,7 @@ Below is a full list of Java types in this module with brief purpose description
 - `CacheService`: service factory for creating named caches with expiration settings.
 - `CacheProvider` (`interface`): abstraction for cache backend operations.
 - `MemoryCacheProvider`: in-memory Guava cache implementation of `CacheProvider`.
-- `EmailService`: sends emails via `JavaMailSender`, with template-based and raw content overloads.
+- `EmailService`: sends emails via `JavaMailSender`, with template-based and raw content overloads and optional configured `spring.mail.from`.
 - `InMemoryLock`: lock helper built on cache; provides per-key lock/unlock and wrapped execution with automatic unlock.
 
 #### Shared contracts: identity (`shared/identity`)
@@ -117,7 +117,11 @@ Below is a full list of Java types in this module with brief purpose description
 - `AuthUtils`: helper for extracting authenticated user UUID from Spring Security context.
 - `DateUtils`: shared date constants (`DEFAULT_ZONE_ID`).
 - `FileUtils`: utility for writing plain text or pretty JSON content to files.
+- `OpenAiErrorClassifier`: classifies OpenAI SDK and WebClient failures into retryable versus non-retryable access errors.
 - `OpenAiFilesClient`: shared OpenAI Files API uploader returning reusable file ids for modules that call the Responses API.
+- `OpenAiUsageMetrics`: shared OpenAI usage/cost metrics value object with input/output token counts and estimated USD cost.
+- `OpenAiUsageMetricsResolver`: shared OpenAI Responses API usage parser and model-pricing cost estimator.
+- `RetryableOpenAiAccessException`: runtime wrapper carrying retryable OpenAI status and optional `Retry-After` instant.
 - `QueryDslUtils`: pagination and dynamic sorting helpers for QueryDSL queries.
 - `RandomCodeGeneratorUtils`: helper generators for PINs, alphanumeric codes, and passwords.
 - `UrlUtils`: URL base extraction helper with malformed-input fallback.

@@ -1,6 +1,6 @@
 services:
   app:
-    container_name: backend-app
+    container_name: open-knit-backend
     build:
       context: .
       dockerfile: Dockerfile-dev
@@ -13,34 +13,25 @@ services:
       - postgres
     working_dir: /workspace
     volumes:
-      - gradle-cache:/root/.gradle
-    command: sh -lc "echo '[backend] http://localhost:8080'; ./gradlew bootRun --no-daemon"
-    develop:
-      watch:
-        - action: rebuild
-          path: Dockerfile-dev
-        - action: rebuild
-          path: build.gradle
-        - action: rebuild
-          path: settings.gradle
-        - action: sync+restart
-          path: .
-          target: /workspace
-          ignore:
-            - .git/
-            - .idea/
-            - .gradle/
-            - build/
-            - "**/build/"
-            - "**/.gradle/"
-            - "**/out/"
+      - .:/workspace
+      - ./storage/documents:/workspace/storage/documents
+      - gradle-cache:/tmp/gradle-home
+      - gradle-project-cache:/tmp/gradle-project-cache
+      - gradle-build-output:/tmp/open-knit-gradle-build
+    command: sh -lc "chmod +x ./scripts/dev-backend-watch.sh && ./scripts/dev-backend-watch.sh"
     environment:
+      HOST_UID: "${UID:-1000}"
+      HOST_GID: "${GID:-1000}"
+      GRADLE_USER_HOME: /tmp/gradle-home
+      GRADLE_PROJECT_CACHE_DIR: /tmp/gradle-project-cache
+      GRADLE_BUILD_ROOT_DIR: /tmp/open-knit-gradle-build
+      GRADLE_INIT_SCRIPT: /workspace/scripts/gradle-container-builddir.init.gradle
       SPRING_MAIN_LAZY_INITIALIZATION: "true"
       DEMO_INSERTS_ENABLED: "true"
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/internal-modules
 
   postgres:
-    container_name: pg17-vector
+    container_name: open-knit-postgres
     image: pgvector/pgvector:pg17
     environment:
       POSTGRES_USER: test
@@ -55,3 +46,5 @@ services:
 volumes:
   pg17-vector-data:
   gradle-cache:
+  gradle-project-cache:
+  gradle-build-output:

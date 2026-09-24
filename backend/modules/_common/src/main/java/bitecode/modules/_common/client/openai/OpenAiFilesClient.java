@@ -3,6 +3,9 @@ package bitecode.modules._common.client.openai;
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
 import com.openai.core.MultipartField;
+import com.openai.errors.OpenAIIoException;
+import com.openai.errors.OpenAIRetryableException;
+import com.openai.errors.OpenAIServiceException;
 import com.openai.models.files.FileCreateParams;
 import com.openai.models.files.FilePurpose;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,12 @@ public class OpenAiFilesClient {
                     .build();
             var uploadedFile = client.files().create(createParams);
             return new UploadedOpenAiFile(uploadedFile.id(), uploadedFile.filename());
+        } catch (OpenAIServiceException | OpenAIRetryableException | OpenAIIoException exception) {
+            var retryableException = OpenAiErrorClassifier.toRetryableException(exception);
+            if (retryableException != null) {
+                throw retryableException;
+            }
+            throw exception;
         } catch (IOException exception) {
             log.error("Error while uploading file through OpenAI Files API", exception);
             throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while uploading file through OpenAI Files API");

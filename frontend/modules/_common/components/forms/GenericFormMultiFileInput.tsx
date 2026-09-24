@@ -28,6 +28,10 @@ export interface GenericFormMultiFileInputProps<
     wrapperClassName?: string
 }
 
+interface FieldErrorWithMessage {
+    message?: string;
+}
+
 function buildFileKey(file: File | ExistingFile) {
     if (file instanceof File) {
         return `${file.name}-${file.size}-${file.lastModified}`
@@ -47,7 +51,7 @@ export function GenericFormMultiFileInput<
                             multiple,
                             addButtonText,
                             emptyStateText,
-                            showFileType,
+                            showFileType: _showFileType,
                         tooltip,
                         wrapperClassName,
                         ...rest
@@ -58,8 +62,8 @@ export function GenericFormMultiFileInput<
     const error =
         errors[existingFilesField.name] || errors[newFilesField.name]
     const errorMessage =
-        typeof (error as any)?.message === 'string'
-            ? (error as any).message
+        typeof (error as FieldErrorWithMessage | undefined)?.message === 'string'
+            ? (error as FieldErrorWithMessage).message
             : undefined
     const color = error ? 'failure' : undefined
 

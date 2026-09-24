@@ -54,7 +54,7 @@ public class OcrResultServiceTest {
         var ocrResultCaptor = ArgumentCaptor.forClass(OcrResult.class);
 
         when(ocrProviderConfigService.findProviderConfigEntity(OcrProviderType.OPEN_AI)).thenReturn(Optional.of(providerConfig));
-        when(providerAdapter.runOcr(any(), eq(providerConfig))).thenReturn(Mono.just(new RunOcrResponse("Total: 123")));
+        when(providerAdapter.runOcr(any(), eq(providerConfig))).thenReturn(Mono.just(new RunOcrResponse("Total: 123", null)));
         when(ocrResultRepository.save(any(OcrResult.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(ocrMapper.toOcrResultDetails(any(OcrResult.class))).thenReturn(resultDetails);
 

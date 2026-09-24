@@ -1,5 +1,15 @@
 .git
+.gitignore
 .idea
 .gradle
+build
 **/build
 **/out
+storage
+temp
+*.log
+*.tmp
+*.swp
+Dockerfile-dev
+README-functionality.md
+README-run.md

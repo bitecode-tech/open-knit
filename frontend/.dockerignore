@@ -7,3 +7,5 @@ build/
 *.log
 pnpm-debug.log
 coverage/
+temp
+TEMP

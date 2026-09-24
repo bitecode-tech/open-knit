@@ -1,7 +1,12 @@
 import Papa from 'papaparse';
 
-function getNestedValue(obj: any, path: string) {
-    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+function getNestedValue(obj: unknown, path: string) {
+    return path.split('.').reduce<unknown>((accumulator, part) => {
+        if (accumulator && typeof accumulator === 'object' && part in accumulator) {
+            return (accumulator as Record<string, unknown>)[part];
+        }
+        return undefined;
+    }, obj);
 }
 
 export function exportToCsv<T>(
@@ -12,7 +17,7 @@ export function exportToCsv<T>(
     if (!data.length) return;
 
     const filteredData = data.map(row => {
-        const filteredRow: Record<string, any> = {};
+        const filteredRow: Record<string, unknown> = {};
         columns.forEach(col => {
             filteredRow[col] = getNestedValue(row, col);
         });

@@ -50,6 +50,7 @@ spring:
     port: ${SPRING_MAIL_PORT}
     username: ${SPRING_MAIL_USERNAME}
     password: ${SPRING_MAIL_PASSWORD}
+    from: ${SPRING_MAIL_FROM:}
     properties:
       mail:
         smtp:
@@ -77,4 +78,3 @@ logging:
     org.springframework.security: DEBUG
     org.springframework.security.web.FilterChainProxy: info
     bitecode.modules: DEBUG
-

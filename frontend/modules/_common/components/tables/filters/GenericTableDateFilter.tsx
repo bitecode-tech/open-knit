@@ -6,7 +6,7 @@ import React, {Dispatch, SetStateAction, useState} from "react";
 import CirclePlusIcon from "@common/assets/tables/circle-plus-icon.svg?react"
 import ChevronDownIcon from "@common/assets/tables/chevron-down.svg?react"
 import CircleXIcon from "@common/assets/tables/circle-x.svg?react"
-import {DateRangePicker} from 'react-date-range';
+import {DateRangePicker, RangeKeyDict} from 'react-date-range';
 import {GenericButton} from "@common/components/blocks/GenericButton.tsx";
 
 export interface GenericTableDateFilterProps {
@@ -32,10 +32,10 @@ const GenericTableDateFilter = ({startDateState, endDateState}: GenericTableDate
         key: 'selection',
     }
 
-    const handleSelect = (ranges: any) => {
+    const handleSelect = (ranges: RangeKeyDict) => {
         const range = ranges.selection
-        setStartDate(range.startDate)
-        setEndDate(range.endDate)
+        setStartDate(range.startDate ?? null)
+        setEndDate(range.endDate ?? null)
     }
 
     const resetDates = () => {
@@ -98,4 +98,3 @@ const GenericTableDateFilter = ({startDateState, endDateState}: GenericTableDate
 }
 
 export default GenericTableDateFilter;
-

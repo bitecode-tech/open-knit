@@ -1,0 +1,4 @@
+gradle.beforeProject { project ->
+    def safePath = project.path == ':' ? '/root' : project.path.replace(':', '/')
+    project.buildDir = new File('/tmp/open-knit-gradle-build' + safePath)
+}

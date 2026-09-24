@@ -50,7 +50,7 @@ The OCR module stores user-owned OCR instructions, executes OCR extraction throu
 ### Integrations and dependencies
 
 - Internal module dependencies: `_common` for auth utilities, base entities, access annotations, and shared OpenAI client.
-- External integrations: OpenAI Responses API through `SimpleOpenAiClient` and OpenAI Files API through shared `_common` upload client.
+- External integrations: OpenAI Responses API through shared `_common` clients/utilities (`SimpleOpenAiClient`, `OpenAiFilesClient`, `OpenAiUsageMetricsResolver`).
 - Communication style (event-driven or direct facade): direct internal service orchestration only.
 
 ### Class and Type Catalog
@@ -94,7 +94,7 @@ The OCR module stores user-owned OCR instructions, executes OCR extraction throu
 - `OcrInstructionDetails`: OCR instruction DTO.
 - `OcrResultDetails`: OCR result DTO.
 - `RunOcrData`: execution command carrying file and instruction snapshot.
-- `RunOcrResponse`: provider OCR text response.
+- `RunOcrResponse`: provider OCR text response with optional provider usage metrics.
 - `CreateOcrInstructionRequest`, `UpdateOcrInstructionRequest`, `RunOcrRequest`, `UpdateOcrProviderConfigRequest`: module request DTOs.
 - `OcrProviderType`, `OcrResultStatus`: OCR enums.
 

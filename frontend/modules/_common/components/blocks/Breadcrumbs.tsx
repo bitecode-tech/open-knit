@@ -3,6 +3,7 @@ import {capitalizeFirstLetter} from "@common/utils/StringUtils.ts";
 import GenericLink from "@common/components/elements/GenericLink.tsx";
 import {Home} from "flowbite-react-icons/outline";
 import {BREADCRUMBS_LABELS} from "@app/components/admin/AdminLayout.tsx";
+import {BreadcrumbBackLinkState} from "@common/types/router/BreadcrumbBackLinkState.ts";
 
 interface Crumb {
     path: string;
@@ -11,6 +12,34 @@ interface Crumb {
 
 export function Breadcrumbs() {
     const location = useLocation();
+    const breadcrumbBackLink = (location.state as BreadcrumbBackLinkState | null)?.breadcrumbBackLink;
+
+    if (breadcrumbBackLink) {
+        return (
+            <nav aria-label="Back navigation">
+                <GenericLink
+                    to={breadcrumbBackLink.to}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary-500"
+                >
+                    <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M15 10H5m0 0 4-4m-4 4 4 4"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1.5"
+                        />
+                    </svg>
+                    <span>{breadcrumbBackLink.label}</span>
+                </GenericLink>
+            </nav>
+        );
+    }
 
     const pathnames = location.pathname.split("/").filter(Boolean);
 

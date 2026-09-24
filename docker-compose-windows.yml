@@ -1,0 +1,26 @@
+services:
+  backend-app:
+    extends:
+      file: backend/docker-compose-windows.yml
+      service: app
+    depends_on:
+      - postgres
+
+  postgres:
+    extends:
+      file: backend/docker-compose-windows.yml
+      service: postgres
+
+  frontend-app:
+    extends:
+      file: frontend/docker-compose-windows.yml
+      service: app
+
+volumes:
+  pg17-vector-data:
+  gradle-cache:
+  gradle-project-cache:
+  gradle-build-output:
+  pnpm-store:
+  node-modules:
+  vite-cache:

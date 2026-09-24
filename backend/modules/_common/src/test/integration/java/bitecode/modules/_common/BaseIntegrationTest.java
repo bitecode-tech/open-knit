@@ -45,6 +45,7 @@ public class BaseIntegrationTest {
     protected ObjectMapper objectMapper;
 
     static {
+        System.setProperty("api.version", System.getProperty("api.version", "1.40"));
         postgres.start();
 
         RestAssured.config = RestAssuredConfig.config().objectMapperConfig(new ObjectMapperConfig().jackson2ObjectMapperFactory(

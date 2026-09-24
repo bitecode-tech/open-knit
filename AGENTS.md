@@ -63,10 +63,10 @@
   - Build: `cd backend && ./gradlew build`
   - Test: `./gradlew test` (uses JUnit; some tests may start Testcontainers → ensure Docker is running)
   - Run locally: `./gradlew bootRun` (API on `http://localhost:8080`)
-  - Infra (optional): `docker compose up -d` in `backend/` to start Postgres or the app container
+  - Infra (optional): `docker compose up app` in `backend/` on Linux, or `docker compose -f docker-compose-windows.yml watch app` on Windows/WSL
 - Frontend
   - Install: `cd frontend && pnpm i`
-  - Dev server: `pnpm dev` (UI on `http://localhost:3000`)
+  - Dev server: `pnpm dev` (UI on `http://localhost:3030`)
   - Build: `pnpm build`; Preview: `pnpm preview`
   - Lint: `pnpm lint`
 
@@ -96,7 +96,7 @@
 ## Security & Configuration
 - Never commit secrets. Copy `frontend/.env-template` to `frontend/.env` and keep local.
 - Stripe and other keys (backend) should be provided via environment or `.env` referenced by `backend/docker-compose.yml`.
-- Ports: backend `8080`, frontend `3000`. Adjust CORS/origin configs if changing.
+- Ports: backend `8080`, frontend `3030`. Adjust CORS/origin configs if changing.
 
 ## Agent Notes
 - If a directory contains its own `AGENTS.md`, follow it for that scope (e.g., `frontend/AGENTS.md`).

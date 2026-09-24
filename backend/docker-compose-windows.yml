@@ -1,0 +1,72 @@
+services:
+  app:
+    container_name: open-knit-backend
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+      target: dev
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    working_dir: /workspace
+    volumes:
+      - ./storage/documents:/workspace/storage/documents
+      - gradle-cache:/tmp/gradle-home
+      - gradle-project-cache:/tmp/gradle-project-cache
+      - gradle-build-output:/tmp/open-knit-gradle-build
+    command: sh -lc "chmod +x ./scripts/dev-backend-watch.sh && ./scripts/dev-backend-watch.sh"
+    develop:
+      watch:
+        - action: rebuild
+          path: Dockerfile-dev
+        - action: rebuild
+          path: build.gradle
+        - action: rebuild
+          path: settings.gradle
+        - action: rebuild
+          path: gradlew
+        - action: rebuild
+          path: gradle/
+        - action: sync+restart
+          path: .
+          target: /workspace
+          ignore:
+            - .git/
+            - .idea/
+            - .gradle/
+            - build/
+            - storage/
+            - storage/**
+            - "**/build/"
+            - "**/.gradle/"
+            - "**/out/"
+    environment:
+      GRADLE_USER_HOME: /tmp/gradle-home
+      GRADLE_PROJECT_CACHE_DIR: /tmp/gradle-project-cache
+      GRADLE_BUILD_ROOT_DIR: /tmp/open-knit-gradle-build
+      GRADLE_INIT_SCRIPT: /workspace/scripts/gradle-container-builddir.init.gradle
+      SPRING_MAIN_LAZY_INITIALIZATION: "true"
+      DEMO_INSERTS_ENABLED: "true"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/internal-modules
+
+  postgres:
+    container_name: open-knit-postgres
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: internal-modules
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg17-vector-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pg17-vector-data:
+  gradle-cache:
+  gradle-project-cache:
+  gradle-build-output:

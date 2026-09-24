@@ -1,6 +1,7 @@
 package bitecode.modules.ocr.service.provider;
 
 import bitecode.modules._common.client.openai.OpenAiFilesClient;
+import bitecode.modules._common.client.openai.OpenAiUsageMetricsResolver;
 import bitecode.modules._common.client.openai.SimpleOpenAiClient;
 import bitecode.modules.ocr.config.properties.OcrProperties;
 import bitecode.modules.ocr.model.data.RunOcrData;
@@ -13,11 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +28,8 @@ import java.util.Map;
 @Component
 @Slf4j
 public class OpenAiOcrProviderAdapter implements OcrProviderAdapter {
+    private static final int FILE_OWNERSHIP_RETRY_ATTEMPTS = 2;
+    private static final Duration FILE_OWNERSHIP_RETRY_DELAY = Duration.ofSeconds(2);
     private static final List<String> ACCEPTED_CONTENT_TYPES = List.of(
             "image/png",
             "image/jpeg",
@@ -90,16 +95,37 @@ public class OpenAiOcrProviderAdapter implements OcrProviderAdapter {
         }
 
         var client = clientFactory.apply(providerConfig.getApiKey());
+        var model = ocrProperties.getOpenAi().getModel();
         var settings = Map.<String, Object>of(
                 "temperature", 0.0,
                 "max_output_tokens", 4000
         );
 
-        return Mono.fromCallable(() -> buildInput(runOcrData, providerConfig.getApiKey()))
+        return runOcrAttempt(runOcrData, providerConfig.getApiKey(), client, model, settings, 0)
+                .map(response -> new RunOcrResponse(
+                        extractMessage(response),
+                        OpenAiUsageMetricsResolver.build(response, model)
+                ));
+    }
+
+    private Mono<Map<String, Object>> runOcrAttempt(RunOcrData runOcrData,
+                                                    String apiKey,
+                                                    SimpleOpenAiClient client,
+                                                    String model,
+                                                    Map<String, Object> settings,
+                                                    int attempt) {
+        return Mono.fromCallable(() -> buildInput(runOcrData, apiKey))
                 .subscribeOn(Schedulers.boundedElastic())
-                .flatMap(input -> client.createResponse(ocrProperties.getOpenAi().getModel(), input, settings, null, List.of()))
-                .map(this::extractMessage)
-                .map(RunOcrResponse::new);
+                .flatMap(input -> client.createResponse(model, input, settings, null, List.of()))
+                .onErrorResume(throwable -> {
+                    if (!shouldRetryFileOwnershipValidation(throwable) || attempt >= FILE_OWNERSHIP_RETRY_ATTEMPTS) {
+                        return Mono.error(throwable);
+                    }
+
+                    log.warn("OpenAI file ownership validation failed for OCR request. Retrying upload and response request, attempt {}", attempt + 1);
+                    return Mono.delay(FILE_OWNERSHIP_RETRY_DELAY)
+                            .then(runOcrAttempt(runOcrData, apiKey, client, model, settings, attempt + 1));
+                });
     }
 
     private List<Map<String, Object>> buildInput(RunOcrData runOcrData, String apiKey) {
@@ -142,6 +168,17 @@ public class OpenAiOcrProviderAdapter implements OcrProviderAdapter {
                 Requested extraction:
                 %s
                 """.formatted(runOcrData.instructionTextSnapshot());
+    }
+
+    private boolean shouldRetryFileOwnershipValidation(Throwable throwable) {
+        if (!(throwable instanceof WebClientResponseException responseException)) {
+            return false;
+        }
+
+        var responseBody = responseException.getResponseBodyAsString();
+        return responseException.getStatusCode().is5xxServerError()
+                && responseBody != null
+                && responseBody.contains("Unknown error while validating file ownership.");
     }
 
     private String extractMessage(Map<String, Object> response) {

@@ -1,6 +1,6 @@
 ---
 name: open-knit-module-release-check
-description: Verify that a new or renamed Open Knit module was fully wired for production across backend, frontend, scaffolder UI, Dockerfile.coolify, and scaffolder env files. Use when adding modules like ocr/documents, fixing missing module registration, or before deploying module-related changes. Always remind the user to add new module env variables and secrets to production.
+description: Use when adding, removing, renaming, or exposing an Open Knit module and you need to verify its backend, frontend, scaffolder, and deployment wiring before release.
 ---
 
 # Open Knit Module Release Check
@@ -61,4 +61,3 @@ node /mnt/c/Users/taras/IdeaProjects/open-knit/.codex/skills/open-knit-module-re
 Always end your response with a production reminder in plain language. Include this exact point:
 
 - Update production env values and secrets for the new module before deploy, especially `AVAILABLE_MODULES`, `MODULE_ALIASES`, and any module-specific configuration keys.
-

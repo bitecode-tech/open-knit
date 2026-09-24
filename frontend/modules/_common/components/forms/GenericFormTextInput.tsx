@@ -1,6 +1,6 @@
 import {ControllerRenderProps, FieldErrors, FieldValues, Path} from "react-hook-form";
 import {HelperText as FlowbiteHelperText, Label as FlowbiteLabel, TextInput as FlowbiteTextInput} from "flowbite-react";
-import React, {ComponentProps, FC, useState} from "react";
+import React, {ComponentProps, useState} from "react";
 import {IoEyeOffOutline, IoEyeOutline} from "react-icons/io5";
 import {GenericTooltip} from "@common/components/elements/GenericTooltip.tsx";
 
@@ -47,6 +47,12 @@ interface TextInputProps<T extends FieldValues, F extends Path<T>> extends Compo
 function TextInput<T extends FieldValues, F extends Path<T>>({field, errors, ...textInputProps}: TextInputProps<T, F>) {
     const [showPassword, setShowPassword] = useState(false);
     const isPasswordField = textInputProps.type === "password";
+    const resolvedRightIcon = isPasswordField ? () => (
+        <button type="button" tabIndex={-1} onClick={() => setShowPassword((prev) => !prev)}
+                className="focus:outline-none pointer-events-auto cursor-pointer px-1 text-gray-500">
+            {showPassword ? <IoEyeOffOutline className="h-5 w-5"/> : <IoEyeOutline className="h-5 w-5"/>}
+        </button>
+    ) : textInputProps.rightIcon;
 
     return <FlowbiteTextInput
         {...textInputProps}
@@ -55,12 +61,7 @@ function TextInput<T extends FieldValues, F extends Path<T>>({field, errors, ...
         sizing={textInputProps.sizing ?? "sm"}
         {...field}
         type={isPasswordField && showPassword ? "text" : textInputProps.type}
-        rightIcon={isPasswordField ? () => (
-            <button type="button" tabIndex={-1} onClick={() => setShowPassword((prev) => !prev)}
-                    className="focus:outline-none pointer-events-auto cursor-pointer px-1 text-gray-500">
-                {showPassword ? <IoEyeOffOutline className="h-5 w-5"/> : <IoEyeOutline className="h-5 w-5"/>}
-            </button>
-        ) : undefined}
+        rightIcon={resolvedRightIcon}
     />
 }
 
@@ -96,7 +97,8 @@ function HelperText<T extends FieldValues, F extends Path<T>>({field, errors, ..
     </FlowbiteHelperText>
 }
 
-interface GenericFormTextInputComponent extends FC<GenericFormInputProps<any, any>> {
+interface GenericFormTextInputComponent {
+    <T extends FieldValues, F extends Path<T>>(props: GenericFormInputProps<T, F>): React.ReactNode;
     TextInput: typeof TextInput;
     Label: typeof Label;
     HelperText: typeof HelperText;
@@ -106,6 +108,6 @@ GenericFormTextInputComponent.TextInput = TextInput;
 GenericFormTextInputComponent.Label = Label;
 GenericFormTextInputComponent.HelperText = HelperText;
 
-const GenericFormTextInput: GenericFormTextInputComponent = GenericFormTextInputComponent;
+const GenericFormTextInput = GenericFormTextInputComponent as GenericFormTextInputComponent;
 
 export {GenericFormTextInput}

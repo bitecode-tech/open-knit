@@ -19,5 +19,8 @@ services:
 volumes:
   pg17-vector-data:
   gradle-cache:
+  gradle-project-cache:
+  gradle-build-output:
   pnpm-store:
   node-modules:
+  vite-cache:
