@@ -39,7 +39,6 @@ public class Payment extends UuidBaseEntity {
     @OneToMany(mappedBy = "payment")
     private List<PaymentHistory> paymentHistoryList = new ArrayList<>();
 
-    @OrderBy("id DESC")
     @OneToOne(mappedBy = "payment")
     private SubscriptionHistory subscriptionHistory;
 }

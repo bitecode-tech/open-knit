@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.10
 
-FROM amazoncorretto:21-alpine3.18 AS build
+FROM amazoncorretto:25-alpine3.24 AS build
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ COPY modules modules
 
 RUN --mount=type=cache,target=/root/.gradle,sharing=locked ./gradlew --no-daemon --build-cache --parallel bootJar -x test
 
-FROM amazoncorretto:21-alpine3.18 AS runner
+FROM amazoncorretto:25-alpine3.24 AS runner
 
 WORKDIR /app
 RUN apk add --no-cache wget curl

@@ -15,7 +15,7 @@ This file is for repo-specific backend rules only. Use the shared skills for gen
 - Windows/WSL: `cd backend && docker compose -f docker-compose-windows.yml watch app`
 - App: `cd backend && ./gradlew bootRun`
 - Profiles: set `SPRING_PROFILES_ACTIVE` to `LOCAL`, `DEV`, `STAGE`, or `PROD`.
-- The POSIX Gradle wrapper bootstraps Java 21 automatically when the current shell is on a different JDK. It caches that runtime under `~/.cache/open-knit/java-21` by default, or uses `OPENKNIT_JAVA21_HOME` when set.
+- The POSIX Gradle wrapper bootstraps Java 25 automatically when the current shell is on a different JDK. It caches that runtime under `~/.cache/open-knit/java-25` by default, or uses `OPENKNIT_JAVA25_HOME` when set.
 
 ## Backend Container Workflow
 

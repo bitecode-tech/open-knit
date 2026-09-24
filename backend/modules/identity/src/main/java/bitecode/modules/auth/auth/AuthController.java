@@ -61,7 +61,13 @@ public class AuthController {
     @PostMapping("/tokens/access")
     public RefreshTokenResponse refreshAccessToken(@CookieValue(name = REFRESH_TOKEN_COOKIE_NAME, required = false) String refreshToken) {
         if (refreshToken != null) {
-            return mapper.toRefreshTokenResponse(authService.generateAccessToken(UUID.fromString(refreshToken)));
+            UUID refreshTokenId;
+            try {
+                refreshTokenId = UUID.fromString(refreshToken);
+            } catch (IllegalArgumentException e) {
+                throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+            }
+            return mapper.toRefreshTokenResponse(authService.generateAccessToken(refreshTokenId));
         }
         throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
     }

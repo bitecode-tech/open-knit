@@ -13,7 +13,7 @@
 ## Backend Agent (summary)
 
 - Source of truth: `backend/AGENTS.md`
-- Stack: **Java 21 + Spring Boot**, Gradle, PostgreSQL.
+- Stack: **Java 25 + Spring Boot**, Gradle, PostgreSQL.
 - Modules: schema-per-module, Flyway migrations, strict module boundaries.
 - If module-to-module comms are needed, ask user to choose **event-driven** vs **direct facade**.
 
@@ -76,7 +76,7 @@
   - Use verbose variables. Instead of const pl = patrons.map(p -> p.name); Do const patronNames = patrons.map(patron -> patron.name).
   - always use brackets for IF, even if it is one line IF. Never do something like that if(true) execute(); Do if(true){execute();}
   - Put data classes into separate files
-- Backend (Java 21, Spring Boot)
+- Backend (Java 25, Spring Boot)
   - 4‑space indent; packages lowercase; classes `PascalCase`, methods/fields `camelCase`.
   - Prefer constructor injection; annotate REST/APIs clearly; use Lombok where already used.
   - MapStruct and QueryDSL are included—follow existing patterns.

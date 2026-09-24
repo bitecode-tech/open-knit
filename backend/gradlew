@@ -106,12 +106,12 @@ java_major_version_from_command () {
     "$1" -version 2>&1 | sed -n 's/.*version "\(.*\)".*/\1/p' | sed 's/^1\.//' | awk -F. 'NR == 1 { print $1 }'
 }
 
-download_java21_home () {
-    cache_home="${OPENKNIT_JAVA21_HOME:-$HOME/.cache/open-knit/java-21}"
+download_java25_home () {
+    cache_home="${OPENKNIT_JAVA25_HOME:-$HOME/.cache/open-knit/java-25}"
     java_command="$cache_home/bin/java"
 
     if [ -x "$java_command" ]; then
-        if [ "$(java_major_version_from_command "$java_command")" = "21" ]; then
+        if [ "$(java_major_version_from_command "$java_command")" = "25" ]; then
             printf '%s\n' "$cache_home"
             return 0
         fi
@@ -120,13 +120,13 @@ download_java21_home () {
     case "$(uname -s)" in
         Linux*) os_name="linux" ;;
         Darwin*) os_name="mac" ;;
-        *) die "This wrapper can only bootstrap Java 21 on Linux or macOS. Set JAVA_HOME to a Java 21 installation instead." ;;
+        *) die "This wrapper can only bootstrap Java 25 on Linux or macOS. Set JAVA_HOME to a Java 25 installation instead." ;;
     esac
 
     case "$(uname -m)" in
         x86_64 | amd64) arch_name="x64" ;;
         aarch64 | arm64) arch_name="aarch64" ;;
-        *) die "Unsupported CPU architecture for automatic Java 21 bootstrap: $(uname -m)" ;;
+        *) die "Unsupported CPU architecture for automatic Java 25 bootstrap: $(uname -m)" ;;
     esac
 
     if command -v curl >/dev/null 2>&1; then
@@ -134,12 +134,12 @@ download_java21_home () {
     elif command -v wget >/dev/null 2>&1; then
         download_tool="wget"
     else
-        die "Neither curl nor wget is available, so the wrapper cannot bootstrap Java 21 automatically."
+        die "Neither curl nor wget is available, so the wrapper cannot bootstrap Java 25 automatically."
     fi
 
-    download_url="https://api.adoptium.net/v3/binary/latest/21/ga/${os_name}/${arch_name}/jdk/hotspot/normal/eclipse"
-    temp_dir=$(mktemp -d "${TMPDIR:-/tmp}/open-knit-java21.XXXXXX")
-    archive_file="$temp_dir/jdk21.tar.gz"
+    download_url="https://api.adoptium.net/v3/binary/latest/25/ga/${os_name}/${arch_name}/jdk/hotspot/normal/eclipse"
+    temp_dir=$(mktemp -d "${TMPDIR:-/tmp}/open-knit-java25.XXXXXX")
+    archive_file="$temp_dir/jdk25.tar.gz"
 
     if [ "$download_tool" = "curl" ]; then
         curl -fsSL "$download_url" -o "$archive_file"
@@ -152,8 +152,8 @@ download_java21_home () {
     tar -xzf "$archive_file" -C "$cache_home" --strip-components=1
     rm -rf "$temp_dir"
 
-    if [ "$(java_major_version_from_command "$cache_home/bin/java")" != "21" ]; then
-        die "Downloaded Java runtime does not look like Java 21: $cache_home"
+    if [ "$(java_major_version_from_command "$cache_home/bin/java")" != "25" ]; then
+        die "Downloaded Java runtime does not look like Java 25: $cache_home"
     fi
 
     printf '%s\n' "$cache_home"
@@ -199,8 +199,8 @@ Please set the JAVA_HOME variable in your environment to match the
     fi
 fi
 
-if [ "$(java_major_version_from_command "$JAVACMD")" != "21" ]; then
-    JAVA_HOME=$(download_java21_home)
+if [ "$(java_major_version_from_command "$JAVACMD")" != "25" ]; then
+    JAVA_HOME=$(download_java25_home)
     JAVACMD="$JAVA_HOME/bin/java"
 fi
 

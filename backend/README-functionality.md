@@ -332,7 +332,7 @@ Each module has its own PostgreSQL schema:
 ## 🛠️ **Technology Stack**
 
 ### **Core Framework**
-- **Spring Boot 3.4.4**: Application framework
+- **Spring Boot 4.1.1**: Application framework
 - **Spring Modulith**: Modular architecture
 - **Spring Security**: Authentication & authorization
 - **Spring Data JPA**: Data access layer
@@ -462,4 +462,4 @@ Each module has its own PostgreSQL schema:
 
 ---
 
-This architecture provides a solid foundation for a scalable, maintainable, and feature-rich financial application with AI capabilities, blockchain integration, and comprehensive notification systems. 
+This architecture provides a solid foundation for a scalable, maintainable, and feature-rich financial application with AI capabilities, blockchain integration, and comprehensive notification systems.

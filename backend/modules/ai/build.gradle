@@ -5,7 +5,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -25,13 +25,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.3.0'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot4:2.4.0'
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
-    implementation "org.springframework.ai:spring-ai-openai:1.1.0"
-    implementation "org.springframework.ai:spring-ai-starter-vector-store-pgvector:1.1.0"
-    implementation "org.springframework.ai:spring-ai-ollama:1.1.0"
-    implementation "org.springframework.ai:spring-ai-azure-openai:1.1.0"
+    implementation "org.springframework.ai:spring-ai-openai:1.1.8"
+    implementation "org.springframework.ai:spring-ai-starter-vector-store-pgvector:1.1.8"
+    implementation "org.springframework.ai:spring-ai-ollama:1.1.8"
+    implementation "org.springframework.ai:spring-ai-azure-openai:1.1.8"
     implementation "com.azure:azure-identity:1.18.1"
     implementation 'org.apache.tika:tika-core:3.2.1'
     implementation 'org.apache.tika:tika-parsers-standard-package:3.2.1'

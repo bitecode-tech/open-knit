@@ -5,7 +5,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -43,9 +43,10 @@ dependencies {
     integrationTestImplementation project(':modules:identity')
     integrationTestRuntimeOnly project(path: ':modules:identity', configuration: 'integrationTestArtifacts')
     integrationTestImplementation 'org.springframework.boot:spring-boot-starter-test'
+    integrationTestImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     integrationTestImplementation 'org.springframework.boot:spring-boot-testcontainers'
-    integrationTestImplementation 'org.testcontainers:postgresql'
-    integrationTestImplementation 'org.testcontainers:junit-jupiter'
+    integrationTestImplementation 'org.testcontainers:testcontainers-postgresql'
+    integrationTestImplementation 'org.testcontainers:testcontainers-junit-jupiter'
     integrationTestImplementation 'io.rest-assured:rest-assured'
 }
 
