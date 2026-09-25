@@ -11,9 +11,27 @@ import SuccessModal from "@app/pages/index/components/SuccessModal";
 import {useErrorModal} from "@app/pages/index/hooks/useErrorModal";
 import {useReadySystemsModal} from "@app/pages/index/hooks/useReadySystemsModal";
 import HttpClient from "@app/clients/HttpClient";
+import type {ProjectSpec, TargetPlatform} from "@app/types/ProjectSpec";
+
+function getBrowserPlatformSuggestion(): TargetPlatform | null {
+    const browserPlatform = navigator.platform.toLowerCase();
+    if (browserPlatform.startsWith("win")) {
+        return "windows";
+    }
+    if (browserPlatform.includes("mac") || browserPlatform.includes("iphone") || browserPlatform.includes("ipad")) {
+        return "macos";
+    }
+    if (browserPlatform.includes("linux")) {
+        return "linux";
+    }
+    return null;
+}
 
 export default function Page() {
     const [projectName, setProjectName] = useState("my-application");
+    const [targetPlatform, setTargetPlatform] = useState<TargetPlatform | "">("");
+    const [suggestedTargetPlatform, setSuggestedTargetPlatform] = useState<TargetPlatform | null>(null);
+    const [targetPlatformConfirmed, setTargetPlatformConfirmed] = useState(false);
     const [demoInsertsEnabled, setDemoInsertsEnabled] = useState(true);
     const [selectedConfiguration, setSelectedConfiguration] = useState<string | null>(null);
     const [selectedSystemIds, setSelectedSystemIds] = useState<Set<string>>(new Set());
@@ -45,7 +63,10 @@ export default function Page() {
         submitReadySystemsWishlist,
         errorModal.open
     );
-    const isGenerateDisabled = selectedSystemIds.size === 0;
+    const isTargetPlatformRequired = selectedConfiguration !== "ready-systems";
+    const isGenerateDisabled = selectedSystemIds.size === 0 || (
+        isTargetPlatformRequired && (!targetPlatform || !targetPlatformConfirmed)
+    );
     const systemOptions = selectedConfiguration
         ? systemOptionsByConfiguration[selectedConfiguration] ?? []
         : [];
@@ -58,6 +79,14 @@ export default function Page() {
             : selectedConfiguration === "ready-systems"
                 ? "Choose ready system"
                 : "Choose modules";
+
+    useEffect(() => {
+        const platformSuggestion = getBrowserPlatformSuggestion();
+        setSuggestedTargetPlatform(platformSuggestion);
+        if (platformSuggestion) {
+            setTargetPlatform(platformSuggestion);
+        }
+    }, []);
 
     useEffect(() => {
         if (!selectedConfiguration) {
@@ -134,14 +163,24 @@ export default function Page() {
             errorModal.open();
             return;
         }
+        if (!targetPlatform || !targetPlatformConfirmed) {
+            errorModal.open();
+            return;
+        }
 
         setIsDownloading(true);
         try {
-            const {blob, fileName} = await HttpClient.downloadScaffold({
-                name: projectName,
+            const selectedTemplateId = selectedConfiguration === "bundles" ? getSelectedSystemId() : null;
+            const projectSpec: ProjectSpec = {
+                schemaVersion: 1,
+                projectName: projectName.trim(),
                 modules,
+                targetPlatform,
                 demoInsertsEnabled,
-                aiEnabled: false,
+                ...(selectedTemplateId ? {templateId: selectedTemplateId} : {})
+            };
+            const {blob, fileName} = await HttpClient.downloadScaffold({
+                projectSpec,
                 counterName: resolveCounterName()
             });
             const downloadUrl = window.URL.createObjectURL(blob);
@@ -155,8 +194,8 @@ export default function Page() {
             window.setTimeout(() => {
                 window.URL.revokeObjectURL(downloadUrl);
             }, 30000);
-        } catch {
-            errorModal.open();
+        } catch (error) {
+            errorModal.open(error instanceof Error ? error.message : undefined);
         } finally {
             setIsDownloading(false);
         }
@@ -179,6 +218,11 @@ export default function Page() {
                     <ProjectMetadataSection
                         projectName={projectName}
                         onProjectNameChange={setProjectName}
+                        targetPlatform={targetPlatform}
+                        suggestedTargetPlatform={suggestedTargetPlatform}
+                        onTargetPlatformChange={setTargetPlatform}
+                        targetPlatformConfirmed={targetPlatformConfirmed}
+                        onTargetPlatformConfirmedChange={setTargetPlatformConfirmed}
                         demoInsertsEnabled={demoInsertsEnabled}
                         onDemoInsertsChange={setDemoInsertsEnabled}
                     />
@@ -284,7 +328,7 @@ export default function Page() {
                     v{__SCAFFOLDER_VERSION__}
                 </span>
             </footer>
-            <ErrorModal isOpen={errorModal.isOpen} onClose={errorModal.close}/>
+            <ErrorModal isOpen={errorModal.isOpen} message={errorModal.message} onClose={errorModal.close}/>
             <SuccessModal
                 isOpen={isSuccessModalOpen}
                 onClose={() => {

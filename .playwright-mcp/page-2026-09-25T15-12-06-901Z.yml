@@ -1,0 +1,101 @@
+- generic [ref=f5e3]:
+  - navigation [ref=f5e4]:
+    - generic [ref=f5e5]:
+      - link "OpenKnit home" [ref=f5e6] [cursor=pointer]:
+        - /url: /
+        - img "OpenKnit logo" [ref=f5e7]
+        - generic [ref=f5e8]: OpenKnit
+      - generic [ref=f5e10]:
+        - generic [ref=f5e11]:
+          - link "Generator" [ref=f5e12] [cursor=pointer]:
+            - /url: /
+          - link "About" [ref=f5e13] [cursor=pointer]:
+            - /url: /about
+          - link "Modules info" [ref=f5e14] [cursor=pointer]:
+            - /url: /modules
+        - generic [ref=f5e15]:
+          - link "OpenKnit Discord server" [ref=f5e16] [cursor=pointer]:
+            - /url: https://discord.gg/XAAjcAFhUn
+            - generic [ref=f5e19]: Discord
+          - link "OpenKnit GitHub repository" [ref=f5e20] [cursor=pointer]:
+            - /url: https://github.com/bitecode-tech/open-knit
+            - generic [ref=f5e23]: GitHub
+  - generic [ref=f5e25]:
+    - generic [ref=f5e26]:
+      - banner [ref=f5e27]:
+        - heading "Compose your app in few clicks" [level=1] [ref=f5e28]
+        - paragraph [ref=f5e29]: Pick the parts you need and download a ready-made fullstack (Java-Spring + React + Vite) app.
+        - link "If you want to understand more, click here" [ref=f5e30] [cursor=pointer]:
+          - /url: /about
+      - generic [ref=f5e31]:
+        - generic [ref=f5e32]:
+          - heading "1. Project metadata" [level=3] [ref=f5e35]
+          - paragraph [ref=f5e36]: Basic configuration
+          - generic [ref=f5e37]:
+            - generic [ref=f5e38]: Project name
+            - textbox "Project name" [ref=f5e40]: invalid/name
+          - generic [ref=f5e41]:
+            - generic [ref=f5e42]: Where will you run Docker Compose?
+            - combobox "Where will you run Docker Compose?" [ref=f5e44]:
+              - option "Select a platform"
+              - option "Windows"
+              - option "Linux or WSL with a Linux Docker engine" [selected]
+              - option "macOS"
+            - paragraph [ref=f5e45]: "Browser suggestion: Linux or WSL with a Linux Docker engine. Confirm the platform where Docker Compose will run. Use native Linux or WSL connected to a Linux Docker engine. WSL connected to Docker Desktop should use the Windows project path and Windows option."
+            - generic [ref=f5e87]:
+              - checkbox "I confirm this is the platform where I will run Docker Compose." [checked] [ref=f5e88]
+              - generic [ref=f5e89]: I confirm this is the platform where I will run Docker Compose.
+          - generic [ref=f5e47]:
+            - button "Initial data inserts" [pressed] [ref=f5e48] [cursor=pointer]
+            - generic [ref=f5e50]:
+              - paragraph [ref=f5e51]: Initial data inserts
+              - paragraph [ref=f5e52]: Seed demo data for the selected modules.
+        - generic [ref=f5e53]:
+          - generic [ref=f5e54]:
+            - heading "2. Choose configuration" [level=3] [ref=f5e56]
+            - paragraph [ref=f5e57]: Pick a starting point
+          - generic [ref=f5e58]:
+            - button [ref=f5e59] [cursor=pointer]:
+              - generic [ref=f5e60]:
+                - paragraph [ref=f5e62]: Bundles (recommended)
+                - paragraph [ref=f5e63]: Choose a prebuilt system template
+            - button [ref=f5e64] [cursor=pointer]:
+              - generic [ref=f5e65]:
+                - paragraph [ref=f5e67]: Modules
+                - paragraph [ref=f5e68]: Pick individual modules and build your stack from scratch.
+            - button [ref=f5e69] [cursor=pointer]:
+              - generic [ref=f5e70]:
+                - paragraph [ref=f5e72]: Ready systems
+                - paragraph [ref=f5e73]: White-label systems—70% complete, with your core logic on top.
+        - generic [ref=f5e91]:
+          - generic [ref=f5e92]:
+            - generic [ref=f5e93]:
+              - heading "3." [level=3] [ref=f5e94]
+              - heading "Choose bundle" [level=3] [ref=f5e95]
+            - paragraph [ref=f5e96]: Pick a bundle to get started
+          - generic [ref=f5e97]:
+            - button [ref=f5e98] [cursor=pointer]:
+              - generic [ref=f5e99]:
+                - paragraph [ref=f5e101]: Subscription Access
+                - paragraph [ref=f5e102]: Create plans, manage subscriptions, and control what users can see or use.
+            - button [ref=f5e103] [cursor=pointer]:
+              - generic [ref=f5e104]:
+                - paragraph [ref=f5e106]: Value Ledger
+                - paragraph [ref=f5e107]: Record value movements with clear entries, timestamps, and a complete audit trail.
+            - button [ref=f5e108] [cursor=pointer]:
+              - generic [ref=f5e109]:
+                - paragraph [ref=f5e111]: Tradebook
+                - paragraph [ref=f5e112]: Track transfers and swaps between parties, assets or resources.
+            - button [ref=f5e113] [cursor=pointer]:
+              - generic [ref=f5e114]:
+                - paragraph [ref=f5e116]: AI assistant
+                - paragraph [ref=f5e117]: AI assistant, vector store, ingestion, and admin tooling.
+    - contentinfo [ref=f5e74]:
+      - generic [ref=f5e76]:
+        - button "Generate" [ref=f5e78] [cursor=pointer]
+        - generic [ref=f5e79]:
+          - link "GitHub" [ref=f5e80] [cursor=pointer]:
+            - /url: https://github.com/bitecode-tech/open-knit
+          - link "Discord" [ref=f5e83] [cursor=pointer]:
+            - /url: https://discord.gg/XAAjcAFhUn
+      - generic "Scaffolder version 0.1.3" [ref=f5e86]: v0.1.3

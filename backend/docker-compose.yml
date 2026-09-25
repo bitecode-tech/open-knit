@@ -37,8 +37,6 @@ services:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
       POSTGRES_DB: internal-modules
-    ports:
-      - "5432:5432"
     volumes:
       - pg17-vector-data:/var/lib/postgresql/data
     restart: unless-stopped

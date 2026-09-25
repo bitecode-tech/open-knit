@@ -40,7 +40,8 @@ class BackendScaffolderService {
             moduleAliases,
             availableModules,
             requestedModules,
-            applicationName
+            applicationName,
+            projectSpec
         } = runContext;
         const {readRequiredFile, runStep} = runHelpers;
         const appPackageName = mainAppPackageNameUpdater.buildTargetPackageName(applicationName);
@@ -93,15 +94,19 @@ class BackendScaffolderService {
             );
         });
         const updatedDockerCompose = await runStep("Preparing docker-compose.yml", () => {
+            const composeFileName = projectSpec.targetPlatform === "linux"
+                ? "docker-compose.yml"
+                : "docker-compose-windows.yml";
             const composeContents = readRequiredFile(
-                path.join(resolvedPaths.backendRoot, "docker-compose.yml"),
-                "docker-compose.yml"
+                path.join(resolvedPaths.backendRoot, composeFileName),
+                composeFileName
             );
             return dockerComposeFileUpdater.updateContents(
                 composeContents,
                 backendContainerName,
                 postgresContainerName,
-                databaseName
+                databaseName,
+                projectSpec.demoInsertsEnabled
             );
         });
         const updatedBuildGradle = await runStep("Preparing build.gradle", () => {
@@ -174,7 +179,9 @@ class BackendScaffolderService {
                 path.join(resolvedPaths.backendRoot, ".env-template"),
                 ".env-template"
             );
-            return envFileService.buildFromTemplate(templateContents);
+            return envFileService.buildFromTemplate(templateContents, {
+                demoInsertsEnabled: projectSpec.demoInsertsEnabled
+            });
         });
 
         return {

@@ -18,14 +18,12 @@ const apiBaseUrl = process.env.SCAFFOLDER_API_URL ?? "http://127.0.0.1:7070";
 async function startServer() {
     const app = express();
 
-    app.use(
-        "/api",
-        createProxyMiddleware({
-            target: apiBaseUrl,
-            changeOrigin: true,
-            xfwd: true
-        })
-    );
+    app.use(createProxyMiddleware({
+        pathFilter: "/api",
+        target: apiBaseUrl,
+        changeOrigin: true,
+        xfwd: true
+    }));
 
     if (!isProd) {
         const {devMiddleware} = await createDevMiddleware({root: appRoot});

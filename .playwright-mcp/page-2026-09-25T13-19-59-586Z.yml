@@ -1,0 +1,168 @@
+- generic [active] [ref=f2e1]:
+  - blockquote [aria-hidden] [ref=f2e2]:
+    - heading [level=2] [ref=f2e3]: Documentation Index
+    - paragraph [ref=f2e4]:
+      - text: "Fetch the complete documentation index at:"
+      - link [ref=f2e5] [cursor=pointer]:
+        - /url: /llms.txt
+        - text: /llms.txt
+    - paragraph [ref=f2e6]: Use this file to discover all available pages before exploring further.
+  - generic [ref=f2e7]:
+    - link "Skip to main content" [ref=f2e8] [cursor=pointer]:
+      - /url: "#content-area"
+    - generic [ref=f2e10]:
+      - banner [ref=f2e11]:
+        - generic [ref=f2e15]:
+          - generic [ref=f2e17]:
+            - link "Model Context Protocol home page light logo" [ref=f2e19] [cursor=pointer]:
+              - /url: /
+              - generic [ref=f2e20]: Model Context Protocol home page
+              - img "light logo" [ref=f2e21]
+            - generic [ref=f2e22]:
+              - button "Open search" [ref=f2e23] [cursor=pointer]:
+                - generic [ref=f2e24]: Search...
+              - button "Toggle assistant panel" [ref=f2e26] [cursor=pointer]
+              - button "More actions" [ref=f2e30] [cursor=pointer]
+          - button "Navigation Transports Overview" [ref=f2e32] [cursor=pointer]:
+            - generic [ref=f2e33]: Navigation
+            - generic [ref=f2e36]:
+              - generic [ref=f2e37]: Transports
+              - generic [ref=f2e41]: Overview
+      - main [ref=f2e43]:
+        - generic [ref=f2e45]:
+          - generic [ref=f2e47]:
+            - generic [ref=f2e48]: Transports
+            - generic [ref=f2e49]:
+              - heading "Overview" [level=1] [ref=f2e50]
+              - generic [ref=f2e51]:
+                - button "Copy page" [ref=f2e52] [cursor=pointer]
+                - button "More actions" [ref=f2e59] [cursor=pointer]
+          - generic [ref=f2e62]:
+            - generic [ref=f2e63]: This page defines what a transport must provide to carry MCP messages, the standard transport bindings, and the requirements for defining new ones.
+            - generic [ref=f2e64]:
+              - text: Protocol semantics are identical on every transport. A transport is a
+              - strong [ref=f2e65]: binding
+              - text: ": it defines how messages are framed and delivered, how request metadata is carried, and how cancellation and termination are signaled. It does not define what the messages mean: the"
+              - link "message patterns" [ref=f2e66] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/patterns
+              - text: "are part of the core protocol and are the same on every binding. The binding pages specify the standard transports:"
+            - list [ref=f2e67]:
+              - listitem [ref=f2e68]:
+                - link "stdio" [ref=f2e69] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/transports/stdio
+                - text: ": newline-delimited messages over the standard streams of a client-launched subprocess."
+              - listitem [ref=f2e70]:
+                - link "Streamable HTTP" [ref=f2e71] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/transports/streamable-http
+                - text: ": each message is an HTTP POST to a single MCP endpoint; replies arrive as a JSON object or a request-scoped SSE stream."
+            - generic [ref=f2e72]:
+              - text: It is also possible for clients and servers to implement
+              - link "custom transports" [ref=f2e73] [cursor=pointer]:
+                - /url: "#custom-transports"
+              - text: .
+            - heading "Navigate to header Messages" [level=2] [ref=f2e74]:
+              - link "Navigate to header" [ref=f2e75] [cursor=pointer]:
+                - /url: "#messages"
+              - generic [ref=f2e80] [cursor=pointer]: Messages
+            - generic [ref=f2e81]:
+              - text: MCP uses JSON-RPC to encode messages. JSON-RPC messages
+              - strong [ref=f2e82]: MUST
+              - text: be UTF-8 encoded.
+            - generic [ref=f2e83]:
+              - text: A binding
+              - strong [ref=f2e84]: MUST
+              - text: deliver client-sent
+              - emphasis [ref=f2e85]: requests
+              - text: and
+              - emphasis [ref=f2e86]: notifications
+              - text: to the server, and server-sent
+              - emphasis [ref=f2e87]: responses
+              - text: and
+              - emphasis [ref=f2e88]: notifications
+              - text: "to the client. No other message direction exists: per the"
+              - link "message patterns" [ref=f2e89] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/patterns
+              - text: ", servers do not initiate JSON-RPC requests and clients do not send JSON-RPC responses."
+            - heading "Navigate to header Request Metadata" [level=2] [ref=f2e90]:
+              - link "Navigate to header" [ref=f2e91] [cursor=pointer]:
+                - /url: "#request-metadata"
+              - generic [ref=f2e96] [cursor=pointer]: Request Metadata
+            - generic [ref=f2e97]:
+              - text: "All protocol metadata travels in the message body: every request carries its protocol version and client capabilities in"
+              - link [ref=f2e98] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/index#meta
+                - code [ref=f2e99]: _meta.io.modelcontextprotocol/*
+              - text: fields.
+            - generic [ref=f2e100]:
+              - text: A binding
+              - strong [ref=f2e101]: MAY
+              - text: additionally mirror selected body fields into envelope metadata. The Streamable HTTP transport mirrors them into
+              - link "HTTP headers" [ref=f2e102] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/transports/streamable-http#request-metadata
+              - text: so that intermediaries can route and inspect requests without parsing the body. The body remains the source of truth; bindings that mirror metadata define how mismatches are rejected.
+            - heading "Navigate to header Cancellation" [level=2] [ref=f2e103]:
+              - link "Navigate to header" [ref=f2e104] [cursor=pointer]:
+                - /url: "#cancellation"
+              - generic [ref=f2e109] [cursor=pointer]: Cancellation
+            - generic [ref=f2e110]:
+              - text: "Each binding defines how a client abandons an in-flight request: on stdio the client sends a"
+              - code [ref=f2e111]: notifications/cancelled
+              - text: notification; on Streamable HTTP it closes the request’s response stream. The protocol-level rules are the same everywhere; see
+              - link "Cancellation" [ref=f2e112] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/patterns/cancellation
+              - text: .
+            - heading "Navigate to header Custom Transports" [level=2] [ref=f2e113]:
+              - link "Navigate to header" [ref=f2e114] [cursor=pointer]:
+                - /url: "#custom-transports"
+              - generic [ref=f2e119] [cursor=pointer]: Custom Transports
+            - generic [ref=f2e120]:
+              - text: Clients and servers
+              - strong [ref=f2e121]: MAY
+              - text: implement additional custom transport mechanisms to suit their specific needs. The protocol is transport-agnostic and can be implemented over any communication channel that supports bidirectional message exchange.
+            - generic [ref=f2e122]:
+              - text: Implementers who choose to support custom transports
+              - strong [ref=f2e123]: MUST
+              - text: preserve the JSON-RPC message format, the
+              - link "message patterns" [ref=f2e124] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/patterns
+              - text: ", and the per-request metadata model. Custom transports"
+              - strong [ref=f2e125]: SHOULD
+              - text: document their connection establishment, message framing, and cancellation patterns to aid interoperability.
+            - generic [ref=f2e126]:
+              - text: Custom transports that run over a reliable bidirectional byte stream (e.g., Unix domain sockets or TCP)
+              - strong [ref=f2e127]: SHOULD
+              - text: reuse the
+              - link "stdio framing" [ref=f2e128] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/transports/stdio
+              - text: "rather than defining a new one: the stdio binding is just newline-delimited JSON-RPC over a byte stream, and only its process-lifecycle rules are specific to standard streams."
+            - heading "Navigate to header Backward Compatibility" [level=2] [ref=f2e129]:
+              - link "Navigate to header" [ref=f2e130] [cursor=pointer]:
+                - /url: "#backward-compatibility"
+              - generic [ref=f2e135] [cursor=pointer]: Backward Compatibility
+            - generic [ref=f2e136]:
+              - text: Earlier protocol revisions established a connection-scoped session with an
+              - code [ref=f2e137]: initialize
+              - text: handshake and allowed servers to initiate JSON-RPC requests. Clients and servers that interoperate with those revisions detect the counterpart’s era and fall back as described in
+              - 'link "Versioning: Backward Compatibility" [ref=f2e138] [cursor=pointer]':
+                - /url: /specification/2026-07-28/basic/versioning#backward-compatibility-with-initialization-based-versions
+              - text: ", which includes a compatibility matrix for implementors. Each binding page describes its transport-specific detection mechanics."
+          - generic [ref=f2e140]:
+            - paragraph [ref=f2e141]: Was this page helpful?
+            - generic [ref=f2e143]:
+              - button "Yes" [ref=f2e144] [cursor=pointer]
+              - button "No" [ref=f2e149] [cursor=pointer]
+          - navigation "Pagination" [ref=f2e154]:
+            - 'link "Previous: Progress" [ref=f2e155] [cursor=pointer]':
+              - /url: /specification/2026-07-28/basic/patterns/progress
+              - generic [ref=f2e158]: Progress
+            - 'link "Next: stdio" [ref=f2e159] [cursor=pointer]':
+              - /url: /specification/2026-07-28/basic/transports/stdio
+              - generic [ref=f2e160]: stdio
+          - generic [ref=f2e164]:
+            - textbox "Ask a question..." [ref=f2e165]
+            - button "Send message" [disabled] [ref=f2e166]
+          - generic [ref=f2e171]:
+            - link "github" [ref=f2e172] [cursor=pointer]:
+              - /url: https://github.com/modelcontextprotocol
+            - link "discord" [ref=f2e175] [cursor=pointer]:
+              - /url: https://discord.gg/6CSzBmMkjX

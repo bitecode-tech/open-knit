@@ -3,6 +3,17 @@ import path from "path";
 import appScaffolderService from "@/services/AppScaffolderService";
 import {ScaffolderRunContext} from "@/types/ScaffolderRunContext";
 import {PathsConfig} from "@/types/PathsConfig";
+import {
+    getSupportedModuleIds,
+    getProjectOptionCatalog,
+    type ProjectOptionCatalog
+} from "@/projectSpec/projectOptions";
+import {
+    validateProjectSpec as validateProjectSpecInput,
+    type ProjectSpec,
+    type ProjectSpecValidationResult
+} from "@/projectSpec/projectSpec";
+import {ProjectSpecValidationError} from "@/projectSpec/ProjectSpecValidationError";
 
 class ScaffolderService {
     private quietLogs = false;
@@ -16,15 +27,78 @@ class ScaffolderService {
         };
     }
 
+    getProjectOptionCatalog(): ProjectOptionCatalog {
+        const runtimeConfig = this.getRuntimeConfig();
+        return getProjectOptionCatalog(
+            getSupportedModuleIds().filter((moduleId) => runtimeConfig.availableModules.includes(moduleId)),
+            runtimeConfig.moduleAliases
+        );
+    }
+
+    validateProjectSpec(projectSpec: unknown): ProjectSpecValidationResult {
+        const runtimeConfig = this.getRuntimeConfig();
+        const supportedModuleIds = getSupportedModuleIds().filter((moduleId) => {
+            return runtimeConfig.availableModules.includes(moduleId);
+        });
+        return validateProjectSpecInput(projectSpec, {
+            supportedModuleIds,
+            moduleAliases: runtimeConfig.moduleAliases
+        });
+    }
+
     async run(
         args: string[],
-        options: { cacheMode?: "rebuild" | "reuse" } = {}
+        options: {
+            cacheMode?: "rebuild" | "reuse";
+            outputIdentifier?: string;
+        } = {}
     ): Promise<string> {
+        const {applicationName, isApplicationNameProvided} = this.parseApplicationName(args);
+        const demoInsertsArgument = this.findArgumentValue(args, "demoInsertsEnabled");
+        const targetPlatformArgument = this.findArgumentValue(args, "targetPlatform");
+        const projectSpec: Record<string, unknown> = {
+            schemaVersion: 1,
+            projectName: applicationName,
+            modules: this.parseRequestedModules(args, false),
+            targetPlatform: targetPlatformArgument ?? "linux",
+            demoInsertsEnabled: demoInsertsArgument === undefined
+                ? true
+                : demoInsertsArgument === "true"
+                    ? true
+                    : demoInsertsArgument === "false"
+                        ? false
+                        : demoInsertsArgument
+        };
+        const templateId = this.findArgumentValue(args, "templateId");
+        if (templateId !== undefined) {
+            projectSpec.templateId = templateId;
+        }
+
+        return this.generateProject(projectSpec, {
+            ...options,
+            isProjectNameProvided: isApplicationNameProvided
+        });
+    }
+
+    async generateProject(
+        projectSpecInput: unknown,
+        options: {
+            cacheMode?: "rebuild" | "reuse";
+            outputIdentifier?: string;
+            isProjectNameProvided?: boolean;
+        } = {}
+    ): Promise<string> {
+        const validation = this.validateProjectSpec(projectSpecInput);
+        if (!validation.valid || validation.normalizedProjectSpec === null) {
+            throw new ProjectSpecValidationError(validation.errors);
+        }
+
         const startTime = process.hrtime.bigint();
         console.log("[scaffolder] Starting scaffolder run");
-        const runContext = this.createRunContext(args, {
+        const runContext = this.createRunContext(validation.normalizedProjectSpec, {
             cacheMode: options.cacheMode ?? "rebuild",
-            allowEmptyModules: false
+            isProjectNameProvided: options.isProjectNameProvided ?? true,
+            outputIdentifier: options.outputIdentifier
         });
 
         const runHelpers = {
@@ -39,10 +113,19 @@ class ScaffolderService {
     }
 
     async buildCache(): Promise<void> {
-        const runContext = this.createRunContext([], {
+        const runContext = this.createRunContext(
+            {
+                schemaVersion: 1,
+                projectName: "backend",
+                modules: [],
+                targetPlatform: "linux",
+                demoInsertsEnabled: true
+            },
+            {
             cacheMode: "rebuild",
-            allowEmptyModules: true
-        });
+                isProjectNameProvided: false
+            }
+        );
         const runHelpers = {
             readRequiredFile: this.readRequiredFile.bind(this),
             runStep: this.runStep.bind(this)
@@ -51,8 +134,12 @@ class ScaffolderService {
     }
 
     private createRunContext(
-        args: string[],
-        options: { cacheMode: "rebuild" | "reuse"; allowEmptyModules: boolean }
+        projectSpec: ProjectSpec,
+        options: {
+            cacheMode: "rebuild" | "reuse";
+            isProjectNameProvided: boolean;
+            outputIdentifier?: string;
+        }
     ): ScaffolderRunContext {
         const resolvedPaths = this.resolvePaths();
         const envValues = this.readEnvValues(resolvedPaths.scaffolderRoot);
@@ -62,21 +149,30 @@ class ScaffolderService {
         const repoRootItems = this.parseRepoRootItems(envValues);
         const moduleAliases = this.parseModuleAliases(envValues);
         const availableModules = this.parseAvailableModules(envValues);
-        const requestedModules = this.parseRequestedModules(args, options.allowEmptyModules);
-        const {applicationName, isApplicationNameProvided} = this.parseApplicationName(args);
-
         return {
+            projectSpec,
             resolvedPaths,
             backendRootItems,
             frontendRootItems,
             repoRootItems,
             moduleAliases,
             availableModules,
-            requestedModules,
-            applicationName,
-            isApplicationNameProvided,
+            requestedModules: [...projectSpec.modules],
+            applicationName: projectSpec.projectName,
+            isApplicationNameProvided: options.isProjectNameProvided,
+            outputIdentifier: options.outputIdentifier,
             cacheMode: options.cacheMode
         };
+    }
+
+    private findArgumentValue(args: string[], name: string): string | undefined {
+        const prefixes = [`${name}=`, `--${name}=`];
+        const argument = args.find((value) => prefixes.some((prefix) => value.startsWith(prefix)));
+        if (!argument) {
+            return undefined;
+        }
+        const prefix = prefixes.find((candidate) => argument.startsWith(candidate));
+        return prefix ? argument.slice(prefix.length).trim() : undefined;
     }
 
     private resolvePaths(): PathsConfig {

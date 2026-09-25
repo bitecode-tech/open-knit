@@ -3,7 +3,8 @@ class DockerComposeFileUpdater {
         composeContents: string,
         backendContainerName: string,
         postgresContainerName: string,
-        databaseName: string
+        databaseName: string,
+        demoInsertsEnabled = true
     ): string {
         const lines = composeContents.split(/\r?\n/);
 
@@ -35,6 +36,12 @@ class DockerComposeFileUpdater {
             "POSTGRES_DB",
             databaseName
         );
+        const demoInsertsUpdated = this.updateServiceEnvironmentValue(
+            lines,
+            appBlock,
+            "DEMO_INSERTS_ENABLED",
+            String(demoInsertsEnabled)
+        );
 
         if (!appContainerUpdated) {
             throw new Error("container_name not found under services.app in docker-compose.yml");
@@ -47,6 +54,9 @@ class DockerComposeFileUpdater {
         }
         if (!postgresDbUpdated) {
             throw new Error("POSTGRES_DB not found under services.postgres.environment in docker-compose.yml");
+        }
+        if (!demoInsertsUpdated) {
+            throw new Error("DEMO_INSERTS_ENABLED not found under services.app.environment in docker-compose.yml");
         }
 
         return lines.join("\n");

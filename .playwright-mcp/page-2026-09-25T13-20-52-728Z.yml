@@ -1,0 +1,634 @@
+- generic [active] [ref=f5e1]:
+  - blockquote [aria-hidden] [ref=f5e2]:
+    - heading [level=2] [ref=f5e3]: Documentation Index
+    - paragraph [ref=f5e4]:
+      - text: "Fetch the complete documentation index at:"
+      - link [ref=f5e5] [cursor=pointer]:
+        - /url: /llms.txt
+        - text: /llms.txt
+    - paragraph [ref=f5e6]: Use this file to discover all available pages before exploring further.
+  - generic [ref=f5e7]:
+    - link "Skip to main content" [ref=f5e8] [cursor=pointer]:
+      - /url: "#content-area"
+    - generic [ref=f5e10]:
+      - banner [ref=f5e11]:
+        - generic [ref=f5e15]:
+          - generic [ref=f5e17]:
+            - link "Model Context Protocol home page light logo" [ref=f5e19] [cursor=pointer]:
+              - /url: /
+              - generic [ref=f5e20]: Model Context Protocol home page
+              - img "light logo" [ref=f5e21]
+            - generic [ref=f5e22]:
+              - button "Open search" [ref=f5e23] [cursor=pointer]:
+                - generic [ref=f5e24]: Search...
+              - button "Toggle assistant panel" [ref=f5e26] [cursor=pointer]
+              - button "More actions" [ref=f5e30] [cursor=pointer]
+          - button "Navigation Server Features Resources" [ref=f5e32] [cursor=pointer]:
+            - generic [ref=f5e33]: Navigation
+            - generic [ref=f5e36]:
+              - generic [ref=f5e37]: Server Features
+              - generic [ref=f5e41]: Resources
+      - main [ref=f5e43]:
+        - generic [ref=f5e45]:
+          - generic [ref=f5e47]:
+            - generic [ref=f5e48]: Server Features
+            - generic [ref=f5e49]:
+              - heading "Resources" [level=1] [ref=f5e50]
+              - generic [ref=f5e51]:
+                - button "Copy page" [ref=f5e52] [cursor=pointer]
+                - button "More actions" [ref=f5e59] [cursor=pointer]
+          - alert [ref=f5e62]:
+            - img "Warning" [ref=f5e64]
+            - generic [ref=f5e66]:
+              - text: You are viewing an older version (2025-11-25) of the specification.
+              - link "View the latest version (2026-07-28)" [ref=f5e67] [cursor=pointer]:
+                - /url: /specification/latest/server/resources
+          - generic [ref=f5e68]:
+            - generic [ref=f5e69]:
+              - text: The Model Context Protocol (MCP) provides a standardized way for servers to expose resources to clients. Resources allow servers to share data that provides context to language models, such as files, database schemas, or application-specific information. Each resource is uniquely identified by a
+              - link "URI" [ref=f5e70] [cursor=pointer]:
+                - /url: https://datatracker.ietf.org/doc/html/rfc3986
+              - text: .
+            - heading "Navigate to header User Interaction Model" [level=2] [ref=f5e71]:
+              - link "Navigate to header" [ref=f5e72] [cursor=pointer]:
+                - /url: "#user-interaction-model"
+              - generic [ref=f5e77] [cursor=pointer]: User Interaction Model
+            - generic [ref=f5e78]:
+              - text: Resources in MCP are designed to be
+              - strong [ref=f5e79]: application-driven
+              - text: ", with host applications determining how to incorporate context based on their needs."
+            - generic [ref=f5e80]: "For example, applications could:"
+            - list [ref=f5e81]:
+              - listitem [ref=f5e82]: Expose resources through UI elements for explicit selection, in a tree or list view
+              - listitem [ref=f5e83]: Allow the user to search through and filter available resources
+              - listitem [ref=f5e84]: Implement automatic context inclusion, based on heuristics or the AI model’s selection
+            - img "Example of resource context picker" [ref=f5e88]
+            - 'button "Expand image: Example of resource context picker"'
+            - generic [ref=f5e89]: However, implementations are free to expose resources through any interface pattern that suits their needs—the protocol itself does not mandate any specific user interaction model.
+            - heading "Navigate to header Capabilities" [level=2] [ref=f5e90]:
+              - link "Navigate to header" [ref=f5e91] [cursor=pointer]:
+                - /url: "#capabilities"
+              - generic [ref=f5e96] [cursor=pointer]: Capabilities
+            - generic [ref=f5e97]:
+              - text: Servers that support resources
+              - strong [ref=f5e98]: MUST
+              - text: declare the
+              - code [ref=f5e99]: resources
+              - text: "capability:"
+            - generic [ref=f5e100]:
+              - generic [ref=f5e101]:
+                - button "Report incorrect code" [ref=f5e103] [cursor=pointer]
+                - generic [ref=f5e107]:
+                  - button "Copy the contents from the code block" [ref=f5e108] [cursor=pointer]
+                  - status [ref=f5e112]
+                - button "Ask Assistant" [ref=f5e114] [cursor=pointer]
+              - code [ref=f5e121]:
+                - generic [ref=f5e122]: "{"
+                - generic [ref=f5e123]: "\"capabilities\": {"
+                - generic [ref=f5e124]: "\"resources\": {"
+                - generic [ref=f5e125]: "\"subscribe\": true,"
+                - generic [ref=f5e126]: "\"listChanged\": true"
+                - generic [ref=f5e127]: "}"
+                - generic [ref=f5e128]: "}"
+                - generic [ref=f5e129]: "}"
+            - generic [ref=f5e130]: "The capability supports two optional features:"
+            - list [ref=f5e131]:
+              - listitem [ref=f5e132]:
+                - code [ref=f5e133]: subscribe
+                - text: ": whether the client can subscribe to be notified of changes to individual resources."
+              - listitem [ref=f5e134]:
+                - code [ref=f5e135]: listChanged
+                - text: ": whether the server will emit notifications when the list of available resources changes."
+            - generic [ref=f5e136]:
+              - text: Both
+              - code [ref=f5e137]: subscribe
+              - text: and
+              - code [ref=f5e138]: listChanged
+              - text: "are optional—servers can support neither, either, or both:"
+            - generic [ref=f5e139]:
+              - generic [ref=f5e140]:
+                - button "Report incorrect code" [ref=f5e142] [cursor=pointer]
+                - generic [ref=f5e146]:
+                  - button "Copy the contents from the code block" [ref=f5e147] [cursor=pointer]
+                  - status [ref=f5e151]
+                - button "Ask Assistant" [ref=f5e153] [cursor=pointer]
+              - code [ref=f5e160]:
+                - generic [ref=f5e161]: "{"
+                - generic [ref=f5e162]: "\"capabilities\": {"
+                - generic [ref=f5e163]: "\"resources\": {} // Neither feature supported"
+                - generic [ref=f5e164]: "}"
+                - generic [ref=f5e165]: "}"
+            - generic [ref=f5e166]:
+              - generic [ref=f5e167]:
+                - button "Report incorrect code" [ref=f5e169] [cursor=pointer]
+                - generic [ref=f5e173]:
+                  - button "Copy the contents from the code block" [ref=f5e174] [cursor=pointer]
+                  - status [ref=f5e178]
+                - button "Ask Assistant" [ref=f5e180] [cursor=pointer]
+              - code [ref=f5e187]:
+                - generic [ref=f5e188]: "{"
+                - generic [ref=f5e189]: "\"capabilities\": {"
+                - generic [ref=f5e190]: "\"resources\": {"
+                - generic [ref=f5e191]: "\"subscribe\": true // Only subscriptions supported"
+                - generic [ref=f5e192]: "}"
+                - generic [ref=f5e193]: "}"
+                - generic [ref=f5e194]: "}"
+            - generic [ref=f5e195]:
+              - generic [ref=f5e196]:
+                - button "Report incorrect code" [ref=f5e198] [cursor=pointer]
+                - generic [ref=f5e202]:
+                  - button "Copy the contents from the code block" [ref=f5e203] [cursor=pointer]
+                  - status [ref=f5e207]
+                - button "Ask Assistant" [ref=f5e209] [cursor=pointer]
+              - code [ref=f5e216]:
+                - generic [ref=f5e217]: "{"
+                - generic [ref=f5e218]: "\"capabilities\": {"
+                - generic [ref=f5e219]: "\"resources\": {"
+                - generic [ref=f5e220]: "\"listChanged\": true // Only list change notifications supported"
+                - generic [ref=f5e221]: "}"
+                - generic [ref=f5e222]: "}"
+                - generic [ref=f5e223]: "}"
+            - heading "Navigate to header Protocol Messages" [level=2] [ref=f5e224]:
+              - link "Navigate to header" [ref=f5e225] [cursor=pointer]:
+                - /url: "#protocol-messages"
+              - generic [ref=f5e230] [cursor=pointer]: Protocol Messages
+            - heading "Navigate to header Listing Resources" [level=3] [ref=f5e231]:
+              - link "Navigate to header" [ref=f5e232] [cursor=pointer]:
+                - /url: "#listing-resources"
+              - generic [ref=f5e237] [cursor=pointer]: Listing Resources
+            - generic [ref=f5e238]:
+              - text: To discover available resources, clients send a
+              - code [ref=f5e239]: resources/list
+              - text: request. This operation supports
+              - link "pagination" [ref=f5e240] [cursor=pointer]:
+                - /url: /specification/2025-11-25/server/utilities/pagination
+              - text: .
+            - strong [ref=f5e242]: "Request:"
+            - generic [ref=f5e243]:
+              - generic [ref=f5e244]:
+                - button "Report incorrect code" [ref=f5e246] [cursor=pointer]
+                - generic [ref=f5e250]:
+                  - button "Copy the contents from the code block" [ref=f5e251] [cursor=pointer]
+                  - status [ref=f5e255]
+                - button "Ask Assistant" [ref=f5e257] [cursor=pointer]
+              - code [ref=f5e264]:
+                - generic [ref=f5e265]: "{"
+                - generic [ref=f5e266]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f5e267]: "\"id\": 1,"
+                - generic [ref=f5e268]: "\"method\": \"resources/list\","
+                - generic [ref=f5e269]: "\"params\": {"
+                - generic [ref=f5e270]: "\"cursor\": \"optional-cursor-value\""
+                - generic [ref=f5e271]: "}"
+                - generic [ref=f5e272]: "}"
+            - strong [ref=f5e274]: "Response:"
+            - generic [ref=f5e275]:
+              - generic [ref=f5e276]:
+                - button "Report incorrect code" [ref=f5e278] [cursor=pointer]
+                - generic [ref=f5e282]:
+                  - button "Copy the contents from the code block" [ref=f5e283] [cursor=pointer]
+                  - status [ref=f5e287]
+                - button "Ask Assistant" [ref=f5e289] [cursor=pointer]
+              - code [ref=f5e296]:
+                - generic [ref=f5e297]: "{"
+                - generic [ref=f5e298]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f5e299]: "\"id\": 1,"
+                - generic [ref=f5e300]: "\"result\": {"
+                - generic [ref=f5e301]: "\"resources\": ["
+                - generic [ref=f5e302]: "{"
+                - generic [ref=f5e303]: "\"uri\": \"file:///project/src/main.rs\","
+                - generic [ref=f5e304]: "\"name\": \"main.rs\","
+                - generic [ref=f5e305]: "\"title\": \"Rust Software Application Main File\","
+                - generic [ref=f5e306]: "\"description\": \"Primary application entry point\","
+                - generic [ref=f5e307]: "\"mimeType\": \"text/x-rust\","
+                - generic [ref=f5e308]: "\"icons\": ["
+                - generic [ref=f5e309]: "{"
+                - generic [ref=f5e310]: "\"src\": \"https://example.com/rust-file-icon.png\","
+                - generic [ref=f5e311]: "\"mimeType\": \"image/png\","
+                - generic [ref=f5e312]: "\"sizes\": [\"48x48\"]"
+                - generic [ref=f5e313]: "}"
+                - generic [ref=f5e314]: "]"
+                - generic [ref=f5e315]: "}"
+                - generic [ref=f5e316]: "],"
+                - generic [ref=f5e317]: "\"nextCursor\": \"next-page-cursor\""
+                - generic [ref=f5e318]: "}"
+                - generic [ref=f5e319]: "}"
+            - heading "Navigate to header Reading Resources" [level=3] [ref=f5e320]:
+              - link "Navigate to header" [ref=f5e321] [cursor=pointer]:
+                - /url: "#reading-resources"
+              - generic [ref=f5e326] [cursor=pointer]: Reading Resources
+            - generic [ref=f5e327]:
+              - text: To retrieve resource contents, clients send a
+              - code [ref=f5e328]: resources/read
+              - text: "request:"
+            - strong [ref=f5e330]: "Request:"
+            - generic [ref=f5e331]:
+              - generic [ref=f5e332]:
+                - button "Report incorrect code" [ref=f5e334] [cursor=pointer]
+                - generic [ref=f5e338]:
+                  - button "Copy the contents from the code block" [ref=f5e339] [cursor=pointer]
+                  - status [ref=f5e343]
+                - button "Ask Assistant" [ref=f5e345] [cursor=pointer]
+              - code [ref=f5e352]:
+                - generic [ref=f5e353]: "{"
+                - generic [ref=f5e354]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f5e355]: "\"id\": 2,"
+                - generic [ref=f5e356]: "\"method\": \"resources/read\","
+                - generic [ref=f5e357]: "\"params\": {"
+                - generic [ref=f5e358]: "\"uri\": \"file:///project/src/main.rs\""
+                - generic [ref=f5e359]: "}"
+                - generic [ref=f5e360]: "}"
+            - strong [ref=f5e362]: "Response:"
+            - generic [ref=f5e363]:
+              - generic [ref=f5e364]:
+                - button "Report incorrect code" [ref=f5e366] [cursor=pointer]
+                - generic [ref=f5e370]:
+                  - button "Copy the contents from the code block" [ref=f5e371] [cursor=pointer]
+                  - status [ref=f5e375]
+                - button "Ask Assistant" [ref=f5e377] [cursor=pointer]
+              - code [ref=f5e384]:
+                - generic [ref=f5e385]: "{"
+                - generic [ref=f5e386]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f5e387]: "\"id\": 2,"
+                - generic [ref=f5e388]: "\"result\": {"
+                - generic [ref=f5e389]: "\"contents\": ["
+                - generic [ref=f5e390]: "{"
+                - generic [ref=f5e391]: "\"uri\": \"file:///project/src/main.rs\","
+                - generic [ref=f5e392]: "\"mimeType\": \"text/x-rust\","
+                - generic [ref=f5e393]: "\"text\": \"fn main() {\\n println!(\\\"Hello world!\\\");\\n}\""
+                - generic [ref=f5e394]: "}"
+                - generic [ref=f5e395]: "]"
+                - generic [ref=f5e396]: "}"
+                - generic [ref=f5e397]: "}"
+            - heading "Navigate to header Resource Templates" [level=3] [ref=f5e398]:
+              - link "Navigate to header" [ref=f5e399] [cursor=pointer]:
+                - /url: "#resource-templates"
+              - generic [ref=f5e404] [cursor=pointer]: Resource Templates
+            - generic [ref=f5e405]:
+              - text: Resource templates allow servers to expose parameterized resources using
+              - link "URI templates" [ref=f5e406] [cursor=pointer]:
+                - /url: https://datatracker.ietf.org/doc/html/rfc6570
+              - text: . Arguments may be auto-completed through
+              - link "the completion API" [ref=f5e407] [cursor=pointer]:
+                - /url: /specification/2025-11-25/server/utilities/completion
+              - text: .
+            - strong [ref=f5e409]: "Request:"
+            - generic [ref=f5e410]:
+              - generic [ref=f5e411]:
+                - button "Report incorrect code" [ref=f5e413] [cursor=pointer]
+                - generic [ref=f5e417]:
+                  - button "Copy the contents from the code block" [ref=f5e418] [cursor=pointer]
+                  - status [ref=f5e422]
+                - button "Ask Assistant" [ref=f5e424] [cursor=pointer]
+              - code [ref=f5e431]:
+                - generic [ref=f5e432]: "{"
+                - generic [ref=f5e433]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f5e434]: "\"id\": 3,"
+                - generic [ref=f5e435]: "\"method\": \"resources/templates/list\""
+                - generic [ref=f5e436]: "}"
+            - strong [ref=f5e438]: "Response:"
+            - generic [ref=f5e439]:
+              - generic [ref=f5e440]:
+                - button "Report incorrect code" [ref=f5e442] [cursor=pointer]
+                - generic [ref=f5e446]:
+                  - button "Copy the contents from the code block" [ref=f5e447] [cursor=pointer]
+                  - status [ref=f5e451]
+                - button "Ask Assistant" [ref=f5e453] [cursor=pointer]
+              - code [ref=f5e460]:
+                - generic [ref=f5e461]: "{"
+                - generic [ref=f5e462]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f5e463]: "\"id\": 3,"
+                - generic [ref=f5e464]: "\"result\": {"
+                - generic [ref=f5e465]: "\"resourceTemplates\": ["
+                - generic [ref=f5e466]: "{"
+                - generic [ref=f5e467]: "\"uriTemplate\": \"file:///{path}\","
+                - generic [ref=f5e468]: "\"name\": \"Project Files\","
+                - generic [ref=f5e469]: "\"title\": \"📁 Project Files\","
+                - generic [ref=f5e470]: "\"description\": \"Access files in the project directory\","
+                - generic [ref=f5e471]: "\"mimeType\": \"application/octet-stream\","
+                - generic [ref=f5e472]: "\"icons\": ["
+                - generic [ref=f5e473]: "{"
+                - generic [ref=f5e474]: "\"src\": \"https://example.com/folder-icon.png\","
+                - generic [ref=f5e475]: "\"mimeType\": \"image/png\","
+                - generic [ref=f5e476]: "\"sizes\": [\"48x48\"]"
+                - generic [ref=f5e477]: "}"
+                - generic [ref=f5e478]: "]"
+                - generic [ref=f5e479]: "}"
+                - generic [ref=f5e480]: "]"
+                - generic [ref=f5e481]: "}"
+                - generic [ref=f5e482]: "}"
+            - heading "Navigate to header List Changed Notification" [level=3] [ref=f5e483]:
+              - link "Navigate to header" [ref=f5e484] [cursor=pointer]:
+                - /url: "#list-changed-notification"
+              - generic [ref=f5e489] [cursor=pointer]: List Changed Notification
+            - generic [ref=f5e490]:
+              - text: When the list of available resources changes, servers that declared the
+              - code [ref=f5e491]: listChanged
+              - text: capability
+              - strong [ref=f5e492]: SHOULD
+              - text: "send a notification:"
+            - generic [ref=f5e493]:
+              - generic [ref=f5e494]:
+                - button "Report incorrect code" [ref=f5e496] [cursor=pointer]
+                - generic [ref=f5e500]:
+                  - button "Copy the contents from the code block" [ref=f5e501] [cursor=pointer]
+                  - status [ref=f5e505]
+                - button "Ask Assistant" [ref=f5e507] [cursor=pointer]
+              - code [ref=f5e514]:
+                - generic [ref=f5e515]: "{"
+                - generic [ref=f5e516]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f5e517]: "\"method\": \"notifications/resources/list_changed\""
+                - generic [ref=f5e518]: "}"
+            - heading "Navigate to header Subscriptions" [level=3] [ref=f5e519]:
+              - link "Navigate to header" [ref=f5e520] [cursor=pointer]:
+                - /url: "#subscriptions"
+              - generic [ref=f5e525] [cursor=pointer]: Subscriptions
+            - generic [ref=f5e526]: "The protocol supports optional subscriptions to resource changes. Clients can subscribe to specific resources and receive notifications when they change:"
+            - strong [ref=f5e528]: "Subscribe Request:"
+            - generic [ref=f5e529]:
+              - generic [ref=f5e530]:
+                - button "Report incorrect code" [ref=f5e532] [cursor=pointer]
+                - generic [ref=f5e536]:
+                  - button "Copy the contents from the code block" [ref=f5e537] [cursor=pointer]
+                  - status [ref=f5e541]
+                - button "Ask Assistant" [ref=f5e543] [cursor=pointer]
+              - code [ref=f5e550]:
+                - generic [ref=f5e551]: "{"
+                - generic [ref=f5e552]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f5e553]: "\"id\": 4,"
+                - generic [ref=f5e554]: "\"method\": \"resources/subscribe\","
+                - generic [ref=f5e555]: "\"params\": {"
+                - generic [ref=f5e556]: "\"uri\": \"file:///project/src/main.rs\""
+                - generic [ref=f5e557]: "}"
+                - generic [ref=f5e558]: "}"
+            - strong [ref=f5e560]: "Update Notification:"
+            - generic [ref=f5e561]:
+              - generic [ref=f5e562]:
+                - button "Report incorrect code" [ref=f5e564] [cursor=pointer]
+                - generic [ref=f5e568]:
+                  - button "Copy the contents from the code block" [ref=f5e569] [cursor=pointer]
+                  - status [ref=f5e573]
+                - button "Ask Assistant" [ref=f5e575] [cursor=pointer]
+              - code [ref=f5e582]:
+                - generic [ref=f5e583]: "{"
+                - generic [ref=f5e584]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f5e585]: "\"method\": \"notifications/resources/updated\","
+                - generic [ref=f5e586]: "\"params\": {"
+                - generic [ref=f5e587]: "\"uri\": \"file:///project/src/main.rs\""
+                - generic [ref=f5e588]: "}"
+                - generic [ref=f5e589]: "}"
+            - heading "Navigate to header Message Flow" [level=2] [ref=f5e590]:
+              - link "Navigate to header" [ref=f5e591] [cursor=pointer]:
+                - /url: "#message-flow"
+              - generic [ref=f5e596] [cursor=pointer]: Message Flow
+            - heading "Navigate to header Data Types" [level=2] [ref=f5e597]:
+              - link "Navigate to header" [ref=f5e598] [cursor=pointer]:
+                - /url: "#data-types"
+              - generic [ref=f5e603] [cursor=pointer]: Data Types
+            - heading "Navigate to header Resource" [level=3] [ref=f5e604]:
+              - link "Navigate to header" [ref=f5e605] [cursor=pointer]:
+                - /url: "#resource"
+              - generic [ref=f5e610] [cursor=pointer]: Resource
+            - generic [ref=f5e611]: "A resource definition includes:"
+            - list [ref=f5e612]:
+              - listitem [ref=f5e613]:
+                - code [ref=f5e614]: uri
+                - text: ": Unique identifier for the resource"
+              - listitem [ref=f5e615]:
+                - code [ref=f5e616]: name
+                - text: ": The name of the resource."
+              - listitem [ref=f5e617]:
+                - code [ref=f5e618]: title
+                - text: ": Optional human-readable name of the resource for display purposes."
+              - listitem [ref=f5e619]:
+                - code [ref=f5e620]: description
+                - text: ": Optional description"
+              - listitem [ref=f5e621]:
+                - code [ref=f5e622]: icons
+                - text: ": Optional array of icons for display in user interfaces"
+              - listitem [ref=f5e623]:
+                - code [ref=f5e624]: mimeType
+                - text: ": Optional MIME type"
+              - listitem [ref=f5e625]:
+                - code [ref=f5e626]: size
+                - text: ": Optional size in bytes"
+            - heading "Navigate to header Resource Contents" [level=3] [ref=f5e627]:
+              - link "Navigate to header" [ref=f5e628] [cursor=pointer]:
+                - /url: "#resource-contents"
+              - generic [ref=f5e633] [cursor=pointer]: Resource Contents
+            - generic [ref=f5e634]: "Resources can contain either text or binary data:"
+            - heading "Navigate to header Text Content" [level=4] [ref=f5e635]:
+              - link "Navigate to header" [ref=f5e636] [cursor=pointer]:
+                - /url: "#text-content"
+              - generic [ref=f5e641] [cursor=pointer]: Text Content
+            - generic [ref=f5e642]:
+              - generic [ref=f5e643]:
+                - button "Report incorrect code" [ref=f5e645] [cursor=pointer]
+                - generic [ref=f5e649]:
+                  - button "Copy the contents from the code block" [ref=f5e650] [cursor=pointer]
+                  - status [ref=f5e654]
+                - button "Ask Assistant" [ref=f5e656] [cursor=pointer]
+              - code [ref=f5e663]:
+                - generic [ref=f5e664]: "{"
+                - generic [ref=f5e665]: "\"uri\": \"file:///example.txt\","
+                - generic [ref=f5e666]: "\"mimeType\": \"text/plain\","
+                - generic [ref=f5e667]: "\"text\": \"Resource content\""
+                - generic [ref=f5e668]: "}"
+            - heading "Navigate to header Binary Content" [level=4] [ref=f5e669]:
+              - link "Navigate to header" [ref=f5e670] [cursor=pointer]:
+                - /url: "#binary-content"
+              - generic [ref=f5e675] [cursor=pointer]: Binary Content
+            - generic [ref=f5e676]:
+              - generic [ref=f5e677]:
+                - button "Report incorrect code" [ref=f5e679] [cursor=pointer]
+                - generic [ref=f5e683]:
+                  - button "Copy the contents from the code block" [ref=f5e684] [cursor=pointer]
+                  - status [ref=f5e688]
+                - button "Ask Assistant" [ref=f5e690] [cursor=pointer]
+              - code [ref=f5e697]:
+                - generic [ref=f5e698]: "{"
+                - generic [ref=f5e699]: "\"uri\": \"file:///example.png\","
+                - generic [ref=f5e700]: "\"mimeType\": \"image/png\","
+                - generic [ref=f5e701]: "\"blob\": \"base64-encoded-data\""
+                - generic [ref=f5e702]: "}"
+            - heading "Navigate to header Annotations" [level=3] [ref=f5e703]:
+              - link "Navigate to header" [ref=f5e704] [cursor=pointer]:
+                - /url: "#annotations"
+              - generic [ref=f5e709] [cursor=pointer]: Annotations
+            - generic [ref=f5e710]: "Resources, resource templates and content blocks support optional annotations that provide hints to clients about how to use or display the resource:"
+            - list [ref=f5e711]:
+              - listitem [ref=f5e712]:
+                - strong [ref=f5e713]:
+                  - code [ref=f5e714]: audience
+                - text: ": An array indicating the intended audience(s) for this resource. Valid values are"
+                - code [ref=f5e715]: "\"user\""
+                - text: and
+                - code [ref=f5e716]: "\"assistant\""
+                - text: . For example,
+                - code [ref=f5e717]: "[\"user\", \"assistant\"]"
+                - text: indicates content useful for both.
+              - listitem [ref=f5e718]:
+                - strong [ref=f5e719]:
+                  - code [ref=f5e720]: priority
+                - text: ": A number from 0.0 to 1.0 indicating the importance of this resource. A value of 1 means “most important” (effectively required), while 0 means “least important” (entirely optional)."
+              - listitem [ref=f5e721]:
+                - strong [ref=f5e722]:
+                  - code [ref=f5e723]: lastModified
+                - text: ": An ISO 8601 formatted timestamp indicating when the resource was last modified (e.g.,"
+                - code [ref=f5e724]: "\"2025-01-12T15:00:58Z\""
+                - text: ).
+            - generic [ref=f5e725]: "Example resource with annotations:"
+            - generic [ref=f5e726]:
+              - generic [ref=f5e727]:
+                - button "Report incorrect code" [ref=f5e729] [cursor=pointer]
+                - generic [ref=f5e733]:
+                  - button "Copy the contents from the code block" [ref=f5e734] [cursor=pointer]
+                  - status [ref=f5e738]
+                - button "Ask Assistant" [ref=f5e740] [cursor=pointer]
+              - code [ref=f5e747]:
+                - generic [ref=f5e748]: "{"
+                - generic [ref=f5e749]: "\"uri\": \"file:///project/README.md\","
+                - generic [ref=f5e750]: "\"name\": \"README.md\","
+                - generic [ref=f5e751]: "\"title\": \"Project Documentation\","
+                - generic [ref=f5e752]: "\"mimeType\": \"text/markdown\","
+                - generic [ref=f5e753]: "\"annotations\": {"
+                - generic [ref=f5e754]: "\"audience\": [\"user\"],"
+                - generic [ref=f5e755]: "\"priority\": 0.8,"
+                - generic [ref=f5e756]: "\"lastModified\": \"2025-01-12T15:00:58Z\""
+                - generic [ref=f5e757]: "}"
+                - generic [ref=f5e758]: "}"
+            - generic [ref=f5e759]: "Clients can use these annotations to:"
+            - list [ref=f5e760]:
+              - listitem [ref=f5e761]: Filter resources based on their intended audience
+              - listitem [ref=f5e762]: Prioritize which resources to include in context
+              - listitem [ref=f5e763]: Display modification times or sort by recency
+            - heading "Navigate to header Common URI Schemes" [level=2] [ref=f5e764]:
+              - link "Navigate to header" [ref=f5e765] [cursor=pointer]:
+                - /url: "#common-uri-schemes"
+              - generic [ref=f5e770] [cursor=pointer]: Common URI Schemes
+            - generic [ref=f5e771]: The protocol defines several standard URI schemes. This list not exhaustive—implementations are always free to use additional, custom URI schemes.
+            - heading "Navigate to header https://" [level=3] [ref=f5e772]:
+              - link "Navigate to header" [ref=f5e773] [cursor=pointer]:
+                - /url: "#https//"
+              - generic [ref=f5e778] [cursor=pointer]: https://
+            - generic [ref=f5e779]: Used to represent a resource available on the web.
+            - generic [ref=f5e780]:
+              - text: Servers
+              - strong [ref=f5e781]: SHOULD
+              - text: use this scheme only when the client is able to fetch and load the resource directly from the web on its own—that is, it doesn’t need to read the resource via the MCP server.
+            - generic [ref=f5e782]:
+              - text: For other use cases, servers
+              - strong [ref=f5e783]: SHOULD
+              - text: prefer to use another URI scheme, or define a custom one, even if the server will itself be downloading resource contents over the internet.
+            - heading "Navigate to header file://" [level=3] [ref=f5e784]:
+              - link "Navigate to header" [ref=f5e785] [cursor=pointer]:
+                - /url: "#file//"
+              - generic [ref=f5e790] [cursor=pointer]: file://
+            - generic [ref=f5e791]: Used to identify resources that behave like a filesystem. However, the resources do not need to map to an actual physical filesystem.
+            - generic [ref=f5e792]:
+              - text: MCP servers
+              - strong [ref=f5e793]: MAY
+              - text: identify file:// resources with an
+              - link "XDG MIME type" [ref=f5e794] [cursor=pointer]:
+                - /url: https://specifications.freedesktop.org/shared-mime-info-spec/0.14/ar01s02.html#id-1.3.14
+              - text: ", like"
+              - code [ref=f5e795]: inode/directory
+              - text: ", to represent non-regular files (such as directories) that don’t otherwise have a standard MIME type."
+            - heading "Navigate to header git://" [level=3] [ref=f5e796]:
+              - link "Navigate to header" [ref=f5e797] [cursor=pointer]:
+                - /url: "#git//"
+              - generic [ref=f5e802] [cursor=pointer]: git://
+            - generic [ref=f5e803]: Git version control integration.
+            - heading "Navigate to header Custom URI Schemes" [level=3] [ref=f5e804]:
+              - link "Navigate to header" [ref=f5e805] [cursor=pointer]:
+                - /url: "#custom-uri-schemes"
+              - generic [ref=f5e810] [cursor=pointer]: Custom URI Schemes
+            - generic [ref=f5e811]:
+              - text: Custom URI schemes
+              - strong [ref=f5e812]: MUST
+              - text: be in accordance with
+              - link "RFC3986" [ref=f5e813] [cursor=pointer]:
+                - /url: https://datatracker.ietf.org/doc/html/rfc3986
+              - text: ", taking the above guidance in to account."
+            - heading "Navigate to header Error Handling" [level=2] [ref=f5e814]:
+              - link "Navigate to header" [ref=f5e815] [cursor=pointer]:
+                - /url: "#error-handling"
+              - generic [ref=f5e820] [cursor=pointer]: Error Handling
+            - generic [ref=f5e821]:
+              - text: Servers
+              - strong [ref=f5e822]: SHOULD
+              - text: "return standard JSON-RPC errors for common failure cases:"
+            - list [ref=f5e823]:
+              - listitem [ref=f5e824]:
+                - text: "Resource not found:"
+                - code [ref=f5e825]: "-32002"
+              - listitem [ref=f5e826]:
+                - text: "Internal errors:"
+                - code [ref=f5e827]: "-32603"
+            - generic [ref=f5e828]: "Example error:"
+            - generic [ref=f5e829]:
+              - generic [ref=f5e830]:
+                - button "Report incorrect code" [ref=f5e832] [cursor=pointer]
+                - generic [ref=f5e836]:
+                  - button "Copy the contents from the code block" [ref=f5e837] [cursor=pointer]
+                  - status [ref=f5e841]
+                - button "Ask Assistant" [ref=f5e843] [cursor=pointer]
+              - code [ref=f5e850]:
+                - generic [ref=f5e851]: "{"
+                - generic [ref=f5e852]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f5e853]: "\"id\": 5,"
+                - generic [ref=f5e854]: "\"error\": {"
+                - generic [ref=f5e855]: "\"code\": -32002,"
+                - generic [ref=f5e856]: "\"message\": \"Resource not found\","
+                - generic [ref=f5e857]: "\"data\": {"
+                - generic [ref=f5e858]: "\"uri\": \"file:///nonexistent.txt\""
+                - generic [ref=f5e859]: "}"
+                - generic [ref=f5e860]: "}"
+                - generic [ref=f5e861]: "}"
+            - heading "Navigate to header Security Considerations" [level=2] [ref=f5e862]:
+              - link "Navigate to header" [ref=f5e863] [cursor=pointer]:
+                - /url: "#security-considerations"
+              - generic [ref=f5e868] [cursor=pointer]: Security Considerations
+            - list [ref=f5e869]:
+              - listitem [ref=f5e870]:
+                - text: Servers
+                - strong [ref=f5e871]: MUST
+                - text: validate all resource URIs
+              - listitem [ref=f5e872]:
+                - text: Access controls
+                - strong [ref=f5e873]: SHOULD
+                - text: be implemented for sensitive resources
+              - listitem [ref=f5e874]:
+                - text: Binary data
+                - strong [ref=f5e875]: MUST
+                - text: be properly encoded
+              - listitem [ref=f5e876]:
+                - text: Resource permissions
+                - strong [ref=f5e877]: SHOULD
+                - text: be checked before operations
+          - generic [ref=f5e879]:
+            - paragraph [ref=f5e880]: Was this page helpful?
+            - generic [ref=f5e882]:
+              - button "Yes" [ref=f5e883] [cursor=pointer]
+              - button "No" [ref=f5e888] [cursor=pointer]
+          - navigation "Pagination" [ref=f5e893]:
+            - 'link "Previous: Prompts" [ref=f5e894] [cursor=pointer]':
+              - /url: /specification/2025-11-25/server/prompts
+              - generic [ref=f5e897]: Prompts
+            - 'link "Next: Tools" [ref=f5e898] [cursor=pointer]':
+              - /url: /specification/2025-11-25/server/tools
+              - generic [ref=f5e899]: Tools
+          - generic [ref=f5e903]:
+            - textbox "Ask a question..." [ref=f5e904]
+            - button "Send message" [disabled] [ref=f5e905]
+          - generic [ref=f5e909]:
+            - generic [ref=f5e910]:
+              - link "github" [ref=f5e911] [cursor=pointer]:
+                - /url: https://github.com/modelcontextprotocol
+              - link "discord" [ref=f5e914] [cursor=pointer]:
+                - /url: https://discord.gg/6CSzBmMkjX
+            - generic [ref=f5e917]:
+              - text: Copyright © Model Context Protocol a Series of LF Projects, LLC.For web site terms of use, trademark policy and other project policies please see
+              - link "https://lfprojects.org" [ref=f5e918] [cursor=pointer]:
+                - /url: https://lfprojects.org
+              - text: .
+  - alert [ref=f5e919]

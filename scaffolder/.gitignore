@@ -13,6 +13,7 @@ dist
 dist-ssr
 ui/node_modules
 ui/dist
+ui/temp
 *.local
 
 # Editor directories and files

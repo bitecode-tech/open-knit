@@ -5,6 +5,9 @@ import zipService from "@/services/files/ZipService";
 import type {Archiver} from "archiver";
 import backendScaffolderService, {BackendPayload} from "@/services/BackendScaffolderService";
 import frontendScaffolderService, {FrontendPayload} from "@/services/FrontendScaffolderService";
+import projectComposeStackBuilder from "@/services/ProjectComposeStackBuilder";
+import projectManifestBuilder from "@/services/ProjectManifestBuilder";
+import {buildGeneratedProjectGuidance} from "@/services/GeneratedProjectGuidance";
 import {ScaffolderRunContext} from "@/types/ScaffolderRunContext";
 import {ScaffolderRunHelpers} from "@/types/ScaffolderRunHelpers";
 
@@ -49,9 +52,20 @@ class AppScaffolderService {
         const zipFilePath = path.join(resolvedPaths.outputRoot, zipFileName);
 
         const zipStart = process.hrtime.bigint();
-        const excludedBaseEntries = backendRootItems.has("Dockerfile")
-            ? new Set([path.posix.join("backend", "Dockerfile")])
-            : undefined;
+        const excludedBaseEntries = new Set([
+            "docker-compose.yml",
+            "README.md",
+            "AGENTS.md",
+            "docker-compose-windows.yml",
+            path.posix.join("backend", "docker-compose.yml"),
+            path.posix.join("backend", "docker-compose-windows.yml"),
+            path.posix.join("backend", "README-run.md"),
+            path.posix.join("frontend", "docker-compose.yml"),
+            path.posix.join("frontend", "docker-compose-windows.yml")
+        ]);
+        if (backendRootItems.has("Dockerfile")) {
+            excludedBaseEntries.add(path.posix.join("backend", "Dockerfile"));
+        }
         await zipService.createZipFromBaseZipAndEntries(
             baseZipPath,
             zipFilePath,
@@ -81,6 +95,23 @@ class AppScaffolderService {
                     (process.hrtime.bigint() - frontendStart) / 1_000_000n
                 );
                 console.log(`[scaffolder] Preparing frontend files (+${frontendElapsedMs}ms)`);
+
+                const rootComposeContents = projectComposeStackBuilder.buildRootCompose(
+                    runContext,
+                    backendPayload.updatedDockerCompose,
+                    frontendPayload.updatedDockerCompose
+                );
+                archive.append(rootComposeContents, {name: "docker-compose.yml"});
+                const projectManifest = projectManifestBuilder.build(
+                    runContext,
+                    backendPayload.updatedBuildGradle,
+                    frontendPayload.updatedPackageJson,
+                    rootComposeContents
+                );
+                const generatedGuidance = buildGeneratedProjectGuidance(runContext.projectSpec, projectManifest);
+                archive.append(generatedGuidance.readme, {name: "README.md"});
+                archive.append(generatedGuidance.agents, {name: "AGENTS.md"});
+                archive.append(`${JSON.stringify(projectManifest, null, 2)}\n`, {name: "open-knit-project.json"});
             },
             excludedBaseEntries
         );
@@ -91,6 +122,13 @@ class AppScaffolderService {
     }
 
     private buildZipFileName(runContext: ScaffolderRunContext): string {
+        if (runContext.outputIdentifier !== undefined) {
+            if (!/^[a-f0-9]{64}$/.test(runContext.outputIdentifier)) {
+                throw new Error("Invalid internal output identifier.");
+            }
+            return `generation-${runContext.outputIdentifier}.zip`;
+        }
+
         const trimmedName = runContext.applicationName.trim();
         const baseName = trimmedName.length > 0 ? trimmedName : "backend";
         const safeName = baseName.replace(/[\\/:*?"<>|]/g, "-");
@@ -147,6 +185,9 @@ class AppScaffolderService {
         baseTreePath: string
     ): void {
         for (const rootItem of repoRootItems) {
+            if (rootItem === "docker-compose.yml") {
+                continue;
+            }
             const sourcePath = path.join(repositoryRoot, rootItem);
             if (!fs.existsSync(sourcePath)) {
                 throw new Error(`Root item "${rootItem}" not found in repository root.`);

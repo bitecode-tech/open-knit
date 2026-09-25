@@ -1,0 +1,1267 @@
+- generic [active] [ref=f3e1]:
+  - blockquote [aria-hidden] [ref=f3e2]:
+    - heading [level=2] [ref=f3e3]: Documentation Index
+    - paragraph [ref=f3e4]:
+      - text: "Fetch the complete documentation index at:"
+      - link [ref=f3e5] [cursor=pointer]:
+        - /url: /llms.txt
+        - text: /llms.txt
+    - paragraph [ref=f3e6]: Use this file to discover all available pages before exploring further.
+  - generic [ref=f3e7]:
+    - link "Skip to main content" [ref=f3e8] [cursor=pointer]:
+      - /url: "#content-area"
+    - generic [ref=f3e10]:
+      - banner [ref=f3e11]:
+        - generic [ref=f3e15]:
+          - generic [ref=f3e17]:
+            - link "Model Context Protocol home page light logo" [ref=f3e19] [cursor=pointer]:
+              - /url: /
+              - generic [ref=f3e20]: Model Context Protocol home page
+              - img "light logo" [ref=f3e21]
+            - generic [ref=f3e22]:
+              - button "Open search" [ref=f3e23] [cursor=pointer]:
+                - generic [ref=f3e24]: Search...
+              - button "Toggle assistant panel" [ref=f3e26] [cursor=pointer]
+              - button "More actions" [ref=f3e30] [cursor=pointer]
+          - button "Navigation Transports Streamable HTTP" [ref=f3e32] [cursor=pointer]:
+            - generic [ref=f3e33]: Navigation
+            - generic [ref=f3e36]:
+              - generic [ref=f3e37]: Transports
+              - generic [ref=f3e41]: Streamable HTTP
+      - main [ref=f3e43]:
+        - generic [ref=f3e45]:
+          - generic [ref=f3e47]:
+            - generic [ref=f3e48]: Transports
+            - generic [ref=f3e49]:
+              - heading "Streamable HTTP" [level=1] [ref=f3e50]
+              - generic [ref=f3e51]:
+                - button "Copy page" [ref=f3e52] [cursor=pointer]
+                - button "More actions" [ref=f3e59] [cursor=pointer]
+          - generic [ref=f3e62]:
+            - note "Info" [ref=f3e63]:
+              - generic [ref=f3e68]:
+                - text: Streamable HTTP was introduced in protocol version 2025-03-26 as a replacement for the
+                - link "HTTP+SSE transport" [ref=f3e69] [cursor=pointer]:
+                  - /url: /specification/2024-11-05/basic/transports#http-with-sse
+                - text: from protocol version 2024-11-05.
+            - note "Info" [ref=f3e70]:
+              - generic [ref=f3e74]:
+                - generic [ref=f3e75]: "Revision 2026-07-28 changed the behavior of Streamable HTTP. Clients must ensure they handle backwards compatibility correctly. Changes included:"
+                - list [ref=f3e76]:
+                  - listitem [ref=f3e77]: Removal of the GET stream endpoint.
+                  - listitem [ref=f3e78]: Removal of protocol-level sessions.
+                - generic [ref=f3e79]:
+                  - text: See the
+                  - link "changelog" [ref=f3e80] [cursor=pointer]:
+                    - /url: /specification/2026-07-28/changelog
+                  - text: and
+                  - link "Backward Compatibility" [ref=f3e81] [cursor=pointer]:
+                    - /url: "#backward-compatibility"
+                  - text: below.
+            - generic [ref=f3e82]:
+              - text: In the
+              - strong [ref=f3e83]: Streamable HTTP
+              - text: "transport, the server operates as an independent process that can handle multiple client connections. At a glance:"
+            - list [ref=f3e84]:
+              - listitem [ref=f3e85]:
+                - text: The server exposes a single HTTP endpoint (the
+                - strong [ref=f3e86]: MCP endpoint
+                - text: ) that accepts POST.
+              - listitem [ref=f3e87]: The client sends every JSON-RPC request or notification as its own HTTP POST.
+              - listitem [ref=f3e88]:
+                - text: The server answers each request with either a single JSON object or a
+                - link "Server-Sent Events" [ref=f3e89] [cursor=pointer]:
+                  - /url: https://en.wikipedia.org/wiki/Server-sent_events
+                - text: (SSE) stream scoped to that request, carrying request-related notifications followed by the final response.
+              - listitem [ref=f3e90]:
+                - text: Server-to-client interactions (sampling, elicitation, roots) are embedded in results as input requests per
+                - link "Multi Round-Trip Requests (MRTR)" [ref=f3e91] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/patterns/mrtr
+                - text: (
+                - link "SEP-2322" [ref=f3e92] [cursor=pointer]:
+                  - /url: /seps/2322-MRTR
+                - text: ).
+              - listitem [ref=f3e93]:
+                - text: Long-lived change notifications (such as list changes and resource updates) are delivered on the response stream of a
+                - link [ref=f3e94] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/patterns/subscriptions
+                  - code [ref=f3e95]: subscriptions/listen
+                - text: request.
+            - generic [ref=f3e96]:
+              - text: See
+              - link "Message Flow" [ref=f3e97] [cursor=pointer]:
+                - /url: "#message-flow"
+              - text: for sequence diagrams of these interactions.
+            - generic [ref=f3e98]:
+              - text: The server
+              - strong [ref=f3e99]: MUST
+              - text: provide a single HTTP endpoint path (hereafter referred to as the
+              - strong [ref=f3e100]: MCP endpoint
+              - text: ) that supports POST. For example, this could be a URL like
+              - code [ref=f3e101]: https://example.com/mcp
+              - text: .
+            - heading "Navigate to header Security & Endpoint" [level=2] [ref=f3e102]:
+              - link "Navigate to header" [ref=f3e103] [cursor=pointer]:
+                - /url: "#security-&-endpoint"
+              - generic [ref=f3e108] [cursor=pointer]: Security & Endpoint
+            - generic [ref=f3e109]: "When implementing Streamable HTTP transport:"
+            - list [ref=f3e110]:
+              - listitem [ref=f3e111]:
+                - text: Servers
+                - strong [ref=f3e112]: MUST
+                - text: validate the
+                - code [ref=f3e113]: Origin
+                - text: header on all incoming connections to prevent DNS rebinding attacks.
+                - list [ref=f3e114]:
+                  - listitem [ref=f3e115]:
+                    - text: If the
+                    - code [ref=f3e116]: Origin
+                    - text: header is present and invalid, servers
+                    - strong [ref=f3e117]: MUST
+                    - text: respond with HTTP 403 Forbidden. The HTTP response body
+                    - strong [ref=f3e118]: MAY
+                    - text: comprise a JSON-RPC
+                    - emphasis [ref=f3e119]: error response
+                    - text: that has no
+                    - code [ref=f3e120]: id
+                    - text: .
+              - listitem [ref=f3e121]:
+                - text: When running locally, servers
+                - strong [ref=f3e122]: SHOULD
+                - text: bind only to localhost (127.0.0.1) rather than all network interfaces (0.0.0.0).
+              - listitem [ref=f3e123]:
+                - text: Servers
+                - strong [ref=f3e124]: SHOULD
+                - text: implement proper authentication for all connections.
+            - generic [ref=f3e125]: Without these protections, attackers could use DNS rebinding to interact with local MCP servers from remote websites.
+            - heading "Navigate to header Sending Messages" [level=2] [ref=f3e126]:
+              - link "Navigate to header" [ref=f3e127] [cursor=pointer]:
+                - /url: "#sending-messages"
+              - generic [ref=f3e132] [cursor=pointer]: Sending Messages
+            - generic [ref=f3e133]:
+              - text: Every JSON-RPC message sent from the client
+              - strong [ref=f3e134]: MUST
+              - text: be a new HTTP POST request to the MCP endpoint.
+            - list [ref=f3e135]:
+              - listitem [ref=f3e136]:
+                - text: The client
+                - strong [ref=f3e137]: MUST
+                - text: use HTTP POST to send JSON-RPC messages.
+              - listitem [ref=f3e138]:
+                - text: The client
+                - strong [ref=f3e139]: MUST
+                - text: include an
+                - code [ref=f3e140]: Accept
+                - text: header listing both
+                - code [ref=f3e141]: application/json
+                - text: and
+                - code [ref=f3e142]: text/event-stream
+                - text: as supported content types.
+              - listitem [ref=f3e143]:
+                - text: The client
+                - strong [ref=f3e144]: MUST
+                - text: include the
+                - link "request metadata headers" [ref=f3e145] [cursor=pointer]:
+                  - /url: "#request-metadata"
+                - text: on each POST request.
+              - listitem [ref=f3e146]:
+                - text: The body of the HTTP POST
+                - strong [ref=f3e147]: MUST
+                - text: be a single JSON-RPC
+                - emphasis [ref=f3e148]: request
+                - text: or
+                - emphasis [ref=f3e149]: notification
+                - text: . The client
+                - strong [ref=f3e150]: MUST NOT
+                - text: send JSON-RPC
+                - emphasis [ref=f3e151]: responses
+                - text: .
+              - listitem [ref=f3e152]:
+                - text: If the body is a JSON-RPC
+                - emphasis [ref=f3e153]: notification
+                - text: ":"
+                - list [ref=f3e154]:
+                  - listitem [ref=f3e155]:
+                    - text: If the server accepts it, the server
+                    - strong [ref=f3e156]: MUST
+                    - text: return HTTP status code
+                    - code [ref=f3e157]: 202 Accepted
+                    - text: with no body.
+                  - listitem [ref=f3e158]:
+                    - text: If the server cannot accept it, it
+                    - strong [ref=f3e159]: MUST
+                    - text: return an HTTP error status code (e.g.,
+                    - code [ref=f3e160]: 400 Bad Request
+                    - text: ). The HTTP response body
+                    - strong [ref=f3e161]: MAY
+                    - text: comprise a JSON-RPC
+                    - emphasis [ref=f3e162]: error response
+                    - text: that has no
+                    - code [ref=f3e163]: id
+                    - text: .
+              - listitem [ref=f3e164]:
+                - text: If the body is a JSON-RPC
+                - emphasis [ref=f3e165]: request
+                - text: ", the server"
+                - strong [ref=f3e166]: MUST
+                - text: return either
+                - code [ref=f3e167]: "Content-Type: application/json"
+                - text: (a single JSON object) or
+                - code [ref=f3e168]: "Content-Type: text/event-stream"
+                - text: (an SSE response stream). The client
+                - strong [ref=f3e169]: MUST
+                - text: support both.
+            - note "Note" [ref=f3e170]:
+              - generic [ref=f3e175]:
+                - text: This revision of the core protocol defines no client-to-server
+                - emphasis [ref=f3e176]: notifications
+                - text: over Streamable HTTP. The only client-sent notification in the core protocol,
+                - code [ref=f3e177]: notifications/cancelled
+                - text: ", is used only on the"
+                - link "stdio" [ref=f3e178] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/transports/stdio
+                - text: transport; on Streamable HTTP, closing the SSE response stream is itself the cancellation signal and no
+                - code [ref=f3e179]: notifications/cancelled
+                - text: message is expected (see
+                - link "Cancellation" [ref=f3e180] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/patterns/cancellation
+                - text: ). The notification rules above describe the transport mechanics for a notification POST; header requirements for notification POSTs are not defined by this revision.
+            - heading "Navigate to header Receiving Messages" [level=2] [ref=f3e181]:
+              - link "Navigate to header" [ref=f3e182] [cursor=pointer]:
+                - /url: "#receiving-messages"
+              - generic [ref=f3e187] [cursor=pointer]: Receiving Messages
+            - generic [ref=f3e188]:
+              - text: When the server returns an SSE response stream (
+              - code [ref=f3e189]: "Content-Type: text/event-stream"
+              - text: "):"
+            - list [ref=f3e190]:
+              - listitem [ref=f3e191]:
+                - text: The server
+                - strong [ref=f3e192]: MAY
+                - text: send JSON-RPC
+                - emphasis [ref=f3e193]: notifications
+                - text: — for example,
+                - link [ref=f3e194] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/patterns/progress
+                  - code [ref=f3e195]: notifications/progress
+                - text: or
+                - link [ref=f3e196] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/server/utilities/logging
+                  - code [ref=f3e197]: notifications/message
+                - text: — before the final response. These notifications
+                - strong [ref=f3e198]: MUST
+                - text: relate to the originating client request.
+              - listitem [ref=f3e199]:
+                - text: The server
+                - strong [ref=f3e200]: MUST NOT
+                - text: send independent JSON-RPC
+                - emphasis [ref=f3e201]: requests
+                - text: on this stream. Server-to-client interactions (sampling, elicitation, list-roots) are embedded as input requests inside an
+                - link [ref=f3e202] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/schema#inputrequiredresult
+                  - code [ref=f3e203]: InputRequiredResult
+                - text: per
+                - link "MRTR" [ref=f3e204] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/patterns/mrtr
+                - text: (
+                - link "SEP-2322" [ref=f3e205] [cursor=pointer]:
+                  - /url: /seps/2322-MRTR
+                - text: ), not delivered as separate requests on this or any other stream. This is a change from Streamable HTTP in protocol versions
+                - code [ref=f3e206]: 2025-03-26
+                - text: through
+                - code [ref=f3e207]: 2025-11-25
+                - text: ", where servers could send such requests on SSE streams."
+              - listitem [ref=f3e208]:
+                - text: The final JSON-RPC
+                - emphasis [ref=f3e209]: response
+                - strong [ref=f3e210]: SHOULD
+                - text: terminate the stream.
+            - generic [ref=f3e211]:
+              - text: Long-lived notification streams are obtained by sending a
+              - link [ref=f3e212] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/patterns/subscriptions
+                - code [ref=f3e213]: subscriptions/listen
+              - text: request. The server’s response is itself an SSE stream that stays open and delivers the change notifications the client opted in to (such as
+              - code [ref=f3e214]: notifications/tools/list_changed
+              - text: or
+              - code [ref=f3e215]: notifications/resources/updated
+              - text: ). Request-scoped notifications like
+              - code [ref=f3e216]: notifications/progress
+              - text: and
+              - code [ref=f3e217]: notifications/message
+              - text: are
+              - strong [ref=f3e218]: not
+              - text: delivered on the listen stream — they flow only on the response stream of the request they relate to.
+            - generic [ref=f3e219]:
+              - text: When initiating an SSE stream, servers
+              - strong [ref=f3e220]: SHOULD
+              - text: include the
+              - code [ref=f3e221]: "X-Accel-Buffering: no"
+              - text: header in the HTTP response. This instructs reverse proxies (such as nginx) to disable response buffering, ensuring that SSE events are delivered to clients immediately rather than being held in a buffer. Without this header, proxies may accumulate messages before sending them to the client, introducing unwanted latency and potentially breaking the real-time nature of SSE communication.
+            - note "Note" [ref=f3e222]:
+              - generic [ref=f3e227]:
+                - text: For long-lived streams — in particular the
+                - link [ref=f3e228] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/patterns/subscriptions
+                  - code [ref=f3e229]: subscriptions/listen
+                - text: response stream — servers are encouraged to periodically emit an SSE comment line (a line beginning with a colon, e.g.
+                - code [ref=f3e230]: :\r\n
+                - text: ) as a keep-alive. This keeps the connection from being closed by intermediaries or client idle timeouts during quiet periods when no notifications are flowing. Per the
+                - link "SSE specification" [ref=f3e231] [cursor=pointer]:
+                  - /url: https://en.wikipedia.org/wiki/Server-sent_events
+                - text: ", any line beginning with a colon is a comment that carries no event data; clients must ignore such lines and must not treat them as malformed input."
+            - generic [ref=f3e232]:
+              - text: Resumable SSE streams via
+              - code [ref=f3e233]: Last-Event-ID
+              - text: are not supported.
+            - heading "Navigate to header Message Flow" [level=2] [ref=f3e234]:
+              - link "Navigate to header" [ref=f3e235] [cursor=pointer]:
+                - /url: "#message-flow"
+              - generic [ref=f3e240] [cursor=pointer]: Message Flow
+            - generic [ref=f3e241]: The following diagrams illustrate the message flows on a single MCP endpoint.
+            - generic [ref=f3e242]:
+              - strong [ref=f3e243]: Requests and responses.
+              - text: "Each request is its own POST; the server chooses per request whether to respond with a single JSON object or an SSE stream:"
+            - generic [ref=f3e244]:
+              - strong [ref=f3e245]: Server-to-client interactions (MRTR).
+              - text: When the server needs input from the client — sampling, elicitation, or roots — it does not send its own JSON-RPC request. It returns an
+              - link [ref=f3e246] [cursor=pointer]:
+                - /url: /specification/2026-07-28/schema#inputrequiredresult
+                - code [ref=f3e247]: InputRequiredResult
+              - text: containing
+              - code [ref=f3e248]: inputRequests
+              - text: ", and the client retries the original request with the matching"
+              - code [ref=f3e249]: inputResponses
+              - text: (see
+              - link "Multi Round-Trip Requests" [ref=f3e250] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/patterns/mrtr
+              - text: "):"
+            - generic [ref=f3e251]:
+              - strong [ref=f3e252]: Change notifications.
+              - text: Clients that want server-initiated change notifications open a long-lived stream with
+              - link [ref=f3e253] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/patterns/subscriptions
+                - code [ref=f3e254]: subscriptions/listen
+              - text: "; the response stream stays open and carries only the notification types the client opted in to:"
+            - heading "Navigate to header Cancellation" [level=2] [ref=f3e255]:
+              - link "Navigate to header" [ref=f3e256] [cursor=pointer]:
+                - /url: "#cancellation"
+              - generic [ref=f3e261] [cursor=pointer]: Cancellation
+            - generic [ref=f3e262]:
+              - text: Closing the SSE response stream
+              - strong [ref=f3e263]: MUST
+              - text: be treated by the server as cancellation of that request. Because each request has its own response stream, the transport-level disconnect is unambiguous. The server
+              - strong [ref=f3e264]: SHOULD
+              - text: stop work on the cancelled request as soon as practical and
+              - strong [ref=f3e265]: MUST NOT
+              - text: send any further messages for it. See
+              - link "Cancellation" [ref=f3e266] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/patterns/cancellation
+              - text: for the full rules.
+            - heading "Navigate to header Request Metadata" [level=2] [ref=f3e267]:
+              - link "Navigate to header" [ref=f3e268] [cursor=pointer]:
+                - /url: "#request-metadata"
+              - generic [ref=f3e273] [cursor=pointer]: Request Metadata
+            - generic [ref=f3e274]: The Streamable HTTP transport mirrors selected JSON-RPC body fields into HTTP headers so that intermediaries (load balancers, gateways, observability tooling) can route and inspect requests without parsing the body.
+            - heading "Navigate to header Protocol Version Header" [level=3] [ref=f3e275]:
+              - link "Navigate to header" [ref=f3e276] [cursor=pointer]:
+                - /url: "#protocol-version-header"
+              - generic [ref=f3e281] [cursor=pointer]: Protocol Version Header
+            - generic [ref=f3e282]:
+              - text: Every POST request to the MCP endpoint
+              - strong [ref=f3e283]: MUST
+              - text: include an
+              - code [ref=f3e284]: MCP-Protocol-Version
+              - text: header.
+            - generic [ref=f3e285]:
+              - text: "For example:"
+              - code [ref=f3e286]: "MCP-Protocol-Version: 2026-07-28"
+            - generic [ref=f3e287]:
+              - text: The header value
+              - strong [ref=f3e288]: MUST
+              - text: match the
+              - code [ref=f3e289]: io.modelcontextprotocol/protocolVersion
+              - text: field carried in the request body’s
+              - code [ref=f3e290]: _meta
+              - text: . If the values do not match, the server
+              - strong [ref=f3e291]: MUST
+              - text: reject the request with
+              - code [ref=f3e292]: 400 Bad Request
+              - text: and a
+              - code [ref=f3e293]: HeaderMismatch
+              - text: JSON-RPC error (see
+              - link "Server Validation" [ref=f3e294] [cursor=pointer]:
+                - /url: "#server-validation"
+              - text: ).
+            - generic [ref=f3e295]:
+              - text: If the server does not implement the requested protocol version (whether the version is unknown to the server, or is a known version the server has chosen not to support), it
+              - strong [ref=f3e296]: MUST
+              - text: respond with
+              - code [ref=f3e297]: 400 Bad Request
+              - text: and an
+              - link [ref=f3e298] [cursor=pointer]:
+                - /url: /specification/2026-07-28/schema#unsupportedprotocolversionerror
+                - code [ref=f3e299]: UnsupportedProtocolVersionError
+              - text: listing its supported versions. See
+              - 'link "Versioning: Protocol Version Negotiation" [ref=f3e300] [cursor=pointer]':
+                - /url: /specification/2026-07-28/basic/versioning#protocol-version-negotiation
+              - text: for the negotiation flow.
+            - generic [ref=f3e301]:
+              - text: If the server does not implement the requested RPC method, it
+              - strong [ref=f3e302]: MUST
+              - text: respond with
+              - code [ref=f3e303]: 404 Not Found
+              - text: and a JSON-RPC error with code
+              - code [ref=f3e304]: "-32601"
+              - text: (
+              - code [ref=f3e305]: Method not found
+              - text: ). The JSON-RPC error body distinguishes this case from a
+              - code [ref=f3e306]: "404"
+              - text: returned by a legacy
+              - link "HTTP+SSE" [ref=f3e307] [cursor=pointer]:
+                - /url: /specification/2024-11-05/basic/transports#http-with-sse
+              - text: server that does not host the modern MCP endpoint (see
+              - link "Backward Compatibility" [ref=f3e308] [cursor=pointer]:
+                - /url: "#backward-compatibility"
+              - text: ).
+            - generic [ref=f3e309]:
+              - text: A server that supports clients implementing protocol versions earlier than
+              - code [ref=f3e310]: 2025-06-18
+              - text: (which did not define the
+              - code [ref=f3e311]: MCP-Protocol-Version
+              - text: header)
+              - strong [ref=f3e312]: MAY
+              - text: treat a request that omits the header as protocol version
+              - code [ref=f3e313]: 2025-03-26
+              - text: . A server that does not support such clients
+              - strong [ref=f3e314]: MUST
+              - text: reject a request without the header per
+              - link "Server Validation" [ref=f3e315] [cursor=pointer]:
+                - /url: "#server-validation"
+              - text: .
+            - heading "Navigate to header Standard Request Headers" [level=3] [ref=f3e316]:
+              - link "Navigate to header" [ref=f3e317] [cursor=pointer]:
+                - /url: "#standard-request-headers"
+              - generic [ref=f3e322] [cursor=pointer]: Standard Request Headers
+            - region "Scrollable table" [ref=f3e323]:
+              - table [ref=f3e325]:
+                - rowgroup [ref=f3e326]:
+                  - row [ref=f3e327]:
+                    - columnheader "Header Name" [ref=f3e328]
+                    - columnheader "Source Field" [ref=f3e329]
+                    - columnheader "Required For" [ref=f3e330]
+                - rowgroup [ref=f3e331]:
+                  - row [ref=f3e332]:
+                    - cell [ref=f3e333]:
+                      - code [ref=f3e334]: Mcp-Method
+                    - cell [ref=f3e335]:
+                      - code [ref=f3e336]: method
+                    - cell "All requests" [ref=f3e337]
+                  - row [ref=f3e338]:
+                    - cell [ref=f3e339]:
+                      - code [ref=f3e340]: Mcp-Name
+                    - cell [ref=f3e341]:
+                      - code [ref=f3e342]: params.name
+                      - text: or
+                      - code [ref=f3e343]: params.uri
+                    - cell [ref=f3e344]:
+                      - code [ref=f3e345]: tools/call
+                      - text: ","
+                      - code [ref=f3e346]: resources/read
+                      - text: ","
+                      - code [ref=f3e347]: prompts/get
+                      - text: requests
+            - generic [ref=f3e348]:
+              - text: These headers are
+              - strong [ref=f3e349]: REQUIRED
+              - text: for compliance.
+            - generic [ref=f3e350]:
+              - text: If the
+              - code [ref=f3e351]: Mcp-Name
+              - text: source value cannot be safely represented as a plain ASCII header value, clients
+              - strong [ref=f3e352]: MUST
+              - text: encode it using the Base64 sentinel format described in
+              - link "Value Encoding" [ref=f3e353] [cursor=pointer]:
+                - /url: "#value-encoding"
+              - text: .
+            - strong [ref=f3e355]:
+              - code [ref=f3e356]: tools/call
+              - text: "request:"
+            - generic [ref=f3e357]:
+              - generic [ref=f3e358]:
+                - button "Report incorrect code" [ref=f3e360] [cursor=pointer]
+                - generic [ref=f3e364]:
+                  - button "Copy the contents from the code block" [ref=f3e365] [cursor=pointer]
+                  - status [ref=f3e369]
+                - button "Ask Assistant" [ref=f3e371] [cursor=pointer]
+              - code [ref=f3e378]:
+                - generic [ref=f3e379]: POST /mcp HTTP/1.1
+                - generic [ref=f3e380]: "Content-Type: application/json"
+                - generic [ref=f3e381]: "MCP-Protocol-Version: 2026-07-28"
+                - generic [ref=f3e382]: "Mcp-Method: tools/call"
+                - generic [ref=f3e383]: "Mcp-Name: get_weather"
+                - generic [ref=f3e384]: "{"
+                - generic [ref=f3e385]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f3e386]: "\"id\": 1,"
+                - generic [ref=f3e387]: "\"method\": \"tools/call\","
+                - generic [ref=f3e388]: "\"params\": {"
+                - generic [ref=f3e389]: "\"name\": \"get_weather\","
+                - generic [ref=f3e390]: "\"arguments\": {"
+                - generic [ref=f3e391]: "\"location\": \"Seattle, WA\""
+                - generic [ref=f3e392]: "},"
+                - generic [ref=f3e393]: "\"_meta\": {"
+                - generic [ref=f3e394]: "\"io.modelcontextprotocol/protocolVersion\": \"2026-07-28\","
+                - generic [ref=f3e395]: "\"io.modelcontextprotocol/clientInfo\": {"
+                - generic [ref=f3e396]: "\"name\": \"ExampleClient\","
+                - generic [ref=f3e397]: "\"version\": \"1.0.0\""
+                - generic [ref=f3e398]: "},"
+                - generic [ref=f3e399]: "\"io.modelcontextprotocol/clientCapabilities\": {}"
+                - generic [ref=f3e400]: "}"
+                - generic [ref=f3e401]: "}"
+                - generic [ref=f3e402]: "}"
+            - strong [ref=f3e404]:
+              - code [ref=f3e405]: resources/read
+              - text: "request:"
+            - generic [ref=f3e406]:
+              - generic [ref=f3e407]:
+                - button "Report incorrect code" [ref=f3e409] [cursor=pointer]
+                - generic [ref=f3e413]:
+                  - button "Copy the contents from the code block" [ref=f3e414] [cursor=pointer]
+                  - status [ref=f3e418]
+                - button "Ask Assistant" [ref=f3e420] [cursor=pointer]
+              - code [ref=f3e427]:
+                - generic [ref=f3e428]: POST /mcp HTTP/1.1
+                - generic [ref=f3e429]: "Content-Type: application/json"
+                - generic [ref=f3e430]: "MCP-Protocol-Version: 2026-07-28"
+                - generic [ref=f3e431]: "Mcp-Method: resources/read"
+                - generic [ref=f3e432]: "Mcp-Name: file:///projects/myapp/config.json"
+                - generic [ref=f3e433]: "{"
+                - generic [ref=f3e434]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f3e435]: "\"id\": 2,"
+                - generic [ref=f3e436]: "\"method\": \"resources/read\","
+                - generic [ref=f3e437]: "\"params\": {"
+                - generic [ref=f3e438]: "\"uri\": \"file:///projects/myapp/config.json\","
+                - generic [ref=f3e439]: "\"_meta\": {"
+                - generic [ref=f3e440]: "\"io.modelcontextprotocol/protocolVersion\": \"2026-07-28\","
+                - generic [ref=f3e441]: "\"io.modelcontextprotocol/clientInfo\": {"
+                - generic [ref=f3e442]: "\"name\": \"ExampleClient\","
+                - generic [ref=f3e443]: "\"version\": \"1.0.0\""
+                - generic [ref=f3e444]: "},"
+                - generic [ref=f3e445]: "\"io.modelcontextprotocol/clientCapabilities\": {}"
+                - generic [ref=f3e446]: "}"
+                - generic [ref=f3e447]: "}"
+                - generic [ref=f3e448]: "}"
+            - heading "Navigate to header Custom Headers from Tool Parameters" [level=3] [ref=f3e449]:
+              - link "Navigate to header" [ref=f3e450] [cursor=pointer]:
+                - /url: "#custom-headers-from-tool-parameters"
+              - generic [ref=f3e455] [cursor=pointer]: Custom Headers from Tool Parameters
+            - generic [ref=f3e456]:
+              - text: MCP servers
+              - strong [ref=f3e457]: MAY
+              - text: designate specific tool parameters to be mirrored into HTTP headers using an
+              - code [ref=f3e458]: x-mcp-header
+              - text: extension property in the parameter’s schema within the tool’s
+              - code [ref=f3e459]: inputSchema
+              - text: . See
+              - link "Tool Definitions" [ref=f3e460] [cursor=pointer]:
+                - /url: /specification/2026-07-28/server/tools#x-mcp-header
+              - text: for details on how to annotate tool parameters.
+            - generic [ref=f3e461]:
+              - text: While the use of
+              - code [ref=f3e462]: x-mcp-header
+              - text: is optional for servers, clients
+              - strong [ref=f3e463]: MUST
+              - text: support this feature. When a server’s tool definition includes
+              - code [ref=f3e464]: x-mcp-header
+              - text: annotations, conforming clients
+              - strong [ref=f3e465]: MUST
+              - text: mirror the designated parameter values into HTTP headers.
+            - heading "Navigate to header Schema Extension" [level=4] [ref=f3e466]:
+              - link "Navigate to header" [ref=f3e467] [cursor=pointer]:
+                - /url: "#schema-extension"
+              - generic [ref=f3e472] [cursor=pointer]: Schema Extension
+            - generic [ref=f3e473]:
+              - text: The
+              - code [ref=f3e474]: x-mcp-header
+              - text: property specifies the name portion used to construct the header name
+              - code [ref=f3e475]: "Mcp-Param-{name}"
+              - text: .
+            - generic [ref=f3e476]:
+              - strong [ref=f3e477]:
+                - text: Constraints on
+                - code [ref=f3e478]: x-mcp-header
+                - text: values
+              - text: ":"
+            - list [ref=f3e479]:
+              - listitem [ref=f3e480]:
+                - strong [ref=f3e481]: MUST NOT
+                - text: be empty
+              - listitem [ref=f3e482]:
+                - strong [ref=f3e483]: MUST
+                - text: match HTTP field-name token syntax (
+                - code [ref=f3e484]: 1*tchar
+                - text: ","
+                - link "RFC 9110 Section 5.1" [ref=f3e485] [cursor=pointer]:
+                  - /url: https://datatracker.ietf.org/doc/html/rfc9110#section-5.1
+                - text: )
+              - listitem [ref=f3e486]:
+                - strong [ref=f3e487]: MUST NOT
+                - text: contain control characters, including carriage return (CR,
+                - code [ref=f3e488]: \r
+                - text: ) or line feed (LF,
+                - code [ref=f3e489]: \n
+                - text: )
+              - listitem [ref=f3e490]:
+                - strong [ref=f3e491]: MUST
+                - text: be case-insensitively unique among all
+                - code [ref=f3e492]: x-mcp-header
+                - text: values in the
+                - code [ref=f3e493]: inputSchema
+              - listitem [ref=f3e494]:
+                - strong [ref=f3e495]: MUST
+                - text: only be applied to parameters with primitive types (integer, string, boolean). Parameters with type
+                - code [ref=f3e496]: number
+                - text: are not permitted. Integer values
+                - strong [ref=f3e497]: MUST
+                - text: be within the safe range for JavaScript (−2
+                - superscript [ref=f3e498]: "53"
+                - text: +1 to 2
+                - superscript [ref=f3e499]: "53"
+                - text: −1)
+              - listitem [ref=f3e500]:
+                - strong [ref=f3e501]: MUST
+                - text: only be applied to properties that are
+                - emphasis [ref=f3e502]: statically reachable
+                - text: "from the schema root: reachable via a chain consisting solely of"
+                - code [ref=f3e503]: properties
+                - text: keys. The chain
+                - strong [ref=f3e504]: MUST NOT
+                - text: pass through
+                - code [ref=f3e505]: items
+                - text: (or any other array keyword), composition keywords (
+                - code [ref=f3e506]: oneOf
+                - text: ","
+                - code [ref=f3e507]: anyOf
+                - text: ","
+                - code [ref=f3e508]: allOf
+                - text: ","
+                - code [ref=f3e509]: not
+                - text: ), conditional keywords (
+                - code [ref=f3e510]: if
+                - text: /
+                - code [ref=f3e511]: then
+                - text: /
+                - code [ref=f3e512]: else
+                - text: ), or
+                - code [ref=f3e513]: $ref
+                - text: . Nested object properties are permitted as long as every step in the chain is a
+                - code [ref=f3e514]: properties
+                - text: key. An
+                - code [ref=f3e515]: x-mcp-header
+                - text: annotation anywhere else makes the annotation — and thus the tool definition — invalid.
+            - generic [ref=f3e516]:
+              - text: Header extraction is defined as reading the instance value at the exact property path of the annotated property (the chain of
+              - code [ref=f3e517]: properties
+              - text: keys leading to it). If no value is present at that path in the call arguments, the header is omitted.
+            - generic [ref=f3e518]:
+              - text: Clients using the Streamable HTTP transport
+              - strong [ref=f3e519]: MUST
+              - text: reject tool definitions where any
+              - code [ref=f3e520]: x-mcp-header
+              - text: value violates these constraints. Rejection means the client
+              - strong [ref=f3e521]: MUST
+              - text: exclude the invalid tool from the result of
+              - code [ref=f3e522]: tools/list
+              - text: . Clients
+              - strong [ref=f3e523]: SHOULD
+              - text: log a warning when rejecting a tool definition, including the tool name and the reason for rejection. This ensures that a single malformed tool definition does not prevent other valid tools from being used. Clients using other transports (e.g., stdio)
+              - strong [ref=f3e524]: MAY
+              - text: ignore
+              - code [ref=f3e525]: x-mcp-header
+              - text: annotations entirely.
+            - strong [ref=f3e527]: "Example tool definition:"
+            - generic [ref=f3e528]:
+              - generic [ref=f3e529]:
+                - button "Report incorrect code" [ref=f3e531] [cursor=pointer]
+                - generic [ref=f3e535]:
+                  - button "Copy the contents from the code block" [ref=f3e536] [cursor=pointer]
+                  - status [ref=f3e540]
+                - button "Ask Assistant" [ref=f3e542] [cursor=pointer]
+              - code [ref=f3e549]:
+                - generic [ref=f3e550]: "{"
+                - generic [ref=f3e551]: "\"name\": \"execute_sql\","
+                - generic [ref=f3e552]: "\"description\": \"Execute SQL on Google Cloud Spanner\","
+                - generic [ref=f3e553]: "\"inputSchema\": {"
+                - generic [ref=f3e554]: "\"type\": \"object\","
+                - generic [ref=f3e555]: "\"properties\": {"
+                - generic [ref=f3e556]: "\"region\": {"
+                - generic [ref=f3e557]: "\"type\": \"string\","
+                - generic [ref=f3e558]: "\"description\": \"The region to execute the query in\","
+                - generic [ref=f3e559]: "\"x-mcp-header\": \"Region\""
+                - generic [ref=f3e560]: "},"
+                - generic [ref=f3e561]: "\"query\": {"
+                - generic [ref=f3e562]: "\"type\": \"string\","
+                - generic [ref=f3e563]: "\"description\": \"The SQL query to execute\""
+                - generic [ref=f3e564]: "}"
+                - generic [ref=f3e565]: "},"
+                - generic [ref=f3e566]: "\"required\": [\"region\", \"query\"]"
+                - generic [ref=f3e567]: "}"
+                - generic [ref=f3e568]: "}"
+            - strong [ref=f3e570]: "Resulting HTTP request:"
+            - generic [ref=f3e571]:
+              - generic [ref=f3e572]:
+                - button "Report incorrect code" [ref=f3e574] [cursor=pointer]
+                - generic [ref=f3e578]:
+                  - button "Copy the contents from the code block" [ref=f3e579] [cursor=pointer]
+                  - status [ref=f3e583]
+                - button "Ask Assistant" [ref=f3e585] [cursor=pointer]
+              - code [ref=f3e592]:
+                - generic [ref=f3e593]: POST /mcp HTTP/1.1
+                - generic [ref=f3e594]: "Content-Type: application/json"
+                - generic [ref=f3e595]: "MCP-Protocol-Version: 2026-07-28"
+                - generic [ref=f3e596]: "Mcp-Method: tools/call"
+                - generic [ref=f3e597]: "Mcp-Name: execute_sql"
+                - generic [ref=f3e598]: "Mcp-Param-Region: us-west1"
+                - generic [ref=f3e599]: "{"
+                - generic [ref=f3e600]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f3e601]: "\"id\": 1,"
+                - generic [ref=f3e602]: "\"method\": \"tools/call\","
+                - generic [ref=f3e603]: "\"params\": {"
+                - generic [ref=f3e604]: "\"_meta\": {"
+                - generic [ref=f3e605]: "\"io.modelcontextprotocol/protocolVersion\": \"2026-07-28\","
+                - generic [ref=f3e606]: "\"io.modelcontextprotocol/clientInfo\": {"
+                - generic [ref=f3e607]: "\"name\": \"ExampleClient\","
+                - generic [ref=f3e608]: "\"version\": \"1.0.0\""
+                - generic [ref=f3e609]: "},"
+                - generic [ref=f3e610]: "\"io.modelcontextprotocol/clientCapabilities\": {}"
+                - generic [ref=f3e611]: "},"
+                - generic [ref=f3e612]: "\"name\": \"execute_sql\","
+                - generic [ref=f3e613]: "\"arguments\": {"
+                - generic [ref=f3e614]: "\"region\": \"us-west1\","
+                - generic [ref=f3e615]: "\"query\": \"SELECT * FROM users\""
+                - generic [ref=f3e616]: "}"
+                - generic [ref=f3e617]: "}"
+                - generic [ref=f3e618]: "}"
+            - heading "Navigate to header Value Encoding" [level=4] [ref=f3e619]:
+              - link "Navigate to header" [ref=f3e620] [cursor=pointer]:
+                - /url: "#value-encoding"
+              - generic [ref=f3e625] [cursor=pointer]: Value Encoding
+            - generic [ref=f3e626]:
+              - text: Clients
+              - strong [ref=f3e627]: MUST
+              - text: encode parameter values before including them in HTTP headers to ensure safe transmission and prevent injection attacks.
+            - generic [ref=f3e628]:
+              - strong [ref=f3e629]: Type conversion
+              - text: ": Convert the parameter value to its string representation:"
+            - list [ref=f3e630]:
+              - listitem [ref=f3e631]:
+                - code [ref=f3e632]: string
+                - text: ": Use the value as-is"
+              - listitem [ref=f3e633]:
+                - code [ref=f3e634]: integer
+                - text: ": Convert to decimal string representation (e.g.,"
+                - code [ref=f3e635]: "42"
+                - text: ","
+                - code [ref=f3e636]: "-7"
+                - text: )
+              - listitem [ref=f3e637]:
+                - code [ref=f3e638]: boolean
+                - text: ": Convert to lowercase"
+                - code [ref=f3e639]: "\"true\""
+                - text: or
+                - code [ref=f3e640]: "\"false\""
+            - generic [ref=f3e641]:
+              - text: Per
+              - link "RFC 9110" [ref=f3e642] [cursor=pointer]:
+                - /url: https://datatracker.ietf.org/doc/html/rfc9110#name-field-values
+              - text: ", HTTP header field values must consist of visible ASCII characters (0x21-0x7E), space (0x20), and horizontal tab (0x09). When a value cannot be safely represented as a plain ASCII header value (e.g., it contains non-ASCII characters, control characters, or has leading/trailing whitespace), clients"
+              - strong [ref=f3e643]: MUST
+              - text: "use Base64 encoding of the UTF-8 representation with the following format:"
+            - generic [ref=f3e644]:
+              - generic [ref=f3e645]:
+                - button "Report incorrect code" [ref=f3e647] [cursor=pointer]
+                - generic [ref=f3e651]:
+                  - button "Copy the contents from the code block" [ref=f3e652] [cursor=pointer]
+                  - status [ref=f3e656]
+                - button "Ask Assistant" [ref=f3e658] [cursor=pointer]
+              - code [ref=f3e665]:
+                - generic [ref=f3e666]: "Mcp-Param-{Name}: =?base64?{Base64EncodedValue}?="
+            - generic [ref=f3e667]:
+              - text: The same encoding rule applies to the
+              - code [ref=f3e668]: Mcp-Name
+              - text: header value. Tool and prompt names are only
+              - strong [ref=f3e669]: SHOULD
+              - text: "-constrained to header-safe characters, so a name (or resource URI) outside the safe set is carried as:"
+            - generic [ref=f3e670]:
+              - generic [ref=f3e671]:
+                - button "Report incorrect code" [ref=f3e673] [cursor=pointer]
+                - generic [ref=f3e677]:
+                  - button "Copy the contents from the code block" [ref=f3e678] [cursor=pointer]
+                  - status [ref=f3e682]
+                - button "Ask Assistant" [ref=f3e684] [cursor=pointer]
+              - code [ref=f3e691]:
+                - generic [ref=f3e692]: "Mcp-Name: =?base64?{Base64EncodedValue}?="
+            - generic [ref=f3e693]:
+              - text: The prefix
+              - code [ref=f3e694]: =?base64?
+              - text: and suffix
+              - code [ref=f3e695]: "?="
+              - text: indicate that the value is Base64-encoded. These markers are case-sensitive and
+              - strong [ref=f3e696]: MUST
+              - text: appear exactly as shown (lowercase). Servers and intermediaries that need to inspect these values
+              - strong [ref=f3e697]: MUST
+              - text: decode them accordingly. In particular, servers
+              - strong [ref=f3e698]: MUST
+              - text: decode an encoded
+              - code [ref=f3e699]: Mcp-Name
+              - text: or
+              - code [ref=f3e700]: "Mcp-Param-{Name}"
+              - text: value before comparing it to the corresponding request body value during
+              - link "Server Validation" [ref=f3e701] [cursor=pointer]:
+                - /url: "#server-validation"
+              - text: .
+            - generic [ref=f3e702]:
+              - text: To avoid ambiguity, clients
+              - strong [ref=f3e703]: MUST
+              - text: also Base64-encode any plain-ASCII value that matches the sentinel pattern (i.e., starts with
+              - code [ref=f3e704]: =?base64?
+              - text: and ends with
+              - code [ref=f3e705]: "?="
+              - text: ).
+            - strong [ref=f3e707]: "Encoding examples:"
+            - region "Scrollable table" [ref=f3e708]:
+              - table [ref=f3e710]:
+                - rowgroup [ref=f3e711]:
+                  - row [ref=f3e712]:
+                    - columnheader "Original Value" [ref=f3e713]
+                    - columnheader "Reason" [ref=f3e714]
+                    - columnheader "Encoded Header Value" [ref=f3e715]
+                - rowgroup [ref=f3e716]:
+                  - row [ref=f3e717]:
+                    - cell [ref=f3e718]:
+                      - code [ref=f3e719]: "\"us-west1\""
+                    - cell "Plain ASCII" [ref=f3e720]
+                    - cell [ref=f3e721]:
+                      - code [ref=f3e722]: "Mcp-Param-Region: us-west1"
+                  - row [ref=f3e723]:
+                    - cell [ref=f3e724]:
+                      - code [ref=f3e725]: "\"Hello, 世界\""
+                    - cell "Contains non-ASCII" [ref=f3e726]
+                    - cell [ref=f3e727]:
+                      - code [ref=f3e728]: "Mcp-Param-Greeting: =?base64?SGVsbG8sIOS4lueVjA==?="
+                  - row [ref=f3e729]:
+                    - cell [ref=f3e730]:
+                      - code [ref=f3e731]: "\" padded \""
+                    - cell "Leading/trailing spaces" [ref=f3e732]
+                    - cell [ref=f3e733]:
+                      - code [ref=f3e734]: "Mcp-Param-Text: =?base64?IHBhZGRlZCA=?="
+                  - row [ref=f3e735]:
+                    - cell [ref=f3e736]:
+                      - code [ref=f3e737]: "\"line1\\nline2\""
+                    - cell "Contains newline" [ref=f3e738]
+                    - cell [ref=f3e739]:
+                      - code [ref=f3e740]: "Mcp-Param-Text: =?base64?bGluZTEKbGluZTI=?="
+                  - row [ref=f3e741]:
+                    - cell [ref=f3e742]:
+                      - code [ref=f3e743]: "\"=?base64?literal?=\""
+                    - cell "Matches sentinel pattern" [ref=f3e744]
+                    - cell [ref=f3e745]:
+                      - code [ref=f3e746]: "Mcp-Param-Val: =?base64?PT9iYXNlNjQ/bGl0ZXJhbD89?="
+            - heading "Navigate to header Client Behavior" [level=4] [ref=f3e747]:
+              - link "Navigate to header" [ref=f3e748] [cursor=pointer]:
+                - /url: "#client-behavior"
+              - generic [ref=f3e753] [cursor=pointer]: Client Behavior
+            - generic [ref=f3e754]:
+              - text: When constructing a
+              - code [ref=f3e755]: tools/call
+              - text: request via HTTP transport, the client
+              - strong [ref=f3e756]: MUST
+              - text: ":"
+            - list [ref=f3e757]:
+              - listitem [ref=f3e758]:
+                - text: Extract the values for any standard headers from the request body (e.g.,
+                - code [ref=f3e759]: method
+                - text: ","
+                - code [ref=f3e760]: params.name
+                - text: ","
+                - code [ref=f3e761]: params.uri
+                - text: ).
+              - listitem [ref=f3e762]:
+                - text: Append the
+                - code [ref=f3e763]: Mcp-Method
+                - text: header and, if applicable,
+                - code [ref=f3e764]: Mcp-Name
+                - text: header to the request.
+              - listitem [ref=f3e765]:
+                - text: Inspect the tool’s
+                - code [ref=f3e766]: inputSchema
+                - text: for properties marked with
+                - code [ref=f3e767]: x-mcp-header
+                - text: and extract the value at each annotated property’s exact property path, omitting the header when no value is present (see
+                - link "Schema Extension" [ref=f3e768] [cursor=pointer]:
+                  - /url: "#schema-extension"
+                - text: ).
+              - listitem [ref=f3e769]:
+                - text: Encode the values according to the
+                - link "Value Encoding" [ref=f3e770] [cursor=pointer]:
+                  - /url: "#value-encoding"
+                - text: rules.
+              - listitem [ref=f3e771]:
+                - text: Append a
+                - code [ref=f3e772]: "Mcp-Param-{Name}: {Value}"
+                - text: header to the request.
+            - generic [ref=f3e773]:
+              - text: If the server rejects a request with a
+              - link [ref=f3e774] [cursor=pointer]:
+                - /url: "#server-validation"
+                - code [ref=f3e775]: HeaderMismatch
+              - text: error because required
+              - code [ref=f3e776]: Mcp-Param-*
+              - text: headers are missing or do not match the body, the client
+              - strong [ref=f3e777]: SHOULD
+              - text: call
+              - code [ref=f3e778]: tools/list
+              - text: to check for changes to the tool’s
+              - code [ref=f3e779]: inputSchema
+              - text: ", then retry the original request with the appropriate headers."
+            - heading "Navigate to header Server Behavior for Custom Headers" [level=4] [ref=f3e780]:
+              - link "Navigate to header" [ref=f3e781] [cursor=pointer]:
+                - /url: "#server-behavior-for-custom-headers"
+              - generic [ref=f3e786] [cursor=pointer]: Server Behavior for Custom Headers
+            - generic [ref=f3e787]:
+              - text: Intermediate servers that do not recognize an
+              - code [ref=f3e788]: "Mcp-Param-{Name}"
+              - text: header
+              - strong [ref=f3e789]: MUST
+              - text: forward it and otherwise ignore it, as required by the
+              - link "HTTP Semantics RFC" [ref=f3e790] [cursor=pointer]:
+                - /url: https://www.rfc-editor.org/rfc/rfc9110.html#name-field-names
+              - text: .
+            - generic [ref=f3e791]:
+              - text: Servers
+              - strong [ref=f3e792]: MUST
+              - text: reject requests with a recognized
+              - code [ref=f3e793]: "Mcp-Param-{Name}"
+              - text: header that contains invalid characters (see
+              - link "Value Encoding" [ref=f3e794] [cursor=pointer]:
+                - /url: "#value-encoding"
+              - text: ).
+            - generic [ref=f3e795]:
+              - text: Any server that processes the message body
+              - strong [ref=f3e796]: MUST
+              - text: validate that encoded header values, after decoding if Base64-encoded, match the corresponding values in the request body. Servers
+              - strong [ref=f3e797]: MUST
+              - text: reject requests with a
+              - code [ref=f3e798]: 400 Bad Request
+              - text: HTTP status and JSON-RPC error code
+              - code [ref=f3e799]: "-32020"
+              - text: (
+              - code [ref=f3e800]: HeaderMismatch
+              - text: ) if any validation fails.
+            - region "Scrollable table" [ref=f3e801]:
+              - table [ref=f3e803]:
+                - rowgroup [ref=f3e804]:
+                  - row [ref=f3e805]:
+                    - columnheader "Scenario" [ref=f3e806]
+                    - columnheader "Client Behavior" [ref=f3e807]
+                    - columnheader "Server Behavior" [ref=f3e808]
+                - rowgroup [ref=f3e809]:
+                  - row [ref=f3e810]:
+                    - cell "Parameter value provided" [ref=f3e811]
+                    - cell "Client MUST include the header" [ref=f3e812]
+                    - cell "Server MUST validate header matches body" [ref=f3e813]
+                  - row [ref=f3e814]:
+                    - cell [ref=f3e815]:
+                      - text: Parameter value is
+                      - code [ref=f3e816]: "null"
+                    - cell "Client MUST omit the header" [ref=f3e817]
+                    - cell "Server MUST NOT expect the header" [ref=f3e818]
+                  - row [ref=f3e819]:
+                    - cell "Parameter not in arguments" [ref=f3e820]
+                    - cell "Client MUST omit the header" [ref=f3e821]
+                    - cell "Server MUST NOT expect the header" [ref=f3e822]
+                  - row [ref=f3e823]:
+                    - cell "Client omits header but value is in body" [ref=f3e824]
+                    - cell "Non-conforming client" [ref=f3e825]
+                    - cell "Server MUST reject the request" [ref=f3e826]
+            - heading "Navigate to header Case Sensitivity" [level=3] [ref=f3e827]:
+              - link "Navigate to header" [ref=f3e828] [cursor=pointer]:
+                - /url: "#case-sensitivity"
+              - generic [ref=f3e833] [cursor=pointer]: Case Sensitivity
+            - generic [ref=f3e834]:
+              - text: Header names (called “field names” in
+              - link "RFC 9110" [ref=f3e835] [cursor=pointer]:
+                - /url: https://datatracker.ietf.org/doc/html/rfc9110#name-field-names
+              - text: ) are case-insensitive. Clients and servers
+              - strong [ref=f3e836]: MUST
+              - text: use case-insensitive comparisons for header names. Header
+              - emphasis [ref=f3e837]: values
+              - text: (such as method names) are case-sensitive.
+            - heading "Navigate to header Server Validation" [level=3] [ref=f3e838]:
+              - link "Navigate to header" [ref=f3e839] [cursor=pointer]:
+                - /url: "#server-validation"
+              - generic [ref=f3e844] [cursor=pointer]: Server Validation
+            - generic [ref=f3e845]:
+              - text: Servers that process the request body
+              - strong [ref=f3e846]: MUST
+              - text: reject requests where the values specified in the headers do not match the corresponding values in the request body. This prevents potential security vulnerabilities when different components in the network rely on different sources of truth (e.g., a load balancer routing on the header value while the MCP server executes based on the body value).
+            - note "Note" [ref=f3e847]:
+              - generic [ref=f3e852]:
+                - text: When validating integer parameter values, servers
+                - strong [ref=f3e853]: SHOULD
+                - text: compare the header value and the body value numerically rather than as strings (e.g.,
+                - code [ref=f3e854]: "42.0"
+                - text: and
+                - code [ref=f3e855]: "42"
+                - text: are considered equal).
+            - generic [ref=f3e856]:
+              - text: When rejecting a request due to header validation failure, servers
+              - strong [ref=f3e857]: MUST
+              - text: return HTTP status
+              - code [ref=f3e858]: 400 Bad Request
+              - text: and
+              - strong [ref=f3e859]: MUST
+              - text: "include a JSON-RPC error response using the following error code:"
+            - region "Scrollable table" [ref=f3e860]:
+              - table [ref=f3e862]:
+                - rowgroup [ref=f3e863]:
+                  - row [ref=f3e864]:
+                    - columnheader "Code" [ref=f3e865]
+                    - columnheader "Name" [ref=f3e866]
+                    - columnheader "Description" [ref=f3e867]
+                - rowgroup [ref=f3e868]:
+                  - row [ref=f3e869]:
+                    - cell [ref=f3e870]:
+                      - code [ref=f3e871]: "-32020"
+                    - cell [ref=f3e872]:
+                      - link [ref=f3e873] [cursor=pointer]:
+                        - /url: /specification/2026-07-28/schema#headermismatcherror
+                        - code [ref=f3e874]: HeaderMismatch
+                    - cell "The HTTP headers do not match the corresponding values in the request body, or required headers are missing/malformed." [ref=f3e875]
+            - generic [ref=f3e876]:
+              - text: This error code is allocated from the sub-range the MCP specification reserves for protocol-defined errors. See
+              - link "Error Codes" [ref=f3e877] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/index#error-codes
+              - text: .
+            - strong [ref=f3e879]: "Example error response:"
+            - generic [ref=f3e880]:
+              - generic [ref=f3e881]:
+                - button "Report incorrect code" [ref=f3e883] [cursor=pointer]
+                - generic [ref=f3e887]:
+                  - button "Copy the contents from the code block" [ref=f3e888] [cursor=pointer]
+                  - status [ref=f3e892]
+                - button "Ask Assistant" [ref=f3e894] [cursor=pointer]
+              - code [ref=f3e901]:
+                - generic [ref=f3e902]: "{"
+                - generic [ref=f3e903]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f3e904]: "\"id\": 1,"
+                - generic [ref=f3e905]: "\"error\": {"
+                - generic [ref=f3e906]: "\"code\": -32020,"
+                - generic [ref=f3e907]: "\"message\": \"Header mismatch: Mcp-Name header value 'foo' does not match body value 'bar'\""
+                - generic [ref=f3e908]: "}"
+                - generic [ref=f3e909]: "}"
+            - generic [ref=f3e910]: "Validation failure conditions include:"
+            - list [ref=f3e911]:
+              - listitem [ref=f3e912]:
+                - text: A required standard header (
+                - code [ref=f3e913]: MCP-Protocol-Version
+                - text: ","
+                - code [ref=f3e914]: Mcp-Method
+                - text: ","
+                - code [ref=f3e915]: Mcp-Name
+                - text: ) is missing.
+              - listitem [ref=f3e916]:
+                - text: A header value does not match the corresponding request body value. For headers that permit the Base64 sentinel encoding (
+                - code [ref=f3e917]: Mcp-Name
+                - text: and
+                - code [ref=f3e918]: "Mcp-Param-{Name}"
+                - text: ), servers
+                - strong [ref=f3e919]: MUST
+                - text: decode encoded values (see
+                - link "Value Encoding" [ref=f3e920] [cursor=pointer]:
+                  - /url: "#value-encoding"
+                - text: ) before comparing them to the body value.
+              - listitem [ref=f3e921]: A header value contains invalid characters.
+            - note "Note" [ref=f3e922]:
+              - generic [ref=f3e927]:
+                - text: Intermediaries
+                - strong [ref=f3e928]: MUST
+                - text: return an appropriate HTTP error status (e.g.,
+                - code [ref=f3e929]: 400 Bad Request
+                - text: ) for validation failures but are not required to return a JSON-RPC error response.
+            - note "Note" [ref=f3e930]:
+              - generic [ref=f3e935]:
+                - text: Intermediaries that enforce policy based on mirrored headers (e.g., routing or rate-limiting by tenant)
+                - strong [ref=f3e936]: SHOULD
+                - text: verify that the
+                - code [ref=f3e937]: MCP-Protocol-Version
+                - text: header indicates a version that requires header–body validation. If the version is older or the header is absent, the intermediary
+                - strong [ref=f3e938]: SHOULD
+                - text: reject the request rather than trusting unvalidated header values.
+            - heading "Navigate to header Backward Compatibility" [level=2] [ref=f3e939]:
+              - link "Navigate to header" [ref=f3e940] [cursor=pointer]:
+                - /url: "#backward-compatibility"
+              - generic [ref=f3e945] [cursor=pointer]: Backward Compatibility
+            - generic [ref=f3e946]:
+              - text: A client that supports both modern (per-request-metadata) MCP versions and a legacy version that requires an
+              - code [ref=f3e947]: initialize
+              - text: handshake
+              - strong [ref=f3e948]: MAY
+              - text: detect which era the server implements by attempting a modern request first. On
+              - code [ref=f3e949]: 400 Bad Request
+              - text: ", the client"
+              - strong [ref=f3e950]: SHOULD
+              - text: "inspect the response body before falling back: modern servers also use"
+              - code [ref=f3e951]: "400"
+              - text: for
+              - link [ref=f3e952] [cursor=pointer]:
+                - /url: /specification/2026-07-28/schema#unsupportedprotocolversionerror
+                - code [ref=f3e953]: UnsupportedProtocolVersionError
+              - text: ","
+              - code [ref=f3e954]: MissingRequiredClientCapabilityError
+              - text: ", and header-validation failures."
+            - list [ref=f3e955]:
+              - listitem [ref=f3e956]:
+                - text: If the body contains a recognized modern JSON-RPC error, the server speaks a modern version of MCP — retry using the advertised
+                - code [ref=f3e957]: supported
+                - text: versions or correct the request, rather than falling back.
+              - listitem [ref=f3e958]:
+                - text: If the body is empty or is not a recognized modern JSON-RPC error, fall back to
+                - code [ref=f3e959]: initialize
+                - text: and continue with the legacy version for subsequent requests.
+            - generic [ref=f3e960]:
+              - text: See
+              - 'link "Versioning: Backward Compatibility" [ref=f3e961] [cursor=pointer]':
+                - /url: /specification/2026-07-28/basic/versioning#backward-compatibility-with-initialization-based-versions
+              - text: for the era model and a compatibility matrix for implementors.
+            - heading "Navigate to header Earlier Streamable HTTP Revisions" [level=3] [ref=f3e962]:
+              - link "Navigate to header" [ref=f3e963] [cursor=pointer]:
+                - /url: "#earlier-streamable-http-revisions"
+              - generic [ref=f3e968] [cursor=pointer]: Earlier Streamable HTTP Revisions
+            - generic [ref=f3e969]:
+              - text: Protocol versions
+              - code [ref=f3e970]: 2025-03-26
+              - text: through
+              - link [ref=f3e971] [cursor=pointer]:
+                - /url: /specification/2025-11-25/basic/transports
+                - code [ref=f3e972]: 2025-11-25
+              - text: "also used the Streamable HTTP transport, but in a different shape: servers could assign a session via the"
+              - code [ref=f3e973]: Mcp-Session-Id
+              - text: header (terminated with HTTP DELETE), clients could open a standalone SSE stream with HTTP GET to receive server-initiated messages, servers could send JSON-RPC
+              - emphasis [ref=f3e974]: requests
+              - text: on SSE streams, and streams were resumable via
+              - code [ref=f3e975]: Last-Event-ID
+              - text: . None of these mechanisms are part of this revision.
+            - generic [ref=f3e976]:
+              - text: A server that supports only this revision and receives such traffic from an older client
+              - strong [ref=f3e977]: SHOULD
+              - text: "respond as follows:"
+            - list [ref=f3e978]:
+              - listitem [ref=f3e979]:
+                - text: "HTTP GET or DELETE to the MCP endpoint: respond with"
+                - code [ref=f3e980]: 405 Method Not Allowed
+                - text: .
+              - listitem [ref=f3e981]:
+                - text: An
+                - code [ref=f3e982]: Mcp-Session-Id
+                - text: "header on a request: ignore it, and do not mint or echo session IDs."
+              - listitem [ref=f3e983]:
+                - text: A
+                - code [ref=f3e984]: Last-Event-ID
+                - text: "header: ignore it; streams are not resumable."
+            - generic [ref=f3e985]:
+              - text: Servers and clients that need to interoperate with counterparts speaking those protocol versions implement the behavior described in the corresponding revision (for example,
+              - 'link "2025-11-25: Streamable HTTP" [ref=f3e986] [cursor=pointer]':
+                - /url: /specification/2025-11-25/basic/transports#streamable-http
+              - text: ), in addition to the version-negotiation fallback described above.
+            - heading "Navigate to header HTTP+SSE Transport (2024-11-05)" [level=3] [ref=f3e987]:
+              - link "Navigate to header" [ref=f3e988] [cursor=pointer]:
+                - /url: "#http+sse-transport-2024-11-05"
+              - generic [ref=f3e993] [cursor=pointer]: HTTP+SSE Transport (2024-11-05)
+            - note "Warning" [ref=f3e994]:
+              - generic [ref=f3e999]:
+                - strong [ref=f3e1000]: Deprecated
+                - text: ": The"
+                - link "HTTP+SSE transport" [ref=f3e1001] [cursor=pointer]:
+                  - /url: /specification/2024-11-05/basic/transports#http-with-sse
+                - text: from protocol version 2024-11-05 has been deprecated since protocol version
+                - code [ref=f3e1002]: 2025-03-26
+                - text: and is classified as Deprecated under the
+                - link "feature lifecycle policy" [ref=f3e1003] [cursor=pointer]:
+                  - /url: /community/feature-lifecycle#deprecating-a-feature
+                - text: (
+                - link "SEP-2596" [ref=f3e1004] [cursor=pointer]:
+                  - /url: https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2596
+                - text: ). New implementations
+                - strong [ref=f3e1005]: SHOULD NOT
+                - text: adopt it; existing implementations
+                - strong [ref=f3e1006]: SHOULD
+                - text: migrate to
+                - link "Streamable HTTP" [ref=f3e1007] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/transports/streamable-http
+                - text: . It is eligible for removal in a future revision; see the
+                - link "deprecated features registry" [ref=f3e1008] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/deprecated
+                - text: .
+            - generic [ref=f3e1009]:
+              - text: Clients and servers can maintain backward compatibility with the deprecated
+              - link "HTTP+SSE transport" [ref=f3e1010] [cursor=pointer]:
+                - /url: /specification/2024-11-05/basic/transports#http-with-sse
+              - text: "(from protocol version 2024-11-05) as follows:"
+            - generic [ref=f3e1011]:
+              - strong [ref=f3e1012]: Servers
+              - text: "wanting to support older clients should:"
+            - list [ref=f3e1013]:
+              - listitem [ref=f3e1014]:
+                - text: Continue to host both the SSE and POST endpoints of the old transport, alongside the new “MCP endpoint” defined for the Streamable HTTP transport.
+                - list [ref=f3e1015]:
+                  - listitem [ref=f3e1016]: It is also possible to combine the old POST endpoint and the new MCP endpoint, but this may introduce unneeded complexity.
+            - generic [ref=f3e1017]:
+              - strong [ref=f3e1018]: Clients
+              - text: "wanting to support older servers should:"
+            - list [ref=f3e1019]:
+              - listitem [ref=f3e1020]: Accept an MCP server URL from the user, which may point to either a server using the old transport or the new transport.
+              - listitem [ref=f3e1021]:
+                - text: Attempt to POST a request to the server URL, with an
+                - code [ref=f3e1022]: Accept
+                - text: "header as defined above:"
+                - list [ref=f3e1023]:
+                  - listitem [ref=f3e1024]: If it succeeds, the client can assume this is a server supporting the new Streamable HTTP transport.
+                  - listitem [ref=f3e1025]:
+                    - text: If it fails with HTTP status code
+                    - code [ref=f3e1026]: 400 Bad Request
+                    - text: ","
+                    - code [ref=f3e1027]: 404 Not Found
+                    - text: ", or"
+                    - code [ref=f3e1028]: 405 Method Not Allowed
+                    - strong [ref=f3e1029]: and
+                    - text: "the response body is not a recognized modern JSON-RPC error (a modern server returns one for unsupported version, unknown method, or header-validation failure):"
+                    - list [ref=f3e1030]:
+                      - listitem [ref=f3e1031]:
+                        - text: Issue a GET request to the server URL, expecting that this will open an SSE stream and return an
+                        - code [ref=f3e1032]: endpoint
+                        - text: event as the first event.
+                      - listitem [ref=f3e1033]:
+                        - text: When the
+                        - code [ref=f3e1034]: endpoint
+                        - text: event arrives, the client can assume this is a server running the old HTTP+SSE transport, and should use that transport for all subsequent communication.
+          - generic [ref=f3e1036]:
+            - paragraph [ref=f3e1037]: Was this page helpful?
+            - generic [ref=f3e1039]:
+              - button "Yes" [ref=f3e1040] [cursor=pointer]
+              - button "No" [ref=f3e1045] [cursor=pointer]
+          - navigation "Pagination" [ref=f3e1050]:
+            - 'link "Previous: stdio" [ref=f3e1051] [cursor=pointer]':
+              - /url: /specification/2026-07-28/basic/transports/stdio
+              - generic [ref=f3e1054]: stdio
+            - 'link "Next: Overview" [ref=f3e1055] [cursor=pointer]':
+              - /url: /specification/2026-07-28/basic/authorization
+              - generic [ref=f3e1056]: Overview
+          - generic [ref=f3e1060]:
+            - textbox "Ask a question..." [ref=f3e1061]
+            - button "Send message" [disabled] [ref=f3e1062]
+          - generic [ref=f3e1067]:
+            - link "github" [ref=f3e1068] [cursor=pointer]:
+              - /url: https://github.com/modelcontextprotocol
+            - link "discord" [ref=f3e1071] [cursor=pointer]:
+              - /url: https://discord.gg/6CSzBmMkjX

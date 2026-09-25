@@ -2,8 +2,10 @@ import {useCallback, useState} from "react";
 
 export function useErrorModal() {
     const [isOpen, setIsOpen] = useState(false);
+    const [message, setMessage] = useState("The request could not be completed. Please try again.");
 
-    const open = useCallback(() => {
+    const open = useCallback((nextMessage?: string) => {
+        setMessage(nextMessage?.trim() || "The request could not be completed. Please try again.");
         setIsOpen(true);
     }, []);
 
@@ -11,5 +13,5 @@ export function useErrorModal() {
         setIsOpen(false);
     }, []);
 
-    return {isOpen, open, close};
+    return {isOpen, message, open, close};
 }

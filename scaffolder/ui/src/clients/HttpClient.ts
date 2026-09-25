@@ -1,8 +1,7 @@
+import type {ProjectSpec} from "@app/types/ProjectSpec";
+
 type DownloadScaffoldParams = {
-    name: string;
-    modules: string[];
-    demoInsertsEnabled: boolean;
-    aiEnabled: boolean;
+    projectSpec: ProjectSpec;
     counterName?: string;
 };
 
@@ -21,31 +20,25 @@ class HttpClient {
     async downloadScaffold(params: DownloadScaffoldParams): Promise<{ blob: Blob; fileName: string }> {
         const abortController = new AbortController();
         const timeout = window.setTimeout(() => abortController.abort(), 180000);
-        const query = new URLSearchParams();
-        if (params.name.trim()) {
-            query.set("name", params.name.trim());
-        }
-        if (params.modules.length > 0) {
-            query.set("modules", params.modules.join(","));
-        }
-        if (params.counterName && params.counterName.trim()) {
-            query.set("counterName", params.counterName.trim());
-        }
-        query.set("demoInsertsEnabled", String(params.demoInsertsEnabled));
-        query.set("aiEnabled", String(params.aiEnabled));
+        const requestBody = {
+            projectSpec: params.projectSpec,
+            ...(params.counterName ? {counterName: params.counterName.trim()} : {})
+        };
 
-        const response = await fetch(`${this.baseUrl}/scaffold?${query.toString()}`, {
-            method: "GET",
+        const response = await fetch(`${this.baseUrl}/scaffold`, {
+            method: "POST",
             headers: {
-                Accept: "application/zip"
+                Accept: "application/zip",
+                "Content-Type": "application/json"
             },
+            body: JSON.stringify(requestBody),
             signal: abortController.signal
         }).finally(() => {
             window.clearTimeout(timeout);
         });
 
         if (!response.ok) {
-            throw new Error(`Scaffold download failed: ${response.status}`);
+            throw new Error(await this.getErrorMessage(response));
         }
 
         const blob = await response.blob();
@@ -81,6 +74,30 @@ class HttpClient {
         }
         const fileName = decodeURIComponent(match[1] ?? match[2] ?? "");
         return fileName || null;
+    }
+
+    private async getErrorMessage(response: Response): Promise<string> {
+        try {
+            const responseBody: unknown = await response.json();
+            if (typeof responseBody === "object" && responseBody !== null && "errors" in responseBody) {
+                const errors = (responseBody as {errors?: unknown}).errors;
+                if (Array.isArray(errors)) {
+                    const fieldErrors = errors
+                        .filter((error): error is {field: string; message: string} => {
+                            return typeof error === "object" && error !== null &&
+                                typeof (error as {field?: unknown}).field === "string" &&
+                                typeof (error as {message?: unknown}).message === "string";
+                        })
+                        .map((error) => `${error.field}: ${error.message}`);
+                    if (fieldErrors.length > 0) {
+                        return fieldErrors.join(" ");
+                    }
+                }
+            }
+        } catch {
+            return `Scaffold download failed: ${response.status}`;
+        }
+        return `Scaffold download failed: ${response.status}`;
     }
 }
 

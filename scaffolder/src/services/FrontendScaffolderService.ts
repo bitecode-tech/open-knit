@@ -46,9 +46,12 @@ class FrontendScaffolderService {
             );
         });
         const updatedDockerCompose = await runStep("Preparing frontend docker-compose.yml", () => {
+            const composeFileName = runContext.projectSpec.targetPlatform === "linux"
+                ? "docker-compose.yml"
+                : "docker-compose-windows.yml";
             const composeContents = readRequiredFile(
-                path.join(resolvedPaths.frontendRoot, "docker-compose.yml"),
-                "frontend docker-compose.yml"
+                path.join(resolvedPaths.frontendRoot, composeFileName),
+                `frontend ${composeFileName}`
             );
             return dockerComposeFileUpdater.updateContents(composeContents, frontendAppName);
         });
@@ -57,7 +60,12 @@ class FrontendScaffolderService {
                 path.join(resolvedPaths.frontendRoot, "package.json"),
                 "frontend package.json"
             );
-            return packageJsonFileUpdater.updateContents(packageJsonContents, frontendAppName);
+            const frontendDockerfileContents = readRequiredFile(
+                path.join(resolvedPaths.frontendRoot, "Dockerfile-dev"),
+                "frontend Dockerfile-dev"
+            );
+            const nodeVersion = this.getNodeVersionFromDockerfile(frontendDockerfileContents);
+            return packageJsonFileUpdater.updateContents(packageJsonContents, frontendAppName, nodeVersion);
         });
         const updatedAdminLayout = await runStep("Preparing AdminLayout module configs", () => {
             const adminLayoutContents = readRequiredFile(
@@ -134,6 +142,16 @@ class FrontendScaffolderService {
         return parts.join("-");
     }
 
+    private getNodeVersionFromDockerfile(dockerfileContents: string): string {
+        const nodeMajorVersions = dockerfileContents.split(/\r?\n/)
+            .map((line) => /^\s*FROM\s+(?:--platform=\S+\s+)?node:(\d+)(?:[^\s]*)?(?:\s+AS\s+[A-Za-z0-9_-]+)?\s*$/i.exec(line)?.[1])
+            .filter((version): version is string => version !== undefined);
+        const distinctVersions = Array.from(new Set(nodeMajorVersions));
+        if (distinctVersions.length !== 1 || !distinctVersions[0]) {
+            throw new Error("Frontend Dockerfile-dev must declare one consistent Node image version.");
+        }
+        return `${distinctVersions[0]}.x`;
+    }
 
 }
 

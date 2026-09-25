@@ -1,9 +1,10 @@
 type ErrorModalProps = {
     isOpen: boolean;
+    message: string;
     onClose: () => void;
 };
 
-export default function ErrorModal({isOpen, onClose}: ErrorModalProps) {
+export default function ErrorModal({isOpen, message, onClose}: ErrorModalProps) {
     if (!isOpen) {
         return null;
     }
@@ -19,7 +20,7 @@ export default function ErrorModal({isOpen, onClose}: ErrorModalProps) {
             >
                 <div className="flex items-start justify-between gap-4">
                     <h3 className="text-xl font-semibold text-[var(--text-strong)]">
-                        High demand
+                        We couldn't complete that request
                     </h3>
                     <button
                         type="button"
@@ -30,7 +31,7 @@ export default function ErrorModal({isOpen, onClose}: ErrorModalProps) {
                     </button>
                 </div>
                 <p className="mt-3 font-normal text-[var(--text-body)]">
-                    There is a lot of interest right now. Please try again in a few minutes.
+                    {message}
                 </p>
                 <div className="mt-6 flex justify-end">
                     <button

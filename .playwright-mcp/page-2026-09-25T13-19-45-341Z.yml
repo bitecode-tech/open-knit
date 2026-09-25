@@ -1,0 +1,511 @@
+- generic [active] [ref=e1]:
+  - blockquote [aria-hidden] [ref=e2]:
+    - heading [level=2] [ref=e3]: Documentation Index
+    - paragraph [ref=e4]:
+      - text: "Fetch the complete documentation index at:"
+      - link [ref=e5] [cursor=pointer]:
+        - /url: /llms.txt
+        - text: /llms.txt
+    - paragraph [ref=e6]: Use this file to discover all available pages before exploring further.
+  - generic [ref=e7]:
+    - link "Skip to main content" [ref=e8] [cursor=pointer]:
+      - /url: "#content-area"
+    - generic [ref=e10]:
+      - banner [ref=e11]:
+        - generic [ref=e15]:
+          - generic [ref=e17]:
+            - link "Model Context Protocol home page light logo" [ref=e19] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e20]: Model Context Protocol home page
+              - img "light logo" [ref=e21]
+            - generic [ref=e22]:
+              - button "Open search" [ref=e23] [cursor=pointer]:
+                - generic [ref=e24]: Search...
+              - button "Toggle assistant panel" [ref=e26] [cursor=pointer]
+              - button "More actions" [ref=e30] [cursor=pointer]
+          - button "Navigation Base Protocol Lifecycle" [ref=e32] [cursor=pointer]:
+            - generic [ref=e33]: Navigation
+            - generic [ref=e36]:
+              - generic [ref=e37]: Base Protocol
+              - generic [ref=e41]: Lifecycle
+      - main [ref=e43]:
+        - generic [ref=e45]:
+          - generic [ref=e47]:
+            - generic [ref=e48]: Base Protocol
+            - generic [ref=e49]:
+              - heading "Lifecycle" [level=1] [ref=e50]
+              - generic [ref=e51]:
+                - button "Copy page" [ref=e52] [cursor=pointer]
+                - button "More actions" [ref=e59] [cursor=pointer]
+          - generic [ref=e62]:
+            - generic [ref=e63]: The Model Context Protocol (MCP) defines a rigorous lifecycle for client-server connections that ensures proper capability negotiation and state management.
+            - list [ref=e64]:
+              - listitem [ref=e65]:
+                - strong [ref=e66]: Initialization
+                - text: ": Capability negotiation and protocol version agreement"
+              - listitem [ref=e67]:
+                - strong [ref=e68]: Operation
+                - text: ": Normal protocol communication"
+              - listitem [ref=e69]:
+                - strong [ref=e70]: Shutdown
+                - text: ": Graceful termination of the connection"
+            - heading "Navigate to header Lifecycle Phases" [level=2] [ref=e71]:
+              - link "Navigate to header" [ref=e72] [cursor=pointer]:
+                - /url: "#lifecycle-phases"
+              - generic [ref=e77] [cursor=pointer]: Lifecycle Phases
+            - heading "Navigate to header Initialization" [level=3] [ref=e78]:
+              - link "Navigate to header" [ref=e79] [cursor=pointer]:
+                - /url: "#initialization"
+              - generic [ref=e84] [cursor=pointer]: Initialization
+            - generic [ref=e85]:
+              - text: The initialization phase
+              - strong [ref=e86]: MUST
+              - text: "be the first interaction between client and server. During this phase, the client and server:"
+            - list [ref=e87]:
+              - listitem [ref=e88]: Establish protocol version compatibility
+              - listitem [ref=e89]: Exchange and negotiate capabilities
+              - listitem [ref=e90]: Share implementation details
+            - generic [ref=e91]:
+              - text: The client
+              - strong [ref=e92]: MUST
+              - text: initiate this phase by sending an
+              - code [ref=e93]: initialize
+              - text: "request containing:"
+            - list [ref=e94]:
+              - listitem [ref=e95]: Protocol version supported
+              - listitem [ref=e96]: Client capabilities
+              - listitem [ref=e97]: Client implementation information
+            - generic [ref=e98]:
+              - generic [ref=e99]:
+                - button "Report incorrect code" [ref=e101] [cursor=pointer]
+                - generic [ref=e105]:
+                  - button "Copy the contents from the code block" [ref=e106] [cursor=pointer]
+                  - status [ref=e110]
+                - button "Ask Assistant" [ref=e112] [cursor=pointer]
+              - code [ref=e119]:
+                - generic [ref=e120]: "{"
+                - generic [ref=e121]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=e122]: "\"id\": 1,"
+                - generic [ref=e123]: "\"method\": \"initialize\","
+                - generic [ref=e124]: "\"params\": {"
+                - generic [ref=e125]: "\"protocolVersion\": \"2025-11-25\","
+                - generic [ref=e126]: "\"capabilities\": {"
+                - generic [ref=e127]: "\"roots\": {"
+                - generic [ref=e128]: "\"listChanged\": true"
+                - generic [ref=e129]: "},"
+                - generic [ref=e130]: "\"sampling\": {},"
+                - generic [ref=e131]: "\"elicitation\": {"
+                - generic [ref=e132]: "\"form\": {},"
+                - generic [ref=e133]: "\"url\": {}"
+                - generic [ref=e134]: "},"
+                - generic [ref=e135]: "\"tasks\": {"
+                - generic [ref=e136]: "\"requests\": {"
+                - generic [ref=e137]: "\"elicitation\": {"
+                - generic [ref=e138]: "\"create\": {}"
+                - generic [ref=e139]: "},"
+                - generic [ref=e140]: "\"sampling\": {"
+                - generic [ref=e141]: "\"createMessage\": {}"
+                - generic [ref=e142]: "}"
+                - generic [ref=e143]: "}"
+                - generic [ref=e144]: "}"
+                - generic [ref=e145]: "},"
+                - generic [ref=e146]: "\"clientInfo\": {"
+                - generic [ref=e147]: "\"name\": \"ExampleClient\","
+                - generic [ref=e148]: "\"title\": \"Example Client Display Name\","
+                - generic [ref=e149]: "\"version\": \"1.0.0\","
+                - generic [ref=e150]: "\"description\": \"An example MCP client application\","
+                - generic [ref=e151]: "\"icons\": ["
+                - generic [ref=e152]: "{"
+                - generic [ref=e153]: "\"src\": \"https://example.com/icon.png\","
+                - generic [ref=e154]: "\"mimeType\": \"image/png\","
+                - generic [ref=e155]: "\"sizes\": [\"48x48\"]"
+                - generic [ref=e156]: "}"
+                - generic [ref=e157]: "],"
+                - generic [ref=e158]: "\"websiteUrl\": \"https://example.com\""
+                - generic [ref=e159]: "}"
+                - generic [ref=e160]: "}"
+                - generic [ref=e161]: "}"
+            - generic [ref=e162]:
+              - text: The server
+              - strong [ref=e163]: MUST
+              - text: "respond with its own capabilities and information:"
+            - generic [ref=e164]:
+              - generic [ref=e165]:
+                - button "Report incorrect code" [ref=e167] [cursor=pointer]
+                - generic [ref=e171]:
+                  - button "Copy the contents from the code block" [ref=e172] [cursor=pointer]
+                  - status [ref=e176]
+                - button "Ask Assistant" [ref=e178] [cursor=pointer]
+              - code [ref=e185]:
+                - generic [ref=e186]: "{"
+                - generic [ref=e187]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=e188]: "\"id\": 1,"
+                - generic [ref=e189]: "\"result\": {"
+                - generic [ref=e190]: "\"protocolVersion\": \"2025-11-25\","
+                - generic [ref=e191]: "\"capabilities\": {"
+                - generic [ref=e192]: "\"logging\": {},"
+                - generic [ref=e193]: "\"prompts\": {"
+                - generic [ref=e194]: "\"listChanged\": true"
+                - generic [ref=e195]: "},"
+                - generic [ref=e196]: "\"resources\": {"
+                - generic [ref=e197]: "\"subscribe\": true,"
+                - generic [ref=e198]: "\"listChanged\": true"
+                - generic [ref=e199]: "},"
+                - generic [ref=e200]: "\"tools\": {"
+                - generic [ref=e201]: "\"listChanged\": true"
+                - generic [ref=e202]: "},"
+                - generic [ref=e203]: "\"tasks\": {"
+                - generic [ref=e204]: "\"list\": {},"
+                - generic [ref=e205]: "\"cancel\": {},"
+                - generic [ref=e206]: "\"requests\": {"
+                - generic [ref=e207]: "\"tools\": {"
+                - generic [ref=e208]: "\"call\": {}"
+                - generic [ref=e209]: "}"
+                - generic [ref=e210]: "}"
+                - generic [ref=e211]: "}"
+                - generic [ref=e212]: "},"
+                - generic [ref=e213]: "\"serverInfo\": {"
+                - generic [ref=e214]: "\"name\": \"ExampleServer\","
+                - generic [ref=e215]: "\"title\": \"Example Server Display Name\","
+                - generic [ref=e216]: "\"version\": \"1.0.0\","
+                - generic [ref=e217]: "\"description\": \"An example MCP server providing tools and resources\","
+                - generic [ref=e218]: "\"icons\": ["
+                - generic [ref=e219]: "{"
+                - generic [ref=e220]: "\"src\": \"https://example.com/server-icon.svg\","
+                - generic [ref=e221]: "\"mimeType\": \"image/svg+xml\","
+                - generic [ref=e222]: "\"sizes\": [\"any\"]"
+                - generic [ref=e223]: "}"
+                - generic [ref=e224]: "],"
+                - generic [ref=e225]: "\"websiteUrl\": \"https://example.com/server\""
+                - generic [ref=e226]: "},"
+                - generic [ref=e227]: "\"instructions\": \"Optional instructions for the client\""
+                - generic [ref=e228]: "}"
+                - generic [ref=e229]: "}"
+            - generic [ref=e230]:
+              - text: After successful initialization, the client
+              - strong [ref=e231]: MUST
+              - text: send an
+              - code [ref=e232]: initialized
+              - text: "notification to indicate it is ready to begin normal operations:"
+            - generic [ref=e233]:
+              - generic [ref=e234]:
+                - button "Report incorrect code" [ref=e236] [cursor=pointer]
+                - generic [ref=e240]:
+                  - button "Copy the contents from the code block" [ref=e241] [cursor=pointer]
+                  - status [ref=e245]
+                - button "Ask Assistant" [ref=e247] [cursor=pointer]
+              - code [ref=e254]:
+                - generic [ref=e255]: "{"
+                - generic [ref=e256]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=e257]: "\"method\": \"notifications/initialized\""
+                - generic [ref=e258]: "}"
+            - list [ref=e259]:
+              - listitem [ref=e260]:
+                - text: The client
+                - strong [ref=e261]: SHOULD NOT
+                - text: send requests other than
+                - link "pings" [ref=e262] [cursor=pointer]:
+                  - /url: /specification/2025-11-25/basic/utilities/ping
+                - text: before the server has responded to the
+                - code [ref=e263]: initialize
+                - text: request.
+              - listitem [ref=e264]:
+                - text: The server
+                - strong [ref=e265]: SHOULD NOT
+                - text: send requests other than
+                - link "pings" [ref=e266] [cursor=pointer]:
+                  - /url: /specification/2025-11-25/basic/utilities/ping
+                - text: and
+                - link "logging" [ref=e267] [cursor=pointer]:
+                  - /url: /specification/2025-11-25/server/utilities/logging
+                - text: before receiving the
+                - code [ref=e268]: initialized
+                - text: notification.
+            - heading "Navigate to header Version Negotiation" [level=4] [ref=e269]:
+              - link "Navigate to header" [ref=e270] [cursor=pointer]:
+                - /url: "#version-negotiation"
+              - generic [ref=e275] [cursor=pointer]: Version Negotiation
+            - generic [ref=e276]:
+              - text: In the
+              - code [ref=e277]: initialize
+              - text: request, the client
+              - strong [ref=e278]: MUST
+              - text: send a protocol version it supports. This
+              - strong [ref=e279]: SHOULD
+              - text: be the
+              - emphasis [ref=e280]: latest
+              - text: version supported by the client.
+            - generic [ref=e281]:
+              - text: If the server supports the requested protocol version, it
+              - strong [ref=e282]: MUST
+              - text: respond with the same version. Otherwise, the server
+              - strong [ref=e283]: MUST
+              - text: respond with another protocol version it supports. This
+              - strong [ref=e284]: SHOULD
+              - text: be the
+              - emphasis [ref=e285]: latest
+              - text: version supported by the server.
+            - generic [ref=e286]:
+              - text: If the client does not support the version in the server’s response, it
+              - strong [ref=e287]: SHOULD
+              - text: disconnect.
+            - note "Note" [ref=e288]:
+              - generic [ref=e293]:
+                - text: If using HTTP, the client
+                - strong [ref=e294]: MUST
+                - text: include the
+                - code [ref=e295]: "MCP-Protocol-Version: <protocol-version>"
+                - text: HTTP header on all subsequent requests to the MCP server. For details, see
+                - link "the Protocol Version Header section in Transports" [ref=e296] [cursor=pointer]:
+                  - /url: /specification/2025-11-25/basic/transports#protocol-version-header
+                - text: .
+            - heading "Navigate to header Capability Negotiation" [level=4] [ref=e297]:
+              - link "Navigate to header" [ref=e298] [cursor=pointer]:
+                - /url: "#capability-negotiation"
+              - generic [ref=e303] [cursor=pointer]: Capability Negotiation
+            - generic [ref=e304]: Client and server capabilities establish which optional protocol features will be available during the session.
+            - generic [ref=e305]: "Key capabilities include:"
+            - region "Scrollable table" [ref=e306]:
+              - table [ref=e308]:
+                - rowgroup [ref=e309]:
+                  - row [ref=e310]:
+                    - columnheader "Category" [ref=e311]
+                    - columnheader "Capability" [ref=e312]
+                    - columnheader "Description" [ref=e313]
+                - rowgroup [ref=e314]:
+                  - row [ref=e315]:
+                    - cell "Client" [ref=e316]
+                    - cell [ref=e317]:
+                      - code [ref=e318]: roots
+                    - cell [ref=e319]:
+                      - text: Ability to provide filesystem
+                      - link "roots" [ref=e320] [cursor=pointer]:
+                        - /url: /specification/2025-11-25/client/roots
+                  - row [ref=e321]:
+                    - cell "Client" [ref=e322]
+                    - cell [ref=e323]:
+                      - code [ref=e324]: sampling
+                    - cell [ref=e325]:
+                      - text: Support for LLM
+                      - link "sampling" [ref=e326] [cursor=pointer]:
+                        - /url: /specification/2025-11-25/client/sampling
+                      - text: requests
+                  - row [ref=e327]:
+                    - cell "Client" [ref=e328]
+                    - cell [ref=e329]:
+                      - code [ref=e330]: elicitation
+                    - cell [ref=e331]:
+                      - text: Support for server
+                      - link "elicitation" [ref=e332] [cursor=pointer]:
+                        - /url: /specification/2025-11-25/client/elicitation
+                      - text: requests
+                  - row [ref=e333]:
+                    - cell "Client" [ref=e334]
+                    - cell [ref=e335]:
+                      - code [ref=e336]: tasks
+                    - cell [ref=e337]:
+                      - text: Support for
+                      - link "task-augmented" [ref=e338] [cursor=pointer]:
+                        - /url: /specification/2025-11-25/basic/utilities/tasks
+                      - text: client requests
+                  - row [ref=e339]:
+                    - cell "Client" [ref=e340]
+                    - cell [ref=e341]:
+                      - code [ref=e342]: experimental
+                    - cell "Describes support for non-standard experimental features" [ref=e343]
+                  - row [ref=e344]:
+                    - cell "Server" [ref=e345]
+                    - cell [ref=e346]:
+                      - code [ref=e347]: prompts
+                    - cell [ref=e348]:
+                      - text: Offers
+                      - link "prompt templates" [ref=e349] [cursor=pointer]:
+                        - /url: /specification/2025-11-25/server/prompts
+                  - row [ref=e350]:
+                    - cell "Server" [ref=e351]
+                    - cell [ref=e352]:
+                      - code [ref=e353]: resources
+                    - cell [ref=e354]:
+                      - text: Provides readable
+                      - link "resources" [ref=e355] [cursor=pointer]:
+                        - /url: /specification/2025-11-25/server/resources
+                  - row [ref=e356]:
+                    - cell "Server" [ref=e357]
+                    - cell [ref=e358]:
+                      - code [ref=e359]: tools
+                    - cell [ref=e360]:
+                      - text: Exposes callable
+                      - link "tools" [ref=e361] [cursor=pointer]:
+                        - /url: /specification/2025-11-25/server/tools
+                  - row [ref=e362]:
+                    - cell "Server" [ref=e363]
+                    - cell [ref=e364]:
+                      - code [ref=e365]: logging
+                    - cell [ref=e366]:
+                      - text: Emits structured
+                      - link "log messages" [ref=e367] [cursor=pointer]:
+                        - /url: /specification/2025-11-25/server/utilities/logging
+                  - row [ref=e368]:
+                    - cell "Server" [ref=e369]
+                    - cell [ref=e370]:
+                      - code [ref=e371]: completions
+                    - cell [ref=e372]:
+                      - text: Supports argument
+                      - link "autocompletion" [ref=e373] [cursor=pointer]:
+                        - /url: /specification/2025-11-25/server/utilities/completion
+                  - row [ref=e374]:
+                    - cell "Server" [ref=e375]
+                    - cell [ref=e376]:
+                      - code [ref=e377]: tasks
+                    - cell [ref=e378]:
+                      - text: Support for
+                      - link "task-augmented" [ref=e379] [cursor=pointer]:
+                        - /url: /specification/2025-11-25/basic/utilities/tasks
+                      - text: server requests
+                  - row [ref=e380]:
+                    - cell "Server" [ref=e381]
+                    - cell [ref=e382]:
+                      - code [ref=e383]: experimental
+                    - cell "Describes support for non-standard experimental features" [ref=e384]
+            - generic [ref=e385]: "Capability objects can describe sub-capabilities like:"
+            - list [ref=e386]:
+              - listitem [ref=e387]:
+                - code [ref=e388]: listChanged
+                - text: ": Support for list change notifications (for prompts, resources, and tools)"
+              - listitem [ref=e389]:
+                - code [ref=e390]: subscribe
+                - text: ": Support for subscribing to individual items’ changes (resources only)"
+            - heading "Navigate to header Operation" [level=3] [ref=e391]:
+              - link "Navigate to header" [ref=e392] [cursor=pointer]:
+                - /url: "#operation"
+              - generic [ref=e397] [cursor=pointer]: Operation
+            - generic [ref=e398]: During the operation phase, the client and server exchange messages according to the negotiated capabilities.
+            - generic [ref=e399]:
+              - text: Both parties
+              - strong [ref=e400]: MUST
+              - text: ":"
+            - list [ref=e401]:
+              - listitem [ref=e402]: Respect the negotiated protocol version
+              - listitem [ref=e403]: Only use capabilities that were successfully negotiated
+            - heading "Navigate to header Shutdown" [level=3] [ref=e404]:
+              - link "Navigate to header" [ref=e405] [cursor=pointer]:
+                - /url: "#shutdown"
+              - generic [ref=e410] [cursor=pointer]: Shutdown
+            - generic [ref=e411]: "During the shutdown phase, one side (usually the client) cleanly terminates the protocol connection. No specific shutdown messages are defined—instead, the underlying transport mechanism should be used to signal connection termination:"
+            - heading "Navigate to header stdio" [level=4] [ref=e412]:
+              - link "Navigate to header" [ref=e413] [cursor=pointer]:
+                - /url: "#stdio"
+              - generic [ref=e418] [cursor=pointer]: stdio
+            - generic [ref=e419]:
+              - text: For the stdio
+              - link "transport" [ref=e420] [cursor=pointer]:
+                - /url: /specification/2025-11-25/basic/transports
+              - text: ", the client"
+              - strong [ref=e421]: SHOULD
+              - text: "initiate shutdown by:"
+            - list [ref=e422]:
+              - listitem [ref=e423]: First, closing the input stream to the child process (the server)
+              - listitem [ref=e424]:
+                - text: Waiting for the server to exit, or sending
+                - code [ref=e425]: SIGTERM
+                - text: if the server does not exit within a reasonable time
+              - listitem [ref=e426]:
+                - text: Sending
+                - code [ref=e427]: SIGKILL
+                - text: if the server does not exit within a reasonable time after
+                - code [ref=e428]: SIGTERM
+            - generic [ref=e429]:
+              - text: The server
+              - strong [ref=e430]: MAY
+              - text: initiate shutdown by closing its output stream to the client and exiting.
+            - heading "Navigate to header HTTP" [level=4] [ref=e431]:
+              - link "Navigate to header" [ref=e432] [cursor=pointer]:
+                - /url: "#http"
+              - generic [ref=e437] [cursor=pointer]: HTTP
+            - generic [ref=e438]:
+              - text: For HTTP
+              - link "transports" [ref=e439] [cursor=pointer]:
+                - /url: /specification/2025-11-25/basic/transports
+              - text: ", shutdown is indicated by closing the associated HTTP connection(s)."
+            - heading "Navigate to header Timeouts" [level=2] [ref=e440]:
+              - link "Navigate to header" [ref=e441] [cursor=pointer]:
+                - /url: "#timeouts"
+              - generic [ref=e446] [cursor=pointer]: Timeouts
+            - generic [ref=e447]:
+              - text: Implementations
+              - strong [ref=e448]: SHOULD
+              - text: establish timeouts for all sent requests, to prevent hung connections and resource exhaustion. When the request has not received a success or error response within the timeout period, the sender
+              - strong [ref=e449]: SHOULD
+              - text: issue a
+              - link "cancellation notification" [ref=e450] [cursor=pointer]:
+                - /url: /specification/2025-11-25/basic/utilities/cancellation
+              - text: for that request and stop waiting for a response.
+            - generic [ref=e451]:
+              - text: SDKs and other middleware
+              - strong [ref=e452]: SHOULD
+              - text: allow these timeouts to be configured on a per-request basis.
+            - generic [ref=e453]:
+              - text: Implementations
+              - strong [ref=e454]: MAY
+              - text: choose to reset the timeout clock when receiving a
+              - link "progress notification" [ref=e455] [cursor=pointer]:
+                - /url: /specification/2025-11-25/basic/utilities/progress
+              - text: corresponding to the request, as this implies that work is actually happening. However, implementations
+              - strong [ref=e456]: SHOULD
+              - text: always enforce a maximum timeout, regardless of progress notifications, to limit the impact of a misbehaving client or server.
+            - heading "Navigate to header Error Handling" [level=2] [ref=e457]:
+              - link "Navigate to header" [ref=e458] [cursor=pointer]:
+                - /url: "#error-handling"
+              - generic [ref=e463] [cursor=pointer]: Error Handling
+            - generic [ref=e464]:
+              - text: Implementations
+              - strong [ref=e465]: SHOULD
+              - text: "be prepared to handle these error cases:"
+            - list [ref=e466]:
+              - listitem [ref=e467]: Protocol version mismatch
+              - listitem [ref=e468]: Failure to negotiate required capabilities
+              - listitem [ref=e469]:
+                - text: Request
+                - link "timeouts" [ref=e470] [cursor=pointer]:
+                  - /url: "#timeouts"
+            - generic [ref=e471]: "Example initialization error:"
+            - generic [ref=e472]:
+              - generic [ref=e473]:
+                - button "Report incorrect code" [ref=e475] [cursor=pointer]
+                - generic [ref=e479]:
+                  - button "Copy the contents from the code block" [ref=e480] [cursor=pointer]
+                  - status [ref=e484]
+                - button "Ask Assistant" [ref=e486] [cursor=pointer]
+              - code [ref=e493]:
+                - generic [ref=e494]: "{"
+                - generic [ref=e495]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=e496]: "\"id\": 1,"
+                - generic [ref=e497]: "\"error\": {"
+                - generic [ref=e498]: "\"code\": -32602,"
+                - generic [ref=e499]: "\"message\": \"Unsupported protocol version\","
+                - generic [ref=e500]: "\"data\": {"
+                - generic [ref=e501]: "\"supported\": [\"2024-11-05\"],"
+                - generic [ref=e502]: "\"requested\": \"1.0.0\""
+                - generic [ref=e503]: "}"
+                - generic [ref=e504]: "}"
+                - generic [ref=e505]: "}"
+          - generic [ref=e507]:
+            - paragraph [ref=e508]: Was this page helpful?
+            - generic [ref=e510]:
+              - button "Yes" [ref=e511] [cursor=pointer]
+              - button "No" [ref=e516] [cursor=pointer]
+          - navigation "Pagination" [ref=e521]:
+            - 'link "Previous: Overview" [ref=e522] [cursor=pointer]':
+              - /url: /specification/2025-11-25/basic
+              - generic [ref=e525]: Overview
+            - 'link "Next: Transports" [ref=e526] [cursor=pointer]':
+              - /url: /specification/2025-11-25/basic/transports
+              - generic [ref=e527]: Transports
+          - generic [ref=e531]:
+            - textbox "Ask a question..." [ref=e532]
+            - button "Send message" [disabled] [ref=e533]
+          - generic [ref=e538]:
+            - link "github" [ref=e539] [cursor=pointer]:
+              - /url: https://github.com/modelcontextprotocol
+            - link "discord" [ref=e542] [cursor=pointer]:
+              - /url: https://discord.gg/6CSzBmMkjX

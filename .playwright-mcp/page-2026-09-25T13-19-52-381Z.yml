@@ -1,0 +1,365 @@
+- generic [active] [ref=f1e1]:
+  - blockquote [aria-hidden] [ref=f1e2]:
+    - heading [level=2] [ref=f1e3]: Documentation Index
+    - paragraph [ref=f1e4]:
+      - text: "Fetch the complete documentation index at:"
+      - link [ref=f1e5] [cursor=pointer]:
+        - /url: /llms.txt
+        - text: /llms.txt
+    - paragraph [ref=f1e6]: Use this file to discover all available pages before exploring further.
+  - generic [ref=f1e7]:
+    - link "Skip to main content" [ref=f1e8] [cursor=pointer]:
+      - /url: "#content-area"
+    - generic [ref=f1e10]:
+      - banner [ref=f1e11]:
+        - generic [ref=f1e15]:
+          - generic [ref=f1e17]:
+            - link "Model Context Protocol home page light logo" [ref=f1e19] [cursor=pointer]:
+              - /url: /
+              - generic [ref=f1e20]: Model Context Protocol home page
+              - img "light logo" [ref=f1e21]
+            - generic [ref=f1e22]:
+              - button "Open search" [ref=f1e23] [cursor=pointer]:
+                - generic [ref=f1e24]: Search...
+              - button "Toggle assistant panel" [ref=f1e26] [cursor=pointer]
+              - button "More actions" [ref=f1e30] [cursor=pointer]
+          - button "Navigation Base Protocol Versioning and Compatibility" [ref=f1e32] [cursor=pointer]:
+            - generic [ref=f1e33]: Navigation
+            - generic [ref=f1e36]:
+              - generic [ref=f1e37]: Base Protocol
+              - generic [ref=f1e41]: Versioning and Compatibility
+      - main [ref=f1e43]:
+        - generic [ref=f1e45]:
+          - generic [ref=f1e47]:
+            - generic [ref=f1e48]: Base Protocol
+            - generic [ref=f1e49]:
+              - heading "Versioning and Compatibility" [level=1] [ref=f1e50]
+              - generic [ref=f1e51]:
+                - button "Copy page" [ref=f1e52] [cursor=pointer]
+                - button "More actions" [ref=f1e59] [cursor=pointer]
+          - generic [ref=f1e62]:
+            - generic [ref=f1e63]: "This page defines how a client and server agree on what they are speaking: the protocol version, declared on every request; optional extensions, negotiated through capabilities; and interoperability with earlier, handshake-based protocol revisions."
+            - generic [ref=f1e64]: "There is no negotiation handshake. Every request carries its protocol version, and the server accepts or rejects each request independently:"
+            - heading "Navigate to header Terminology" [level=2] [ref=f1e65]:
+              - link "Navigate to header" [ref=f1e66] [cursor=pointer]:
+                - /url: "#terminology"
+              - generic [ref=f1e71] [cursor=pointer]: Terminology
+            - generic [ref=f1e72]: "This page uses the following terms for interoperability across protocol revisions:"
+            - list [ref=f1e73]:
+              - listitem [ref=f1e74]:
+                - strong [ref=f1e75]: Modern
+                - text: ": protocol versions that convey version, identity, and capabilities as per-request metadata (revision"
+                - code [ref=f1e76]: 2026-07-28
+                - text: and later).
+              - listitem [ref=f1e77]:
+                - strong [ref=f1e78]: Legacy
+                - text: ": protocol versions that establish a session with an"
+                - code [ref=f1e79]: initialize
+                - text: handshake (
+                - code [ref=f1e80]: 2025-11-25
+                - text: and earlier).
+              - listitem [ref=f1e81]:
+                - strong [ref=f1e82]: Dual-era
+                - text: ": an implementation that supports both modern and legacy versions."
+            - heading "Navigate to header Protocol Version Negotiation" [level=2] [ref=f1e83]:
+              - link "Navigate to header" [ref=f1e84] [cursor=pointer]:
+                - /url: "#protocol-version-negotiation"
+              - generic [ref=f1e89] [cursor=pointer]: Protocol Version Negotiation
+            - generic [ref=f1e90]:
+              - text: Every request declares the protocol version it is using in its
+              - link [ref=f1e91] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/index#meta
+                - code [ref=f1e92]: _meta
+              - text: field. On HTTP, this is also carried in the
+              - link [ref=f1e93] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/transports/streamable-http#protocol-version-header
+                - code [ref=f1e94]: MCP-Protocol-Version
+                - text: header
+              - text: .
+            - generic [ref=f1e95]:
+              - text: If the server does not implement the requested version (whether the version is unknown to the server, or is a known version the server has chosen not to support), it
+              - strong [ref=f1e96]: MUST
+              - text: respond with an
+              - link [ref=f1e97] [cursor=pointer]:
+                - /url: /specification/2026-07-28/schema#unsupportedprotocolversionerror
+                - code [ref=f1e98]: UnsupportedProtocolVersionError
+              - text: "listing the versions it does support:"
+            - generic [ref=f1e99]:
+              - generic [ref=f1e100]:
+                - button "Report incorrect code" [ref=f1e102] [cursor=pointer]
+                - generic [ref=f1e106]:
+                  - button "Copy the contents from the code block" [ref=f1e107] [cursor=pointer]
+                  - status [ref=f1e111]
+                - button "Ask Assistant" [ref=f1e113] [cursor=pointer]
+              - code [ref=f1e120]:
+                - generic [ref=f1e121]: "{"
+                - generic [ref=f1e122]: "\"jsonrpc\": \"2.0\","
+                - generic [ref=f1e123]: "\"id\": 1,"
+                - generic [ref=f1e124]: "\"error\": {"
+                - generic [ref=f1e125]: "\"code\": -32022,"
+                - generic [ref=f1e126]: "\"message\": \"Unsupported protocol version\","
+                - generic [ref=f1e127]: "\"data\": {"
+                - generic [ref=f1e128]: "\"supported\": [\"2026-07-28\", \"2025-11-25\"],"
+                - generic [ref=f1e129]: "\"requested\": \"1900-01-01\""
+                - generic [ref=f1e130]: "}"
+                - generic [ref=f1e131]: "}"
+                - generic [ref=f1e132]: "}"
+            - generic [ref=f1e133]:
+              - text: The client
+              - strong [ref=f1e134]: SHOULD
+              - text: select a mutually supported version from the
+              - code [ref=f1e135]: supported
+              - text: list and retry the request, or surface an error to the user if no compatible version exists.
+            - generic [ref=f1e136]:
+              - text: Servers
+              - strong [ref=f1e137]: MUST
+              - text: implement
+              - link [ref=f1e138] [cursor=pointer]:
+                - /url: /specification/2026-07-28/server/discover
+                - code [ref=f1e139]: server/discover
+              - text: . Clients
+              - strong [ref=f1e140]: MAY
+              - text: "call it before sending any other requests to learn the server’s supported versions up front, but are not required to: a client is free to invoke any RPC inline and handle"
+              - code [ref=f1e141]: UnsupportedProtocolVersionError
+              - text: if its preferred version is not supported.
+            - heading "Navigate to header Extension Negotiation" [level=2] [ref=f1e142]:
+              - link "Navigate to header" [ref=f1e143] [cursor=pointer]:
+                - /url: "#extension-negotiation"
+              - generic [ref=f1e148] [cursor=pointer]: Extension Negotiation
+            - generic [ref=f1e149]:
+              - text: Clients and servers can negotiate support for optional
+              - link "extensions" [ref=f1e150] [cursor=pointer]:
+                - /url: /docs/extensions/overview
+              - text: beyond the core protocol. Extensions are advertised in the
+              - code [ref=f1e151]: extensions
+              - text: field of capabilities, which is a map of extension identifiers to per-extension settings objects. Extension identifiers
+              - strong [ref=f1e152]: MUST
+              - text: follow the
+              - link [ref=f1e153] [cursor=pointer]:
+                - /url: /specification/2026-07-28/basic/index#meta
+                - code [ref=f1e154]: _meta
+                - text: key naming rules
+              - text: ", with a mandatory prefix."
+            - generic [ref=f1e155]:
+              - text: The following is an example of a client that advertises the
+              - link "MCP Apps extension" [ref=f1e156] [cursor=pointer]:
+                - /url: /extensions/apps/overview
+              - text: identified as
+              - code [ref=f1e157]: io.modelcontextprotocol/ui
+              - text: ":"
+            - generic [ref=f1e158]:
+              - generic [ref=f1e159]:
+                - button "Report incorrect code" [ref=f1e161] [cursor=pointer]
+                - generic [ref=f1e165]:
+                  - button "Copy the contents from the code block" [ref=f1e166] [cursor=pointer]
+                  - status [ref=f1e170]
+                - button "Ask Assistant" [ref=f1e172] [cursor=pointer]
+              - code [ref=f1e179]:
+                - generic [ref=f1e180]: "{"
+                - generic [ref=f1e181]: "\"capabilities\": {"
+                - generic [ref=f1e182]: "\"roots\": {},"
+                - generic [ref=f1e183]: "\"extensions\": {"
+                - generic [ref=f1e184]: "\"io.modelcontextprotocol/ui\": {"
+                - generic [ref=f1e185]: "\"mimeTypes\": [\"text/html;profile=mcp-app\"]"
+                - generic [ref=f1e186]: "}"
+                - generic [ref=f1e187]: "}"
+                - generic [ref=f1e188]: "}"
+                - generic [ref=f1e189]: "}"
+            - generic [ref=f1e190]:
+              - text: An example of
+              - link "Tasks extension" [ref=f1e191] [cursor=pointer]:
+                - /url: /extensions/tasks/overview
+              - text: identified as
+              - code [ref=f1e192]: io.modelcontextprotocol/tasks
+              - text: ":"
+            - generic [ref=f1e193]:
+              - generic [ref=f1e194]:
+                - button "Report incorrect code" [ref=f1e196] [cursor=pointer]
+                - generic [ref=f1e200]:
+                  - button "Copy the contents from the code block" [ref=f1e201] [cursor=pointer]
+                  - status [ref=f1e205]
+                - button "Ask Assistant" [ref=f1e207] [cursor=pointer]
+              - code [ref=f1e214]:
+                - generic [ref=f1e215]: "{"
+                - generic [ref=f1e216]: "\"capabilities\": {"
+                - generic [ref=f1e217]: "\"tools\": {},"
+                - generic [ref=f1e218]: "\"extensions\": {"
+                - generic [ref=f1e219]: "\"io.modelcontextprotocol/tasks\": {}"
+                - generic [ref=f1e220]: "}"
+                - generic [ref=f1e221]: "}"
+                - generic [ref=f1e222]: "}"
+            - generic [ref=f1e223]: Each extension specifies the schema of its settings object; an empty object indicates support with no additional settings.
+            - generic [ref=f1e224]:
+              - text: If one party supports an extension but the other does not, the supporting party
+              - strong [ref=f1e225]: MUST
+              - text: either revert to core protocol behavior or reject the request with an appropriate error. Extensions
+              - strong [ref=f1e226]: SHOULD
+              - text: document their expected fallback behavior.
+            - heading "Navigate to header Backward Compatibility with Initialization-Based Versions" [level=2] [ref=f1e227]:
+              - link "Navigate to header" [ref=f1e228] [cursor=pointer]:
+                - /url: "#backward-compatibility-with-initialization-based-versions"
+              - generic [ref=f1e233] [cursor=pointer]: Backward Compatibility with Initialization-Based Versions
+            - generic [ref=f1e234]:
+              - text: A server that wishes to support both
+              - link "legacy" [ref=f1e235] [cursor=pointer]:
+                - /url: "#terminology"
+              - text: clients (which expect an
+              - code [ref=f1e236]: initialize
+              - text: handshake) and
+              - link "modern" [ref=f1e237] [cursor=pointer]:
+                - /url: "#terminology"
+              - text: clients (which use per-request metadata)
+              - strong [ref=f1e238]: MAY
+              - text: implement both behaviors.
+            - generic [ref=f1e239]: "A client that needs to interoperate with both kinds of servers detects the server’s era with transport-specific mechanics, specified in the binding pages:"
+            - list [ref=f1e240]:
+              - listitem [ref=f1e241]:
+                - link "stdio" [ref=f1e242] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/transports/stdio#backward-compatibility
+                - text: ": probe with"
+                - code [ref=f1e243]: server/discover
+                - text: and fall back on any error that is not a recognized modern error.
+              - listitem [ref=f1e244]:
+                - link "Streamable HTTP" [ref=f1e245] [cursor=pointer]:
+                  - /url: /specification/2026-07-28/basic/transports/streamable-http#backward-compatibility
+                - text: ": attempt a modern request and inspect the body of a"
+                - code [ref=f1e246]: 400 Bad Request
+                - text: before falling back.
+            - generic [ref=f1e247]:
+              - text: In both cases, a recognized modern JSON-RPC error (such as
+              - link [ref=f1e248] [cursor=pointer]:
+                - /url: /specification/2026-07-28/schema#unsupportedprotocolversionerror
+                - code [ref=f1e249]: UnsupportedProtocolVersionError
+              - text: ") identifies a modern server: the client retries with a supported version rather than falling back. Anything else identifies a legacy server."
+            - generic [ref=f1e250]:
+              - text: The era determination is a property of the server, not of an individual request. Clients
+              - strong [ref=f1e251]: SHOULD
+              - text: cache the result for the lifetime of the server process (stdio) or origin (HTTP), and
+              - strong [ref=f1e252]: MAY
+              - text: persist it across restarts of the same server configuration, re-probing if the cached assumption later fails.
+            - generic [ref=f1e253]:
+              - text: A server that supports only
+              - link "modern" [ref=f1e254] [cursor=pointer]:
+                - /url: "#terminology"
+              - text: versions
+              - strong [ref=f1e255]: SHOULD
+              - text: name the protocol versions it supports in any error it returns to an
+              - code [ref=f1e256]: initialize
+              - text: "request, on any transport: legacy clients have no fall-forward mechanism, and this message may be the only diagnostic they can surface to users."
+            - heading "Navigate to header Compatibility Matrix" [level=3] [ref=f1e257]:
+              - link "Navigate to header" [ref=f1e258] [cursor=pointer]:
+                - /url: "#compatibility-matrix"
+              - generic [ref=f1e263] [cursor=pointer]: Compatibility Matrix
+            - generic [ref=f1e264]: "The following matrix summarizes the expected outcome of every combination of client and server era:"
+            - region "Scrollable table" [ref=f1e265]:
+              - table [ref=f1e267]:
+                - rowgroup [ref=f1e268]:
+                  - row [ref=f1e269]:
+                    - columnheader "Client" [ref=f1e270]
+                    - columnheader "Server" [ref=f1e271]
+                    - columnheader "Outcome" [ref=f1e272]
+                - rowgroup [ref=f1e273]:
+                  - row [ref=f1e274]:
+                    - cell "Modern" [ref=f1e275]
+                    - cell "Modern" [ref=f1e276]
+                    - cell [ref=f1e277]:
+                      - text: Works.
+                      - code [ref=f1e278]: server/discover
+                      - text: is optional; version mismatches surface as
+                      - code [ref=f1e279]: UnsupportedProtocolVersionError
+                      - text: and the client retries with a mutually supported version.
+                  - row [ref=f1e280]:
+                    - cell "Modern" [ref=f1e281]
+                    - cell "Legacy" [ref=f1e282]
+                    - cell [ref=f1e283]:
+                      - text: Fails. The server may reject the request with an implementation-defined error, stay silent, or even process an era-ambiguous method under legacy semantics. On stdio, clients
+                      - strong [ref=f1e284]: SHOULD
+                      - text: send
+                      - code [ref=f1e285]: server/discover
+                      - text: first to fail deterministically; the client then surfaces an actionable error to the user.
+                  - row [ref=f1e286]:
+                    - cell "Dual-era" [ref=f1e287]
+                    - cell "Modern" [ref=f1e288]
+                    - cell [ref=f1e289]:
+                      - text: Works. The stdio probe returns a
+                      - code [ref=f1e290]: DiscoverResult
+                      - text: (or
+                      - code [ref=f1e291]: UnsupportedProtocolVersionError
+                      - text: ); on HTTP, the first modern request succeeds or returns a modern error. The client stays modern.
+                  - row [ref=f1e292]:
+                    - cell "Dual-era" [ref=f1e293]
+                    - cell "Legacy" [ref=f1e294]
+                    - cell [ref=f1e295]:
+                      - text: "Works. stdio: the probe returns a non-modern error or times out, and the client falls back to"
+                      - code [ref=f1e296]: initialize
+                      - text: ". HTTP: the modern request returns a"
+                      - code [ref=f1e297]: 4xx
+                      - text: without a recognized modern error body, and the client falls back to
+                      - code [ref=f1e298]: initialize
+                      - text: (and possibly further to the deprecated HTTP+SSE transport).
+                  - row [ref=f1e299]:
+                    - cell "Legacy" [ref=f1e300]
+                    - cell "Modern" [ref=f1e301]
+                    - cell [ref=f1e302]:
+                      - text: "Fails. stdio: the server rejects"
+                      - code [ref=f1e303]: initialize
+                      - text: with a JSON-RPC error; the exact code is implementation-defined (
+                      - code [ref=f1e304]: initialize
+                      - text: is an unknown method and the request also lacks the required
+                      - code [ref=f1e305]: _meta
+                      - text: "fields). HTTP: the request is missing the required headers and is rejected per"
+                      - link "server validation" [ref=f1e306] [cursor=pointer]:
+                        - /url: /specification/2026-07-28/basic/transports/streamable-http#server-validation
+                      - text: with
+                      - code [ref=f1e307]: 400 Bad Request
+                      - text: (a client on the deprecated HTTP+SSE transport fails at its opening
+                      - code [ref=f1e308]: GET
+                      - text: instead). Legacy clients have no fall-forward mechanism.
+                  - row [ref=f1e309]:
+                    - cell "Legacy" [ref=f1e310]
+                    - cell "Dual-era" [ref=f1e311]
+                    - cell [ref=f1e312]:
+                      - text: Works. The server answers
+                      - code [ref=f1e313]: initialize
+                      - text: and serves the client according to the negotiated legacy revision.
+                  - row [ref=f1e314]:
+                    - cell "Legacy" [ref=f1e315]
+                    - cell "Legacy" [ref=f1e316]
+                    - cell "Works according to the legacy revision; out of scope for this document." [ref=f1e317]
+            - generic [ref=f1e318]:
+              - text: A dual-era
+              - strong [ref=f1e319]: server
+              - text: "selects its behavior from how the client opens:"
+            - list [ref=f1e320]:
+              - listitem [ref=f1e321]:
+                - text: A request carrying modern per-request
+                - code [ref=f1e322]: _meta
+                - text: is served statelessly according to this revision.
+              - listitem [ref=f1e323]:
+                - text: An
+                - code [ref=f1e324]: initialize
+                - text: request selects legacy semantics, scoped to the stdio process (stdio) or the session (HTTP), as specified by the negotiated legacy protocol version.
+            - generic [ref=f1e325]:
+              - text: A dual-era server
+              - strong [ref=f1e326]: MAY
+              - text: serve both eras concurrently on the same endpoint or process.
+          - generic [ref=f1e328]:
+            - paragraph [ref=f1e329]: Was this page helpful?
+            - generic [ref=f1e331]:
+              - button "Yes" [ref=f1e332] [cursor=pointer]
+              - button "No" [ref=f1e337] [cursor=pointer]
+          - navigation "Pagination" [ref=f1e342]:
+            - 'link "Previous: Overview" [ref=f1e343] [cursor=pointer]':
+              - /url: /specification/2026-07-28/basic
+              - generic [ref=f1e346]: Overview
+            - 'link "Next: Overview" [ref=f1e347] [cursor=pointer]':
+              - /url: /specification/2026-07-28/basic/patterns
+              - generic [ref=f1e348]: Overview
+          - generic [ref=f1e352]:
+            - textbox "Ask a question..." [ref=f1e353]
+            - button "Send message" [disabled] [ref=f1e354]
+          - generic [ref=f1e359]:
+            - link "github" [ref=f1e360] [cursor=pointer]:
+              - /url: https://github.com/modelcontextprotocol
+            - link "discord" [ref=f1e363] [cursor=pointer]:
+              - /url: https://discord.gg/6CSzBmMkjX
