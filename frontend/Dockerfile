@@ -16,6 +16,6 @@ ENV NODE_ENV=production
 
 RUN npm install -g serve
 COPY --from=builder /app/dist .
-EXPOSE 3030
+EXPOSE 3000
 
-CMD ["serve", "-s", "/app", "-l", "3030"]
+CMD ["serve", "-s", "/app", "-l", "3000"]
