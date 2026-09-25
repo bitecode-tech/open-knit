@@ -49,33 +49,41 @@ class AppScaffolderService {
         const zipFilePath = path.join(resolvedPaths.outputRoot, zipFileName);
 
         const zipStart = process.hrtime.bigint();
-        await zipService.createZipFromBaseZipAndEntries(baseZipPath, zipFilePath, (archive) => {
-            const backendStart = process.hrtime.bigint();
-            backendScaffolderService.appendBackendUpdatesToArchive(
-                archive,
-                runContext,
-                backendPayload,
-                backendRootItems,
-                "backend"
-            );
-            const backendElapsedMs = Number(
-                (process.hrtime.bigint() - backendStart) / 1_000_000n
-            );
-            console.log(`[scaffolder] Preparing backend files (+${backendElapsedMs}ms)`);
+        const excludedBaseEntries = backendRootItems.has("Dockerfile")
+            ? new Set([path.posix.join("backend", "Dockerfile")])
+            : undefined;
+        await zipService.createZipFromBaseZipAndEntries(
+            baseZipPath,
+            zipFilePath,
+            (archive) => {
+                const backendStart = process.hrtime.bigint();
+                backendScaffolderService.appendBackendUpdatesToArchive(
+                    archive,
+                    runContext,
+                    backendPayload,
+                    backendRootItems,
+                    "backend"
+                );
+                const backendElapsedMs = Number(
+                    (process.hrtime.bigint() - backendStart) / 1_000_000n
+                );
+                console.log(`[scaffolder] Preparing backend files (+${backendElapsedMs}ms)`);
 
-            const frontendStart = process.hrtime.bigint();
-            this.appendFrontendUpdatesToArchive(
-                archive,
-                runContext,
-                frontendPayload,
-                frontendRootItems,
-                "frontend"
-            );
-            const frontendElapsedMs = Number(
-                (process.hrtime.bigint() - frontendStart) / 1_000_000n
-            );
-            console.log(`[scaffolder] Preparing frontend files (+${frontendElapsedMs}ms)`);
-        });
+                const frontendStart = process.hrtime.bigint();
+                this.appendFrontendUpdatesToArchive(
+                    archive,
+                    runContext,
+                    frontendPayload,
+                    frontendRootItems,
+                    "frontend"
+                );
+                const frontendElapsedMs = Number(
+                    (process.hrtime.bigint() - frontendStart) / 1_000_000n
+                );
+                console.log(`[scaffolder] Preparing frontend files (+${frontendElapsedMs}ms)`);
+            },
+            excludedBaseEntries
+        );
         const zipElapsedMs = Number((process.hrtime.bigint() - zipStart) / 1_000_000n);
         console.log(`[scaffolder] Zipping archive (+${zipElapsedMs}ms)`);
 
@@ -163,6 +171,7 @@ class AppScaffolderService {
             "src",
             "settings.gradle",
             "build.gradle",
+            "Dockerfile",
             "docker-compose.yml"
         ]);
 

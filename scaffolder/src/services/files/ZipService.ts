@@ -26,7 +26,8 @@ class ZipService {
     async createZipFromBaseZipAndEntries(
         baseZipPath: string,
         zipFilePath: string,
-        addEntries: (archive: archiver.Archiver) => void | Promise<void>
+        addEntries: (archive: archiver.Archiver) => void | Promise<void>,
+        excludedBaseEntries: ReadonlySet<string> = new Set<string>()
     ): Promise<void> {
         await new Promise<void>((resolve, reject) => {
             const outputStream = fs.createWriteStream(zipFilePath);
@@ -47,7 +48,7 @@ class ZipService {
                 zipFile.readEntry();
 
                 zipFile.on("entry", (entry) => {
-                    if (/\/$/.test(entry.fileName)) {
+                    if (/\/$/.test(entry.fileName) || excludedBaseEntries.has(entry.fileName)) {
                         zipFile.readEntry();
                         return;
                     }

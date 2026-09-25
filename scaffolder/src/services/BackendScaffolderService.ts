@@ -3,6 +3,7 @@ import path from "path";
 import envFileService from "@/services/files/EnvFileService";
 import backendModuleResolver from "@/services/modules/backend/ModuleResolver";
 import dockerComposeFileUpdater from "@/services/files/backend/DockerComposeFileUpdater";
+import dockerfileFileUpdater from "@/services/files/backend/DockerfileFileUpdater";
 import buildGradleFileUpdater from "@/services/files/backend/BuildGradleFileUpdater";
 import settingsGradleFileUpdater from "@/services/files/backend/SettingsGradleFileUpdater";
 import applicationYamlFileUpdater from "@/services/files/backend/ApplicationYamlFileUpdater";
@@ -18,6 +19,7 @@ export type BackendPayload = {
     requestedModules: string[];
     selectedModules: string[];
     updatedSettingsGradle: string;
+    updatedDockerfile: string | null;
     updatedDockerCompose: string;
     updatedBuildGradle: string;
     updatedApplicationYaml: string | null;
@@ -75,6 +77,19 @@ class BackendScaffolderService {
                 settingsContents,
                 backendSelectionResult.selectedModules,
                 applicationName
+            );
+        });
+        const updatedDockerfile = await runStep("Preparing Dockerfile", () => {
+            if (!backendRootItems.has("Dockerfile")) {
+                return null;
+            }
+            const dockerfileContents = readRequiredFile(
+                path.join(resolvedPaths.backendRoot, "Dockerfile"),
+                "Dockerfile"
+            );
+            return dockerfileFileUpdater.updateModuleBuildCopyInstructions(
+                dockerfileContents,
+                backendSelectionResult.selectedModules
             );
         });
         const updatedDockerCompose = await runStep("Preparing docker-compose.yml", () => {
@@ -166,6 +181,7 @@ class BackendScaffolderService {
             requestedModules: backendSelectionResult.requestedModules,
             selectedModules: backendSelectionResult.selectedModules,
             updatedSettingsGradle,
+            updatedDockerfile,
             updatedDockerCompose,
             updatedBuildGradle,
             updatedApplicationYaml,
@@ -198,6 +214,11 @@ class BackendScaffolderService {
         if (backendRootItems.has("settings.gradle")) {
             archive.append(payload.updatedSettingsGradle, {
                 name: path.posix.join(zipPrefix, "settings.gradle")
+            });
+        }
+        if (backendRootItems.has("Dockerfile") && payload.updatedDockerfile !== null) {
+            archive.append(payload.updatedDockerfile, {
+                name: path.posix.join(zipPrefix, "Dockerfile")
             });
         }
         if (backendRootItems.has("build.gradle")) {
