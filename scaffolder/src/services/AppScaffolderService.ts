@@ -8,6 +8,19 @@ import frontendScaffolderService, {FrontendPayload} from "@/services/FrontendSca
 import {ScaffolderRunContext} from "@/types/ScaffolderRunContext";
 import {ScaffolderRunHelpers} from "@/types/ScaffolderRunHelpers";
 
+const FIGMA_SKILL_SOURCE_PATH = path.join(
+    ".codex",
+    "skills",
+    "figma-focused-implementation",
+    "SKILL.md"
+);
+const FIGMA_SKILL_TARGET_PATH = path.join(
+    ".agents",
+    "skills",
+    "figma-focused-implementation",
+    "SKILL.md"
+);
+
 class AppScaffolderService {
     async run(
         runContext: ScaffolderRunContext,
@@ -154,6 +167,15 @@ class AppScaffolderService {
             const targetPath = path.join(baseTreePath, rootItem);
             this.copyPath(sourcePath, targetPath);
         }
+
+        const figmaSkillSourcePath = path.join(repositoryRoot, FIGMA_SKILL_SOURCE_PATH);
+        if (!fs.existsSync(figmaSkillSourcePath)) {
+            throw new Error(`Required Figma implementation skill not found at ${figmaSkillSourcePath}.`);
+        }
+        this.copyPath(
+            figmaSkillSourcePath,
+            path.join(baseTreePath, FIGMA_SKILL_TARGET_PATH)
+        );
     }
 
     private copyBackendBaseItems(

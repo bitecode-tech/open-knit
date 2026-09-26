@@ -100,3 +100,4 @@
 
 ## Agent Notes
 - If a directory contains its own `AGENTS.md`, follow it for that scope (e.g., `frontend/AGENTS.md`).
+- For frontend implementation or review against a Figma frame, mockup, or UI screenshot, load `.codex/skills/figma-focused-implementation/SKILL.md`. New scaffolded apps include the skill at `.agents/skills/figma-focused-implementation/SKILL.md`; load it alongside an orchestrator when its plan, ticket, or acceptance criteria references Figma or a UI image.
