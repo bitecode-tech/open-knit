@@ -4,6 +4,7 @@ import React, {useEffect, useRef} from 'react';
 import AuthService from "@identity/auth/services/AuthService.ts";
 import {adminBaseConfig} from "@common/config/AxiosConfig.ts";
 import {exportToCsv} from "@common/utils/CsvUtils.ts";
+import {GenericButton} from "@common/components/blocks/GenericButton.tsx";
 import {CloseCircle} from "flowbite-react-icons/outline";
 
 export interface UserPromptResponse {
@@ -117,12 +118,12 @@ const DatasetResponseRenderer: React.FC<ResponseRendererProps<UserPromptResponse
                         </tbody>
                     </table>
                 </div>
-                <button
+                <GenericButton
                     onClick={() => exportToCsv(dataset, columns, 'export.csv')}
                     className="inline-block bg-primary-500 text-white rounded px-3 py-1 text-xs hover:bg-primary-700 cursor-pointer"
                 >
                     Download CSV
-                </button>
+                </GenericButton>
             </div>
         );
     }

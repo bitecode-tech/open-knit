@@ -35,4 +35,40 @@ export default tseslint.config(
             ],
         },
     },
+    {
+        files: ['modules/**/*.{ts,tsx}'],
+        ignores: ['modules/_common/**'],
+        rules: {
+            'no-restricted-imports': ['error', {
+                paths: [{
+                    name: 'flowbite-react',
+                    importNames: ['Button'],
+                    message: 'Use @common/components/blocks/GenericButton.tsx in feature modules.',
+                }],
+            }],
+        },
+    },
+    {
+        files: ['modules/**/*.tsx'],
+        ignores: [
+            'modules/_common/**',
+            // These existing controls are specialized chat/OCR or compact row actions.
+            'modules/ai/components/chat/user-configurable-chat/chat-provider/components/ChatComposer.tsx',
+            'modules/ai/components/chat/user-configurable-chat/chat-provider/components/QuickReplies.tsx',
+            'modules/ocr/components/OcrWorkspaceSection.tsx',
+            'modules/payment/components/PaymentHistoryTable.tsx',
+            'modules/transaction/components/TransactionEventsTable.tsx',
+            // This file's table is a compact dataset preview, not a data grid.
+            'modules/ai/components/chat/NavbarAiChat.tsx',
+        ],
+        rules: {
+            'no-restricted-syntax': ['error', {
+                selector: "JSXOpeningElement[name.name='button']",
+                message: 'Use a shared _common button primitive in feature modules, or document why a native control is required.',
+            }, {
+                selector: "JSXOpeningElement[name.name='table']",
+                message: 'Use GenericTable for feature data tables; document specialized semantic table exceptions.',
+            }],
+        },
+    },
 )

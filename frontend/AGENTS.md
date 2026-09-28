@@ -13,7 +13,8 @@ Use the shared frontend skills for general React/TypeScript guidance:
 - Shared primitives, utilities, and cross-module UI live in `modules/_common/`.
 - App shell code that is not module-specific lives in `src/`.
 - Keep module boundaries explicit. Avoid cross-module imports unless the code is clearly shared.
-- Every frontend module under `frontend/modules/<module>/` should have its own `AGENTS.md`.
+- Add a module-local `AGENTS.md` only when that module has conventions that are not covered here. Do not create placeholder copies of this guidance.
+- The shared component catalog and its local rules live in `modules/_common/AGENTS.md`.
 
 ## Stack
 
@@ -42,8 +43,10 @@ Use the shared frontend skills for general React/TypeScript guidance:
 
 ## Shared UI Policy
 
-- Reuse `_common` primitives first.
-- If a control is broadly reusable and does not yet exist in `_common`, add it there instead of creating a feature-local duplicate.
+- Before implementing or styling a button, table, form control, modal, or other common UI pattern, inspect `modules/_common/AGENTS.md` and the listed implementation for a suitable existing component.
+- Use the existing `_common` component when it supports the required behavior. Compose or extend it when a broadly reusable behavior is missing; do not rebuild a matching control inside a feature module.
+- If no shared component fits, keep genuinely feature-specific behavior local. For low-level controls or specialized markup that must bypass a shared component, add a brief code comment explaining why.
+- Follow the frontend ESLint rules that prevent feature modules from importing Flowbite `Button` directly or rebuilding ordinary buttons and tables. Existing path-scoped exceptions are for the documented specialized controls only.
 - Keep the reusable component catalog in `frontend/modules/_common/AGENTS.md` current when generic primitives are added, renamed, or removed.
 - Prefer project tokens and existing color semantics over ad hoc hard-coded values.
 - Main interactive controls should use the project `primary` palette unless the screen already relies on a different semantic color.

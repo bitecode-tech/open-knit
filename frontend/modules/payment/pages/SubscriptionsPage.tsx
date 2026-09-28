@@ -1,5 +1,6 @@
 import React, {useState} from "react";
-import {Button, Label, Select} from "flowbite-react";
+import {Label, Select} from "flowbite-react";
+import {GenericButton} from "@common/components/blocks/GenericButton.tsx";
 import {NewSubscriptionPlanModal} from "@payment/components/NewSubscriptionPlanModal.tsx";
 import {UpdateSubscriptionPlanModal} from "@payment/components/UpdateSubscriptionPlanModal.tsx";
 import {useQuery} from "@tanstack/react-query";
@@ -27,12 +28,12 @@ export function SubscriptionsPage() {
                 <Label className="mb-2 block">
                     New subscription plan
                 </Label>
-                <Button
+                <GenericButton
                     size="lg"
                     className="max-w-44"
                     onClick={() => setShowNewSubscriptionPlanModal(true)}>
                     New subscription plan
-                </Button>
+                </GenericButton>
             </div>
             <div className="flex flex-col gap-1 max-w-fit">
                 <Label className="mb-2 block">
@@ -48,13 +49,13 @@ export function SubscriptionsPage() {
                     </option>
                     {subscriptionPlans?.map(plan => <option key={plan.uuid} value={plan.uuid}>{plan.name}</option>)}
                 </Select>
-                <Button
+                <GenericButton
                     size="lg"
                     className="max-w-44"
                     disabled={!pickedSubscriptionPlan}
                     onClick={() => setShowUpdateNewSubscriptionPlanModal(true)}>
                     Edit subscription plan
-                </Button>
+                </GenericButton>
             </div>
             <NewSubscriptionPlanModal showModal={showNewSubscriptionPlanModal} setShowModal={setShowNewSubscriptionPlanModal}/>
             <UpdateSubscriptionPlanModal showModal={showUpdateSubscriptionPlanModal} setShowModal={setShowUpdateNewSubscriptionPlanModal}
