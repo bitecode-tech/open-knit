@@ -37,8 +37,8 @@ export const configurationOptions: ChoiceOption[] = [
     },
     {
         id: "ready-systems",
-        title: "Ready systems",
-        description: "White-label systems—70% complete, with your core logic on top."
+        title: "Planned system templates",
+        description: "Choose a preconfigured system for the interest list. These templates are not downloadable yet."
     }
 ];
 
@@ -73,7 +73,7 @@ export const moduleSummaries: ModuleSummary[] = [
         slug: "payment",
         backendName: "payment",
         title: "Payment",
-        shortDescription: "Payment/Subscription processing connector (currently only Stripe).",
+        shortDescription: "Payment and subscription processing with provider integrations.",
         heroDescription: "Payment and subscription orchestration for plans, checkout flows, provider execution, and billing lifecycle management.",
         imagePath: "/module-screens/transaction-details.jpg",
         imageAlt: "OpenKnit payment transaction details screen",

@@ -23,7 +23,11 @@ async function startServer() {
         createProxyMiddleware({
             target: apiBaseUrl,
             changeOrigin: true,
-            xfwd: true
+            xfwd: true,
+            pathRewrite: {
+                // The Express `/api` mount strips its prefix before proxying.
+                "^/modules(?=\\?|$)": "/api/modules"
+            }
         })
     );
 
