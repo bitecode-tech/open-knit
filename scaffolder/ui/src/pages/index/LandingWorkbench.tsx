@@ -1,43 +1,12 @@
-import type {ModuleSummary, ModuleSlug} from "@app/content/scaffolderCatalog";
-import {moduleSummaries} from "@app/content/scaffolderCatalog";
+import {useState} from "react";
+import {moduleSummaries, type ModuleSlug} from "@app/content/scaffolderCatalog";
+import ModuleMark from "@app/pages/modules/ModuleMark";
 
-export type ModuleAvailabilityState = "loading" | "error" | "ready";
-
-type LandingWorkbenchProps = {
-    availabilityState: ModuleAvailabilityState;
-    availableBackendNames: ReadonlySet<string>;
-    selectedModuleSlugs: ReadonlySet<ModuleSlug>;
-    onToggleModule: (slug: ModuleSlug) => void;
-    onRetryAvailability: () => void;
-};
-
-export default function LandingWorkbench({
-    availabilityState,
-    availableBackendNames,
-    selectedModuleSlugs,
-    onToggleModule,
-    onRetryAvailability
-}: LandingWorkbenchProps) {
-    const selectedModules = moduleSummaries.filter((moduleSummary) => selectedModuleSlugs.has(moduleSummary.slug));
-    const previewSections = [
-        {
-            title: "Backend modules",
-            paths: selectedModules.map((moduleSummary) => moduleSummary.backendModulePath)
-        },
-        {
-            title: "Frontend modules",
-            paths: selectedModules.flatMap((moduleSummary) =>
-                moduleSummary.frontendModulePath ? [moduleSummary.frontendModulePath] : []
-            )
-        },
-        {
-            title: "Developer guidance",
-            paths: selectedModules.flatMap((moduleSummary) => [
-                moduleSummary.backendGuidePath,
-                ...(moduleSummary.frontendReadmePath ? [moduleSummary.frontendReadmePath] : [])
-            ])
-        }
-    ];
+export default function LandingWorkbench() {
+    const [selectedModuleSlug, setSelectedModuleSlug] = useState<ModuleSlug>("identity");
+    const selectedModule = moduleSummaries.find((moduleSummary) => moduleSummary.slug === selectedModuleSlug)
+        ?? moduleSummaries[0];
+    const selectedModuleIndex = moduleSummaries.findIndex((moduleSummary) => moduleSummary.slug === selectedModule.slug);
 
     return (
         <section className="landing-workbench-section" id="workbench" aria-labelledby="workbench-title">
@@ -50,154 +19,133 @@ export default function LandingWorkbench({
                         </h2>
                     </div>
                     <p className="landing-section-intro">
-                        Choose from the current module catalog and see the source paths associated with your selection.
+                        Browse available modules, understand what each includes and how it’s structured, then open the builder when you’re ready to configure and combine modules for your project.
                     </p>
                 </div>
 
-                <div className="landing-workbench-grid">
-                    <section className="landing-panel landing-module-panel" aria-labelledby="module-selection-title">
-                        <div className="landing-panel-heading">
-                            <span className="landing-panel-step">01</span>
-                            <div>
-                                <p className="landing-panel-kicker">Select modules</p>
-                                <h3 id="module-selection-title">Choose your building blocks</h3>
-                            </div>
-                        </div>
+                <div className="landing-module-browser">
+                    <nav className="landing-module-browser-list" aria-label="Browse modules">
+                        {moduleSummaries.map((moduleSummary, moduleIndex) => {
+                            const isSelected = selectedModule.slug === moduleSummary.slug;
 
-                        {availabilityState === "loading" ? (
-                            <p className="landing-availability-message" role="status" aria-live="polite">
-                                Checking backend module availability…
-                            </p>
-                        ) : null}
-                        {availabilityState === "ready" ? (
-                            <p className="landing-availability-message" role="status" aria-live="polite">
-                                Availability reflects the backend module list.
-                            </p>
-                        ) : null}
-                        {availabilityState === "error" ? (
-                            <div className="landing-availability-error" role="alert">
-                                <p>Module availability could not be loaded. Other modules stay disabled until availability is confirmed.</p>
-                                <button type="button" onClick={onRetryAvailability}>Try again</button>
-                            </div>
-                        ) : null}
-
-                        <fieldset className="landing-module-list">
-                            <legend className="landing-sr-only">Select available OpenKnit modules</legend>
-                            {moduleSummaries.map((moduleSummary) => (
-                                <ModuleOption
+                            return (
+                                <button
+                                    className={`landing-module-browser-option${isSelected ? " is-selected" : ""}`}
                                     key={moduleSummary.slug}
-                                    moduleSummary={moduleSummary}
-                                    availabilityState={availabilityState}
-                                    backendIsAvailable={availableBackendNames.has(moduleSummary.backendName)}
-                                    isSelected={selectedModuleSlugs.has(moduleSummary.slug)}
-                                    onToggle={() => onToggleModule(moduleSummary.slug)}
-                                />
-                            ))}
-                        </fieldset>
-
-                        <p className="landing-selection-summary" aria-live="polite">
-                            {selectedModules.length} {selectedModules.length === 1 ? "module" : "modules"} in this interactive example.
-                        </p>
-                    </section>
-
-                    <section className="landing-panel landing-preview-panel" aria-labelledby="example-preview-title">
-                        <div className="landing-panel-heading">
-                            <span className="landing-panel-step">02</span>
-                            <div>
-                                <p className="landing-panel-kicker">Architecture view</p>
-                                <h3 id="example-preview-title">Interactive example preview</h3>
-                            </div>
-                        </div>
-                        <p className="landing-preview-intro">
-                            This view is derived from the selected catalog entries. It does not configure or preselect the builder.
-                        </p>
-
-                        <div className="landing-path-groups" aria-label="Example source paths">
-                            {previewSections.map((previewSection) => (
-                                <article
-                                    className={`landing-path-group${previewSection.paths.length > 0 ? " is-active" : " is-empty"}`}
-                                    key={previewSection.title}
+                                    type="button"
+                                    aria-pressed={isSelected}
+                                    onClick={() => setSelectedModuleSlug(moduleSummary.slug)}
                                 >
-                                    <h4>{previewSection.title}</h4>
-                                    {previewSection.paths.length > 0 ? (
-                                        <ul>
-                                            {previewSection.paths.map((path) => (
-                                                <li key={path}><code>{path}</code></li>
-                                            ))}
-                                        </ul>
-                                    ) : (
-                                        <p>No path is listed for the selected modules.</p>
-                                    )}
-                                </article>
-                            ))}
-                        </div>
+                                    <span className="landing-module-browser-mark">
+                                        <ModuleMark slug={moduleSummary.slug}/>
+                                    </span>
+                                    <span className="landing-module-browser-copy">
+                                        <span className="landing-module-browser-title">{moduleSummary.title}</span>
+                                        <span className="landing-module-browser-description">{moduleSummary.shortDescription}</span>
+                                    </span>
+                                    <span className="landing-module-browser-number" aria-hidden="true">
+                                        {String(moduleIndex + 1).padStart(2, "0")}
+                                    </span>
+                                    <span className="landing-module-browser-arrow" aria-hidden="true">›</span>
+                                </button>
+                            );
+                        })}
+                    </nav>
 
-                        <div className="landing-example-note">
-                            <span className="landing-example-mark" aria-hidden="true">↳</span>
-                            <p>
-                                The preview uses paths from the module catalog. Your example selection stays on this page.
-                            </p>
-                        </div>
-                        <a className="landing-button landing-button-primary landing-preview-cta" href="/builder">
-                            Open the builder <span aria-hidden="true">↗</span>
-                        </a>
-                    </section>
+                    <article
+                        className="landing-module-detail"
+                        aria-labelledby="landing-module-detail-title"
+                        aria-live="polite"
+                    >
+                        <header className="landing-module-detail-heading">
+                            <span className="landing-module-detail-mark">
+                                <ModuleMark slug={selectedModule.slug}/>
+                            </span>
+                            <div>
+                                <p className="landing-module-detail-index">
+                                    {String(selectedModuleIndex + 1).padStart(2, "0")} / {String(moduleSummaries.length).padStart(2, "0")} modules
+                                </p>
+                                <h3 id="landing-module-detail-title">{selectedModule.title}</h3>
+                                <p>{selectedModule.shortDescription}</p>
+                            </div>
+                        </header>
+
+                        <section className="landing-module-detail-section landing-module-summary" aria-labelledby="landing-module-summary-title">
+                            <span className="landing-module-detail-step" aria-hidden="true">01</span>
+                            <div>
+                                <h4 id="landing-module-summary-title">What it does</h4>
+                                <p>{selectedModule.heroDescription}</p>
+                            </div>
+                        </section>
+
+                        <section className="landing-module-detail-section landing-module-structure" aria-labelledby="landing-module-structure-title">
+                            <span className="landing-module-detail-step" aria-hidden="true">02</span>
+                            <div className="landing-module-detail-section-content">
+                                <h4 id="landing-module-structure-title">Typical structure</h4>
+                                <p>Explore the module directories and implementation guidance.</p>
+                                <div className="landing-module-path-grid">
+                                    <div className="landing-module-path-card">
+                                        <h5><FolderPathIcon/> Backend module</h5>
+                                        <code>{selectedModule.backendModulePath}</code>
+                                    </div>
+                                    <div className="landing-module-path-card">
+                                        <h5><FolderPathIcon/> Frontend module</h5>
+                                        <code>
+                                            {selectedModule.frontendModulePath
+                                                ?? "No frontend module directory is currently present."}
+                                        </code>
+                                    </div>
+                                    <div className="landing-module-path-card">
+                                        <h5><DocumentPathIcon/> Developer guidance</h5>
+                                        <code>{selectedModule.backendGuidePath}</code>
+                                        {selectedModule.frontendReadmePath ? (
+                                            <code>{selectedModule.frontendReadmePath}</code>
+                                        ) : null}
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="landing-module-detail-section landing-module-capabilities" aria-labelledby="landing-module-capabilities-title">
+                            <span className="landing-module-detail-step" aria-hidden="true">03</span>
+                            <div>
+                                <h4 id="landing-module-capabilities-title">Included capabilities</h4>
+                                <ul>
+                                    {selectedModule.capabilities.map((capability) => (
+                                        <li key={capability}>{capability}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </section>
+
+                        <footer className="landing-module-detail-footer">
+                            <p>Details and paths are based on the current module catalogue.</p>
+                            <a className="landing-module-detail-link" href={`/modules/${selectedModule.slug}`}>
+                                Open full module details <span aria-hidden="true">→</span>
+                            </a>
+                        </footer>
+                    </article>
                 </div>
+
             </div>
         </section>
     );
 }
 
-type ModuleOptionProps = {
-    moduleSummary: ModuleSummary;
-    availabilityState: ModuleAvailabilityState;
-    backendIsAvailable: boolean;
-    isSelected: boolean;
-    onToggle: () => void;
-};
-
-function ModuleOption({
-    moduleSummary,
-    availabilityState,
-    backendIsAvailable,
-    isSelected,
-    onToggle
-}: ModuleOptionProps) {
-    const moduleIsLocked = moduleSummary.isLocked;
-    const moduleCanBeSelected = !moduleIsLocked && availabilityState === "ready" && backendIsAvailable;
-    const availabilityLabel = availabilityState === "loading"
-        ? "Checking"
-        : availabilityState === "error"
-            ? "Unknown"
-            : backendIsAvailable
-                ? "Backend available"
-                : "Backend unavailable";
-    const statusDescriptionId = `module-status-${moduleSummary.slug}`;
-    const lockDescriptionId = `module-lock-${moduleSummary.slug}`;
-
+function FolderPathIcon() {
     return (
-        <label className={`landing-module-option${isSelected ? " is-selected" : ""}${moduleCanBeSelected ? "" : " is-disabled"}`}>
-            <input
-                type="checkbox"
-                checked={isSelected}
-                disabled={!moduleCanBeSelected}
-                onChange={onToggle}
-                aria-describedby={moduleIsLocked ? `${statusDescriptionId} ${lockDescriptionId}` : statusDescriptionId}
-            />
-            <span className="landing-module-copy">
-                <span className="landing-module-title">{moduleSummary.title}</span>
-                <span className="landing-module-description">{moduleSummary.shortDescription}</span>
-                <span className="landing-sr-only" id={statusDescriptionId}>{availabilityLabel}</span>
-                {moduleIsLocked ? (
-                    <span className="landing-sr-only" id={lockDescriptionId}>Locked and selected as a fixed module in the builder.</span>
-                ) : null}
-            </span>
-            <span className="landing-module-badges" aria-hidden="true">
-                <span className={`landing-status-badge landing-status-${availabilityState === "ready" ? backendIsAvailable ? "available" : "unavailable" : availabilityState}`}>
-                    {availabilityLabel}
-                </span>
-                {moduleIsLocked ? <span className="landing-locked-badge">Locked</span> : null}
-            </span>
-        </label>
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M1.75 4.25h4l1.5 1.5h7v6.5H1.75v-8Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+            <path d="M1.75 6h12.5" stroke="currentColor" strokeWidth="1.5"/>
+        </svg>
+    );
+}
+
+function DocumentPathIcon() {
+    return (
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 1.75h6l4 4v8.5H3v-12.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+            <path d="M9 1.75v4h4M5.5 8.5h5M5.5 11h5" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+        </svg>
     );
 }

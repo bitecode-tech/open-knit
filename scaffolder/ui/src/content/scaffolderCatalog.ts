@@ -73,7 +73,7 @@ export const moduleSummaries: ModuleSummary[] = [
         slug: "payment",
         backendName: "payment",
         title: "Payment",
-        shortDescription: "Payment/Subscription processing connector (currently only Stripe).",
+        shortDescription: "Payment and subscription processing with provider integrations.",
         heroDescription: "Payment and subscription orchestration for plans, checkout flows, provider execution, and billing lifecycle management.",
         imagePath: "/module-screens/transaction-details.jpg",
         imageAlt: "OpenKnit payment transaction details screen",

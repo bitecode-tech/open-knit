@@ -1,5 +1,14 @@
 # Progress Log
 
+## 2026-09-28 — About page redesign
+
+- **Completed:** Started deployment `about_page_redesign_20260928`; read the current design system, source-mapped the About route and shared landing navigation, verified product facts, and drafted `about-page-redesign-00-overview.md` plus `about-page-redesign-01-implementation.md`. Two independent gap reviews refined composition, artwork, content claims, metadata, accessibility, and responsive acceptance criteria. Implemented the reference-led About page, active nav semantics, skip link, corrected metadata, and sitemap date.
+- **Verified:** About is a static Vike route under `ui/src/pages/about/+Page.tsx`; the shared `LandingSiteHeader` is already supplied by `+Layout.tsx`. No About-local navigation or page data source exists.
+- **Verified:** UI typecheck and production build passed; browser inspection covered 390/768/1024/1440/1448 widths, keyboard/skip navigation, CTA destinations, metadata, and console/network. Screenshots/logs are in `/tmp/about-page-redesign-20260928/`.
+- **Handoff:** Branch `feat/openknit-landing-page` remains at `305c0d1`, matching its remote tracking branch. About implementation and documentation changes are uncommitted; no commit or push was requested. Preserve generated local artifacts in `.playwright-mcp/` and `ui/temp/`.
+- **Next:** User review of `/about`; implementation is complete. Commit and push only if requested.
+- **Blockers:** None.
+
 ## 2026-09-28
 
 - **Completed:** Created `feat/openknit-landing-page`; added the design package to `frontend/docs/design/`; initialized and read the six current scaffolder `agent_docs` documents; completed two independent source-discovery passes; implemented Phases 01–03, including moving the generator to `/builder`, and completed independent responsive and accessibility recheck.

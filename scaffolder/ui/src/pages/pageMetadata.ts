@@ -64,8 +64,8 @@ export function resolvePageMetadata(currentPathname: string, moduleSummary: Modu
 
     if (currentPathname === "/about") {
         return {
-            title: "About OpenKnit | Modular fullstack app builder",
-            description: "Learn what OpenKnit is, why it exists, how its modular architecture works, and why teams can extend and own the code without vendor lock-in.",
+            title: "About OpenKnit | Editable application foundations",
+            description: "Learn why OpenKnit generates editable React and TypeScript frontends with Java and Spring backend foundations, selectable modules, and project guidance for coding agents.",
             canonicalUrl: `${websiteUrl}/about`,
             ogType: "website"
         };
@@ -204,7 +204,7 @@ export function resolveStructuredData(
                 {
                     "@type": "AboutPage",
                     name: "About OpenKnit",
-                    description: "Explanation of OpenKnit as a modular fullstack app builder with extendible code ownership and AI-friendly structure.",
+                    description: "Learn how OpenKnit combines editable React, TypeScript, and Vite frontend source with a Java and Spring backend foundation, selectable modules, and development-time guidance for coding agents.",
                     url: canonicalUrl
                 }
             ]

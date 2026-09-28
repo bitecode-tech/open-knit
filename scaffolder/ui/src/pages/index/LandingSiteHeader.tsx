@@ -9,7 +9,9 @@ export default function LandingSiteHeader({currentPathname}: LandingSiteHeaderPr
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const mobileMenuToggleRef = useRef<HTMLButtonElement>(null);
     const isLandingPage = currentPathname === "/";
+    const isBuilderPage = currentPathname === "/builder";
     const isModulesPage = currentPathname === "/modules" || currentPathname.startsWith("/modules/");
+    const isAboutPage = currentPathname === "/about";
 
     const focusWorkbenchHeading = () => {
         window.requestAnimationFrame(() => {
@@ -18,7 +20,11 @@ export default function LandingSiteHeader({currentPathname}: LandingSiteHeaderPr
     };
 
     return (
-        <header className="landing-site-header">
+        <header
+            className="landing-site-header"
+            data-current-page={isAboutPage ? "about" : undefined}
+        >
+            {isAboutPage ? <a className="landing-skip-link" href="#about-main">Skip to content</a> : null}
             <div className="landing-container landing-header-inner">
                 <a className="landing-brand" href="/" aria-label="OpenKnit home">
                     <span className="landing-brand-name">OPENKNIT</span>
@@ -63,7 +69,13 @@ export default function LandingSiteHeader({currentPathname}: LandingSiteHeaderPr
                     >
                         Modules
                     </a>
-                    <a href="/about" onClick={() => setIsMobileMenuOpen(false)}>About</a>
+                    <a
+                        href="/about"
+                        aria-current={isAboutPage ? "page" : undefined}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        About
+                    </a>
                     <a
                         href="https://github.com/bitecode-tech/open-knit"
                         target="_blank"
@@ -76,6 +88,7 @@ export default function LandingSiteHeader({currentPathname}: LandingSiteHeaderPr
                 <a
                     className="landing-button landing-button-small landing-button-outline landing-header-builder"
                     href="/builder"
+                    aria-current={isBuilderPage ? "page" : undefined}
                 >
                     Builder <span aria-hidden="true">↗</span>
                 </a>

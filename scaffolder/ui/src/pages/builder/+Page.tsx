@@ -12,22 +12,16 @@ import HttpClient from "@app/clients/HttpClient";
 import BuilderChoiceCard from "./BuilderChoiceCard";
 import "./builder.css";
 
-const DEFAULT_BUNDLE_ID = "subscription-access";
-
 export default function Page() {
     const [projectName, setProjectName] = useState("my-application");
     const [demoInsertsEnabled, setDemoInsertsEnabled] = useState(true);
-    const [selectedConfiguration, setSelectedConfiguration] = useState<string | null>("bundles");
-    const [selectedSystemIds, setSelectedSystemIds] = useState<Set<string>>(() => new Set([DEFAULT_BUNDLE_ID]));
-    const [selectedOrder, setSelectedOrder] = useState<string[]>([DEFAULT_BUNDLE_ID]);
-    const [unselectedOrder, setUnselectedOrder] = useState<string[]>(() =>
-        systemOptionsByConfiguration.bundles
-            .map((option) => option.id)
-            .filter((optionId) => optionId !== DEFAULT_BUNDLE_ID)
-    );
+    const [selectedConfiguration, setSelectedConfiguration] = useState<string | null>(null);
+    const [selectedSystemIds, setSelectedSystemIds] = useState<Set<string>>(() => new Set());
+    const [selectedOrder, setSelectedOrder] = useState<string[]>([]);
+    const [unselectedOrder, setUnselectedOrder] = useState<string[]>([]);
     const [isDownloading, setIsDownloading] = useState(false);
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-    const previousConfiguration = useRef<string | null>("bundles");
+    const previousConfiguration = useRef<string | null>(null);
     const errorModal = useErrorModal();
 
     const getSelectedSystemId = useCallback((): string | null => {
@@ -318,23 +312,21 @@ export default function Page() {
                             </div>
                         </section>
 
-                        <section className="builder-panel builder-selection-panel" aria-labelledby="builder-selection-heading">
-                            <div className="builder-panel-heading">
-                                <span className="builder-step-number">03</span>
-                                <div>
-                                    <p className="builder-panel-kicker">Selection</p>
-                                    <h2 id="builder-selection-heading">{systemsTitle}</h2>
-                                </div>
-                                {showSystems ? (
+                        {showSystems ? (
+                            <section className="builder-panel builder-selection-panel" aria-labelledby="builder-selection-heading">
+                                <div className="builder-panel-heading">
+                                    <span className="builder-step-number">03</span>
+                                    <div>
+                                        <p className="builder-panel-kicker">Selection</p>
+                                        <h2 id="builder-selection-heading">{systemsTitle}</h2>
+                                    </div>
                                     <span className="builder-selection-count">
                                         {selectedConfiguration === "modules"
                                             ? `${selectedSystemIds.size} selected`
                                             : selectedSystemIds.size > 0 ? "1 selected" : "Choose one"}
                                     </span>
-                                ) : null}
-                            </div>
+                                </div>
 
-                            {showSystems ? (
                                 <div className="builder-panel-content builder-option-list builder-selection-list">
                                     {isMultiSelect ? (
                                         <>
@@ -374,14 +366,8 @@ export default function Page() {
                                         ))
                                     )}
                                 </div>
-                            ) : (
-                                <div className="builder-empty-selection">
-                                    <span aria-hidden="true">···</span>
-                                    <p>Choose a configuration</p>
-                                    <small>Available options will appear here.</small>
-                                </div>
-                            )}
-                        </section>
+                            </section>
+                        ) : null}
                     </section>
                 </div>
             </div>

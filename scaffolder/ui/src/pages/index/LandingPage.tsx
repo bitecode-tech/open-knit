@@ -1,65 +1,8 @@
-import {useEffect, useState} from "react";
-import {fetchAvailableBackendModules} from "@app/clients/ModuleAvailabilityClient";
-import {moduleSummaries, type ModuleSlug} from "@app/content/scaffolderCatalog";
 import FoundationStack from "./FoundationStack";
-import LandingWorkbench, {type ModuleAvailabilityState} from "./LandingWorkbench";
-import LandingSiteHeader from "./LandingSiteHeader";
+import LandingWorkbench from "./LandingWorkbench";
 import "./landing.css";
 
 export default function LandingPage() {
-    const [availabilityState, setAvailabilityState] = useState<ModuleAvailabilityState>("loading");
-    const [availableBackendNames, setAvailableBackendNames] = useState<Set<string>>(() => new Set());
-    const [selectedModuleSlugs, setSelectedModuleSlugs] = useState<Set<ModuleSlug>>(
-        () => new Set(moduleSummaries.filter((moduleSummary) => moduleSummary.isLocked).map((moduleSummary) => moduleSummary.slug))
-    );
-    const [availabilityAttempt, setAvailabilityAttempt] = useState(0);
-
-    useEffect(() => {
-        const abortController = new AbortController();
-
-        fetchAvailableBackendModules(abortController.signal)
-            .then((moduleNames) => {
-                setAvailableBackendNames(new Set(moduleNames));
-                setAvailabilityState("ready");
-            })
-            .catch(() => {
-                if (abortController.signal.aborted) {
-                    return;
-                }
-                setAvailableBackendNames(new Set());
-                setAvailabilityState("error");
-            });
-
-        return () => abortController.abort();
-    }, [availabilityAttempt]);
-
-    const toggleModule = (slug: ModuleSlug) => {
-        const moduleSummary = moduleSummaries.find((candidate) => candidate.slug === slug);
-        if (
-            !moduleSummary ||
-            moduleSummary.isLocked ||
-            availabilityState !== "ready" ||
-            !availableBackendNames.has(moduleSummary.backendName)
-        ) {
-            return;
-        }
-
-        setSelectedModuleSlugs((current) => {
-            const next = new Set(current);
-            if (next.has(slug)) {
-                next.delete(slug);
-            } else {
-                next.add(slug);
-            }
-            return next;
-        });
-    };
-
-    const retryAvailability = () => {
-        setAvailabilityState("loading");
-        setAvailabilityAttempt((currentAttempt) => currentAttempt + 1);
-    };
-
     const focusWorkbenchHeading = () => {
         window.requestAnimationFrame(() => {
             document.getElementById("workbench-title")?.focus({preventScroll: true});
@@ -69,8 +12,6 @@ export default function LandingPage() {
     return (
         <div className="landing-page">
             <a className="landing-skip-link" href="#landing-main">Skip to content</a>
-            <LandingSiteHeader currentPathname="/"/>
-
             <main id="landing-main">
                 <section className="landing-hero" aria-labelledby="landing-title">
                     <div className="landing-container landing-hero-inner">
@@ -100,13 +41,7 @@ export default function LandingPage() {
                     </div>
                 </section>
 
-                <LandingWorkbench
-                    availabilityState={availabilityState}
-                    availableBackendNames={availableBackendNames}
-                    selectedModuleSlugs={selectedModuleSlugs}
-                    onToggleModule={toggleModule}
-                    onRetryAvailability={retryAvailability}
-                />
+                <LandingWorkbench />
 
                 <section className="landing-process-section" aria-labelledby="process-title">
                     <div className="landing-container">
