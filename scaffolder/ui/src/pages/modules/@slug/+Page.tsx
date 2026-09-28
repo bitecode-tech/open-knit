@@ -1,197 +1,290 @@
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import GenericLinkButton from "@app/components/GenericLinkButton";
 import MarkdownDocument from "@app/components/MarkdownDocument";
-import {getBundlesForModule} from "@app/content/scaffolderCatalog";
+import {getBundlesForModule, moduleSummaries} from "@app/content/scaffolderCatalog";
+import ModuleMark from "@app/pages/modules/ModuleMark";
+import {
+    getModuleBrowseCategoryLabel,
+    getModuleDetailDescription
+} from "@app/pages/modules/catalogueContent";
 import type {Data} from "@app/pages/modules/@slug/+data";
+import "@app/pages/modules/modules.css";
 import {useData} from "vike-react/useData";
 
 export default function ModuleDetailsPage() {
     const {moduleSummary, moduleDocs} = useData<Data>();
     const [imageIsOpen, setImageIsOpen] = useState(false);
+    const imageTriggerRef = useRef<HTMLButtonElement>(null);
+    const imageCloseButtonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        if (!imageIsOpen) {
+            return;
+        }
+
+        const previouslyFocusedElement = document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+        const closeButton = imageCloseButtonRef.current;
+        closeButton?.focus();
+
+        const handleModalKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setImageIsOpen(false);
+            }
+
+            if (event.key === "Tab") {
+                event.preventDefault();
+                closeButton?.focus();
+            }
+        };
+
+        document.addEventListener("keydown", handleModalKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", handleModalKeyDown);
+            previouslyFocusedElement?.focus();
+        };
+    }, [imageIsOpen]);
 
     if (!moduleSummary || !moduleDocs) {
         return (
-            <div className="flex-1 w-full px-4 pb-10 pt-6 md:px-0 md:pt-8">
-                <div className="mx-auto flex max-w-[1333px] flex-col gap-6 rounded-[24px] border border-[var(--border)] bg-[var(--card)] p-6 md:p-8">
-                    <h1>Module not found</h1>
-                    <p className="text-lg leading-8 text-[var(--text-body)]">
-                        The module you requested doesn&apos;t exist in the current catalog.
-                    </p>
-                    <div>
-                        <GenericLinkButton href="/modules">
-                            Back to modules
+            <main className="module-page module-detail module-detail--not-found">
+                <div className="module-page__inner">
+                    <section className="module-detail__not-found">
+                        <h1>Module not found</h1>
+                        <p>The module you requested doesn&apos;t exist in the current catalogue.</p>
+                        <GenericLinkButton href="/modules" variant="secondary" className="module-page__button module-page__button--secondary">
+                            Back to the catalogue
                         </GenericLinkButton>
-                    </div>
+                    </section>
                 </div>
-            </div>
+            </main>
         );
     }
 
     const includedBundles = getBundlesForModule(moduleSummary.slug);
+    const moduleIndex = moduleSummaries.findIndex((catalogueEntry) => catalogueEntry.slug === moduleSummary.slug);
+    const relatedModules = Array.from({length: Math.min(3, moduleSummaries.length - 1)}, (_, offset) => {
+        return moduleSummaries[(moduleIndex + offset + 1) % moduleSummaries.length];
+    });
     const coreFlowItems = parseCoreFlows(moduleDocs.coreFlows);
+    const moduleNumber = String(moduleIndex + 1).padStart(2, "0");
+    const catalogueSize = String(moduleSummaries.length).padStart(2, "0");
+    const detailDescription = getModuleDetailDescription(moduleSummary.slug, moduleSummary.heroDescription);
 
     return (
-        <div className="flex-1 w-full px-4 pb-10 pt-6 md:px-0 md:pt-8">
-            <div className="mx-auto flex max-w-[1333px] flex-col gap-8">
-                <header className="grid w-full gap-6 lg:grid-cols-[minmax(0,1.1fr)_360px] lg:items-start">
-                    <div className="flex flex-col gap-4">
-                        <h1 className="text-5xl font-semibold tracking-[-0.03em] text-[var(--text-strong)] md:text-6xl">
-                            {moduleSummary.title}
-                        </h1>
-                        <p className="max-w-[860px] text-lg leading-8 text-[var(--text-body)]">
-                            {moduleSummary.heroDescription}
+        <main className="module-page module-detail">
+            <div className="module-page__inner">
+                <a className="module-detail__breadcrumb" href="/modules">
+                    <span aria-hidden="true">←</span> All catalogue entries
+                </a>
+
+                <header className="module-detail__intro">
+                    <div className="module-detail__intro-copy">
+                        <p className="module-detail__index">
+                            <strong>{moduleNumber} / {catalogueSize}</strong> Module catalogue detail
                         </p>
-                        <div className="flex flex-wrap gap-3">
-                            <GenericLinkButton href="/">
-                                Generate with OpenKnit
+                        <h1 className="module-detail__title">{moduleSummary.title}</h1>
+                        <p className="module-detail__lede">{detailDescription}</p>
+                        <p className="module-detail__category">
+                            Browse category: <strong>{getModuleBrowseCategoryLabel(moduleSummary.slug)}</strong>
+                        </p>
+                        <div className="module-detail__actions">
+                            <GenericLinkButton href="/builder" className="module-page__button">
+                                Open the builder <span aria-hidden="true">↗</span>
                             </GenericLinkButton>
-                            <GenericLinkButton href="/modules" variant="secondary">
-                                Browse other modules
+                            <GenericLinkButton href="/modules" variant="secondary" className="module-page__button module-page__button--secondary">
+                                Browse all modules
                             </GenericLinkButton>
                         </div>
+                        <p className="module-detail__builder-note">
+                            Choose the modules you want after opening the builder.
+                        </p>
                     </div>
 
-                    <div className="flex justify-start lg:justify-end">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setImageIsOpen(true);
-                            }}
-                            className="group flex max-w-full flex-col items-start gap-3"
-                        >
-                            <div className="overflow-hidden rounded-[22px] transition-transform duration-200 ease-out group-hover:-translate-y-0.5">
-                                <img
-                                    src={moduleSummary.imagePath}
-                                    alt={moduleSummary.imageAlt}
-                                    className="h-[180px] w-auto max-w-full rounded-[22px] object-cover object-top md:h-[210px]"
-                                />
-                            </div>
-                            <span className="text-sm font-medium text-[var(--text-muted)]">
-                                In-app view
-                            </span>
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        ref={imageTriggerRef}
+                        className="module-detail__image-button"
+                        aria-label={`Open the ${moduleSummary.title} in-app image`}
+                        onClick={() => {
+                            setImageIsOpen(true);
+                        }}
+                    >
+                        <span className="module-detail__image-frame">
+                            <img
+                                src={moduleSummary.imagePath}
+                                alt={moduleSummary.imageAlt}
+                            />
+                        </span>
+                        <span className="module-detail__image-caption">Open in-app view</span>
+                    </button>
                 </header>
 
-                <section className="grid gap-6">
-                    <article className="flex flex-col gap-5 rounded-[24px] border border-[var(--border)] bg-[var(--card)] p-6">
-                        <div className="flex flex-col gap-3">
-                            <h2 className="text-2xl font-semibold text-[var(--text-strong)]">
-                                What this module does
-                            </h2>
-                            <p className="leading-8 text-[var(--text-body)]">
-                                {moduleSummary.shortDescription}
-                            </p>
-                        </div>
-                        <div className="flex flex-col gap-3">
-                            <h3 className="text-lg font-semibold text-[var(--text-strong)]">
-                                Key capabilities
-                            </h3>
-                            <ul className="ml-5 flex list-disc flex-col gap-2 text-[var(--text-body)]">
-                                {moduleSummary.capabilities.map((capability) => (
-                                    <li key={capability}>{capability}</li>
-                                ))}
-                            </ul>
-                        </div>
+                <section className="module-detail__main-grid" aria-label={`${moduleSummary.title} details`}>
+                    <article className="module-detail__panel module-detail__panel--capabilities">
+                        <p className="module-page__section-label">01 / Module overview</p>
+                        <h2>What this module does</h2>
+                        <p className="module-detail__panel-lede">
+                            {getModuleDetailDescription(moduleSummary.slug, moduleSummary.shortDescription)}
+                        </p>
+                        <h3 className="module-detail__subheading">Documented capabilities</h3>
+                        <ul className="module-detail__list">
+                            {moduleSummary.capabilities.map((capability) => (
+                                <li key={capability}>{capability}</li>
+                            ))}
+                        </ul>
+                        {moduleSummary.configurationHighlights.length > 0 ? (
+                            <>
+                                <h3 className="module-detail__subheading">Configuration highlights</h3>
+                                <ul className="module-detail__list module-detail__configuration-list">
+                                    {moduleSummary.configurationHighlights.map((configurationHighlight) => (
+                                        <li key={configurationHighlight}>
+                                            <MarkdownDocument content={configurationHighlight}/>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        ) : null}
                     </article>
-                </section>
 
-                <section className="grid gap-6">
-                    <article className="flex flex-col gap-4 rounded-[24px] border border-[var(--border)] bg-[var(--card)] p-6">
-                        <div className="flex flex-col gap-1">
-                            <h2 className="text-2xl font-semibold text-[var(--text-strong)]">
-                                Core flows
-                            </h2>
-                        </div>
+                    <article className="module-detail__panel module-detail__core-flows">
+                        <p className="module-page__section-label">02 / Implementation record</p>
+                        <h2>Core flows</h2>
                         {coreFlowItems.length > 0 ? (
-                            <ol className="ml-5 flex list-decimal flex-col gap-5">
+                            <ol className="module-detail__flow-list">
                                 {coreFlowItems.map((coreFlowItem) => (
-                                    <li key={coreFlowItem.title} className="pl-2 text-[var(--text-body)]">
-                                        <div className="flex flex-col gap-3">
-                                            <h3 className="text-lg font-semibold text-[var(--text-strong)]">
-                                                {coreFlowItem.title}
-                                            </h3>
-                                            {coreFlowItem.details ? (
+                                    <li key={coreFlowItem.title}>
+                                        <h3>{coreFlowItem.title}</h3>
+                                        {coreFlowItem.details ? (
+                                            <div className="module-detail__markdown-content">
                                                 <MarkdownDocument content={coreFlowItem.details}/>
-                                            ) : null}
-                                        </div>
+                                            </div>
+                                        ) : null}
                                     </li>
                                 ))}
                             </ol>
                         ) : (
-                            <MarkdownDocument content={moduleDocs.coreFlows}/>
+                            <div className="module-detail__markdown-content">
+                                <MarkdownDocument content={moduleDocs.coreFlows}/>
+                            </div>
                         )}
+                        <p className="module-detail__flow-source">
+                            Core flow source: {moduleDocs.coreFlowsPath}
+                        </p>
                     </article>
 
-                    <article className="flex flex-col gap-3 rounded-[24px] border border-[var(--border)] bg-[var(--card)] p-6">
-                        <h2 className="text-xl font-semibold text-[var(--text-strong)]">
-                            Module is included in
-                        </h2>
-                        <ul className="ml-5 flex list-disc flex-col gap-2 text-[var(--text-body)]">
+                    <aside className="module-detail__sidebar" aria-label="Bundle and source information">
+                        <article className="module-detail__panel">
+                            <p className="module-page__section-label">03 / Generator bundles</p>
+                            <h2>Bundle membership</h2>
                             {includedBundles.length > 0 ? (
-                                includedBundles.map((bundleDefinition) => (
-                                    <li key={bundleDefinition.id}>
-                                        <strong>{bundleDefinition.title}:</strong> {bundleDefinition.description}
-                                    </li>
-                                ))
+                                <ul className="module-detail__bundle-list">
+                                    {includedBundles.map((bundleDefinition) => (
+                                        <li key={bundleDefinition.id}>
+                                            <strong>{bundleDefinition.title}</strong>
+                                            <span>{bundleDefinition.description}</span>
+                                        </li>
+                                    ))}
+                                </ul>
                             ) : (
-                                <li>This module is currently available only as an individual module selection.</li>
+                                <p className="module-detail__panel-lede">
+                                    No current bundle definition lists this module.
+                                </p>
                             )}
                             {moduleSummary.isLocked ? (
-                                <li>Included by default in the custom modules generator flow.</li>
+                                <p className="module-detail__panel-lede">
+                                    Included by default in the custom modules generator flow.
+                                </p>
                             ) : null}
-                        </ul>
-                    </article>
+                        </article>
 
-                    <article className="flex flex-col gap-3 rounded-[24px] border border-[var(--border)] bg-[var(--card)] p-6">
-                        <h2 className="text-xl font-semibold text-[var(--text-strong)]">
-                            Source paths
-                        </h2>
-                        <ul className="ml-5 flex list-disc flex-col gap-2 break-all text-[var(--text-body)]">
-                            <li>{moduleSummary.backendModulePath}</li>
-                            {moduleSummary.frontendModulePath ? (
-                                <li>{moduleSummary.frontendModulePath}</li>
-                            ) : (
-                                <li>No frontend module directory is currently present for this module.</li>
-                            )}
-                        </ul>
-                    </article>
+                        <article className="module-detail__panel">
+                            <p className="module-page__section-label">04 / Repository paths</p>
+                            <h2>Source paths</h2>
+                            <dl className="module-detail__source-list">
+                                <div>
+                                    <dt>Backend module</dt>
+                                    <dd>{moduleSummary.backendModulePath}</dd>
+                                </div>
+                                <div>
+                                    <dt>Frontend module</dt>
+                                    <dd>
+                                        {moduleSummary.frontendModulePath
+                                            ?? "No frontend module directory is currently present for this module."}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt>Backend guide</dt>
+                                    <dd>{moduleSummary.backendGuidePath}</dd>
+                                </div>
+                            </dl>
+                        </article>
+                    </aside>
                 </section>
+
+                <section className="module-detail__related" aria-labelledby="related-modules-heading">
+                    <div className="module-detail__related-heading">
+                        <p className="module-page__section-label">Continue exploring</p>
+                        <h2 id="related-modules-heading">Other catalogue entries</h2>
+                    </div>
+                    <div className="module-detail__related-grid">
+                        {relatedModules.map((relatedModule) => (
+                            <a key={relatedModule.slug} href={`/modules/${relatedModule.slug}`}>
+                                <ModuleMark slug={relatedModule.slug}/>
+                                <span>{relatedModule.title}</span>
+                                <span aria-hidden="true">↗</span>
+                            </a>
+                        ))}
+                    </div>
+                </section>
+
+                <footer className="module-page__closing">
+                    <div>
+                        <p className="module-page__section-label">Continue to the builder</p>
+                        <h2>Configure a project with the modules you choose.</h2>
+                        <p>Module details are reference material; configure your project in the builder.</p>
+                    </div>
+                    <GenericLinkButton href="/builder" className="module-page__button">
+                        Open the builder <span aria-hidden="true">↗</span>
+                    </GenericLinkButton>
+                </footer>
             </div>
 
             {imageIsOpen ? (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--overlay)] px-4 py-8"
+                    className="module-detail__modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={`${moduleSummary.title} image`}
                     onClick={() => {
                         setImageIsOpen(false);
                     }}
                 >
                     <div
-                        className="flex max-h-full max-w-[1200px] flex-col gap-3"
+                        className="module-detail__modal-content"
                         onClick={(event) => {
                             event.stopPropagation();
                         }}
                     >
                         <button
                             type="button"
-                            className="self-end rounded-full bg-[var(--card)] px-4 py-2 text-sm font-medium text-[var(--text-strong)]"
+                            ref={imageCloseButtonRef}
+                            className="module-detail__modal-close"
                             onClick={() => {
                                 setImageIsOpen(false);
                             }}
                         >
                             Close
                         </button>
-                        <div className="overflow-auto rounded-[24px] shadow-[var(--shadow-card)]">
-                            <img
-                                src={moduleSummary.imagePath}
-                                alt={moduleSummary.imageAlt}
-                                className="h-auto max-h-[80vh] w-full rounded-[24px] object-contain"
-                            />
+                        <div className="module-detail__modal-image">
+                            <img src={moduleSummary.imagePath} alt={moduleSummary.imageAlt}/>
                         </div>
                     </div>
                 </div>
             ) : null}
-        </div>
+        </main>
     );
 }
 

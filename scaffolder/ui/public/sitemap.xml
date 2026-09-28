@@ -2,9 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://open-knit.com/</loc>
-    <lastmod>2026-04-05</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://open-knit.com/builder</loc>
+    <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://open-knit.com/about</loc>
@@ -14,49 +20,49 @@
   </url>
   <url>
     <loc>https://open-knit.com/modules</loc>
-    <lastmod>2026-04-05</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://open-knit.com/modules/identity</loc>
-    <lastmod>2026-03-18</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://open-knit.com/modules/payment</loc>
-    <lastmod>2026-03-18</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://open-knit.com/modules/wallet</loc>
-    <lastmod>2026-03-18</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://open-knit.com/modules/transaction</loc>
-    <lastmod>2026-03-18</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://open-knit.com/modules/ai</loc>
-    <lastmod>2026-03-18</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://open-knit.com/modules/ocr</loc>
-    <lastmod>2026-04-05</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://open-knit.com/modules/documents</loc>
-    <lastmod>2026-04-05</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
