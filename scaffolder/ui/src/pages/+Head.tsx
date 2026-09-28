@@ -22,6 +22,7 @@ export default function Head() {
             <meta name="twitter:description" content={meta.description}/>
             <link rel="canonical" href={meta.canonicalUrl}/>
             <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+            <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
             <script
                 id="open-knit-structured-data"
                 type="application/ld+json"
