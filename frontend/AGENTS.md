@@ -40,6 +40,7 @@ Use the shared frontend skills for general React/TypeScript guidance:
 - Run `pnpm lint` when touching shared UI, hooks, routing, or anything that may affect formatting or hook correctness.
 - Do not run `pnpm build` as default verification unless the user explicitly asks for a production build.
 - Use Playwright for browser-based inspection or interaction.
+- Always run Playwright browser checks in an isolated browser context that is fresh for each run; never attach to or reuse a context, session, or persistent profile from another agent/Codex run or a user's browser.
 - When using Playwright screenshots, save them under a `temp/` directory because it is gitignored.
 
 ## Shared UI Policy
