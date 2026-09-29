@@ -31,6 +31,16 @@ async function startServer() {
         })
     );
 
+    app.use(
+        "/mcp",
+        createProxyMiddleware({
+            target: apiBaseUrl,
+            changeOrigin: true,
+            xfwd: true,
+            pathRewrite: {"^/": "/mcp/"}
+        })
+    );
+
     if (!isProd) {
         const {devMiddleware} = await createDevMiddleware({root: appRoot});
         app.use(devMiddleware);

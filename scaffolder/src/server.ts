@@ -1,6 +1,9 @@
 import path from "path";
 import {register} from "tsconfig-paths";
 import express from "express";
+import {StreamableHTTPServerTransport} from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import artifactStore from "./mcp/artifactStore";
+import {createProjectMcpServer} from "./mcp/projectMcpServer";
 import {loadEnvFile} from "./env/loadEnvFile";
 import {installTimestampedConsole} from "./logging/installTimestampedConsole";
 
@@ -27,6 +30,12 @@ const port = Number(process.env.PORT ?? 7070);
 const corsOrigin = process.env.CORS_ORIGIN ?? "*";
 const scaffoldRateLimitMax = Number(process.env.RATE_LIMIT_MAX ?? 3);
 const scaffoldRateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 30_000);
+const mcpRateLimitMax = Number(process.env.MCP_RATE_LIMIT_MAX ?? 30);
+const mcpRateLimitWindowMs = Number(process.env.MCP_RATE_LIMIT_WINDOW_MS ?? 60_000);
+const mcpAllowedOrigins = (process.env.MCP_ALLOWED_ORIGINS ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 const enableRateLimitDiagnostics = process.env.RATE_LIMIT_DIAGNOSTICS === "true";
 const wishlistRateLimitMax = 3;
 const wishlistRateLimitWindowMs = 30_000;
@@ -55,8 +64,12 @@ function getFirstHeaderIp(headerValue: string | string[] | undefined): string {
 app.use(express.json({limit: "16kb"}));
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", corsOrigin);
-    res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Content-Type, MCP-Protocol-Version, MCP-Session-Id, Last-Event-ID"
+    );
+    res.header("Access-Control-Expose-Headers", "MCP-Session-Id");
     if (req.method === "OPTIONS") {
         res.sendStatus(204);
         return;
@@ -104,6 +117,11 @@ const scaffoldRateLimiter = buildRateLimiter(
     scaffoldRateLimitMax,
     scaffoldRateLimitWindowMs,
     "scaffold-download"
+);
+const mcpRateLimiter = buildRateLimiter(
+    mcpRateLimitMax,
+    mcpRateLimitWindowMs,
+    "mcp"
 );
 const wishlistRateLimiter = buildRateLimiter(wishlistRateLimitMax, wishlistRateLimitWindowMs, "wishlist");
 
@@ -214,6 +232,67 @@ const handleScaffoldRequest: express.RequestHandler = async (req, res) => {
 
 app.get("/api/scaffold", scaffoldRateLimiter, handleScaffoldRequest);
 app.get("/scaffold", scaffoldRateLimiter, handleScaffoldRequest);
+
+app.all("/mcp", mcpRateLimiter, async (req, res) => {
+    const origin = req.headers.origin;
+    if (origin && mcpAllowedOrigins.length > 0 && !mcpAllowedOrigins.includes(origin)) {
+        res.status(403).json({error: "Origin is not allowed for the MCP endpoint"});
+        return;
+    }
+
+    try {
+        const configuredPublicOrigin = process.env.MCP_PUBLIC_ORIGIN?.trim() || "https://open-knit.com";
+        const publicOriginUrl = new URL(configuredPublicOrigin);
+        if (!["http:", "https:"].includes(publicOriginUrl.protocol)) {
+            res.status(500).json({error: "MCP_PUBLIC_ORIGIN must use HTTP or HTTPS"});
+            return;
+        }
+        const publicOrigin = publicOriginUrl.origin;
+        const mcpServer = createProjectMcpServer(
+            scaffolderService,
+            scaffolderService.getPathsConfig(),
+            publicOrigin
+        );
+        const transport = new StreamableHTTPServerTransport({
+            sessionIdGenerator: undefined,
+            enableJsonResponse: true,
+            ...(mcpAllowedOrigins.length > 0 ? {allowedOrigins: mcpAllowedOrigins} : {})
+        });
+        await mcpServer.connect(transport);
+        await transport.handleRequest(req, res, req.body);
+        await transport.close();
+        await mcpServer.close();
+    } catch (error) {
+        console.error(
+            "[scaffolder] MCP request failed:",
+            error instanceof Error ? error.message : "Unknown error"
+        );
+        if (!res.headersSent) {
+            res.status(500).json({error: "MCP request failed"});
+        }
+    }
+});
+
+const handleMcpArtifactDownload: express.RequestHandler = (req, res) => {
+    const token = String(req.params.token ?? "");
+    if (!/^[a-f0-9]{64}$/.test(token)) {
+        res.status(404).json({error: "Artifact not found or expired"});
+        return;
+    }
+    const artifact = artifactStore.get(token);
+    if (!artifact) {
+        res.status(404).json({error: "Artifact not found or expired"});
+        return;
+    }
+    res.download(artifact.filePath, artifact.fileName, (downloadError) => {
+        if (downloadError && !res.headersSent) {
+            res.status(500).json({error: "Failed to send generated project"});
+        }
+    });
+};
+
+app.get("/mcp/artifacts/:token", handleMcpArtifactDownload);
+app.get("/api/mcp/artifacts/:token", handleMcpArtifactDownload);
 
 async function startServer() {
     const configuredDatabaseUrl = getConfiguredDatabaseUrl();

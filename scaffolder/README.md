@@ -125,6 +125,26 @@ Useful endpoints:
 - `GET /api/modules`
 - `GET /api/scaffold?modules=identity,payment,transaction&name=acme&counterName=subscription-access`
 - `POST /api/wishlist` with JSON body: `{"email":"user@example.com","systemName":"smart-invoicing"}`
+- `POST /mcp` — unauthenticated MCP Streamable HTTP endpoint for project generation and setup guidance
+- `GET /mcp/artifacts/<token>` — temporary generated ZIP download (expires after 30 minutes)
+
+### MCP project generation
+
+Connect an MCP client to `https://open-knit.com/mcp` (or `http://127.0.0.1:7070/mcp` for local development). The server uses unauthenticated Streamable HTTP. The public UI server forwards `/mcp` requests to the scaffolder API. Configure `MCP_PUBLIC_ORIGIN` when a proxy or deployment hostname differs from the request hostname so generated download links point to the public scaffolder URL. OpenAI's [MCP server guide](https://developers.openai.com/api/docs/guides/tools-connectors-mcp) supports Streamable HTTP for remote servers; remote servers must be reachable by the OpenAI API, or connected through Secure MCP Tunnel when kept private.
+
+Available tools:
+
+- `list_project_modules` returns the selectable source modules and configured aliases.
+- `generate_project` creates a ZIP from the repository source files and returns a temporary download URL.
+- `get_project_setup_requirements` detects the Java toolchain, Node.js requirement, and pnpm version from the source project and distinguishes container development from native host development.
+
+The `guide_project_setup` prompt gives MCP clients that support prompts a step-by-step installation workflow. The same assistant guidance is included in the setup-requirements tool result for clients that only load tools. The MCP server cannot inspect the user's machine; the connected assistant must run the checks through its own terminal capability or ask the user to run them. The guidance tells the assistant to ask before installing software or starting commands.
+
+Optional MCP settings:
+
+- `MCP_PUBLIC_ORIGIN` — public origin used in ZIP download links; defaults to `https://open-knit.com`. For local development, set it to `http://127.0.0.1:7070` in `.env`.
+- `MCP_ALLOWED_ORIGINS` — comma-separated browser origins allowed to call MCP; requests without an `Origin` header are accepted for native MCP clients.
+- `MCP_RATE_LIMIT_MAX` and `MCP_RATE_LIMIT_WINDOW_MS` — request limit for the MCP endpoint (defaults: 30 requests per 60 seconds).
 
 Database commands (Drizzle):
 

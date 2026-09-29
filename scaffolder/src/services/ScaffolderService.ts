@@ -16,6 +16,10 @@ class ScaffolderService {
         };
     }
 
+    getPathsConfig(): PathsConfig {
+        return this.resolvePaths();
+    }
+
     async run(
         args: string[],
         options: { cacheMode?: "rebuild" | "reuse" } = {}
