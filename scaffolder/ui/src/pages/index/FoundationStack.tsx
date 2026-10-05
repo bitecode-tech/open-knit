@@ -11,7 +11,7 @@ export default function FoundationStack() {
                         <stop offset="1" stopColor="#0a0e09"/>
                     </linearGradient>
                 </defs>
-                <rect x="12" y="18" width="496" height="404" fill="url(#landing-grid)" opacity="0.7"/>
+                <rect x="12" y="8" width="496" height="444" fill="url(#landing-grid)" opacity="0.7"/>
                 <g fill="none" stroke="#b8f34a" strokeOpacity="0.34" strokeWidth="1">
                     <path d="M 80 294 L 260 210 L 444 294 L 260 380 Z"/>
                     <path d="M 100 224 L 260 150 L 424 224 L 260 300 Z"/>

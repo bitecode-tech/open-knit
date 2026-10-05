@@ -1,8 +1,13 @@
 import FoundationStack from "./FoundationStack";
 import LandingWorkbench from "./LandingWorkbench";
+import McpConnectCard from "./components/McpConnectCard";
 import "./landing.css";
 
-export default function LandingPage() {
+type LandingPageProps = {
+    mcpEndpoint: string;
+};
+
+export default function LandingPage({mcpEndpoint}: LandingPageProps) {
     const focusWorkbenchHeading = () => {
         window.requestAnimationFrame(() => {
             document.getElementById("workbench-title")?.focus({preventScroll: true});
@@ -36,6 +41,7 @@ export default function LandingPage() {
                                     Explore modules
                                 </a>
                             </div>
+                            <McpConnectCard endpoint={mcpEndpoint}/>
                         </div>
                         <FoundationStack/>
                     </div>
