@@ -30,8 +30,8 @@ const port = Number(process.env.PORT ?? 7070);
 const corsOrigin = process.env.CORS_ORIGIN ?? "*";
 const scaffoldRateLimitMax = Number(process.env.RATE_LIMIT_MAX ?? 3);
 const scaffoldRateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 30_000);
-const mcpRateLimitMax = Number(process.env.MCP_RATE_LIMIT_MAX ?? 30);
-const mcpRateLimitWindowMs = Number(process.env.MCP_RATE_LIMIT_WINDOW_MS ?? 60_000);
+const mcpRateLimitMax = Number(process.env.MCP_RATE_LIMIT_MAX ?? 0);
+const mcpRateLimitWindowMs = Number(process.env.MCP_RATE_LIMIT_WINDOW_MS ?? scaffoldRateLimitWindowMs);
 const mcpAllowedOrigins = (process.env.MCP_ALLOWED_ORIGINS ?? "")
     .split(",")
     .map((origin) => origin.trim())
@@ -118,12 +118,19 @@ const scaffoldRateLimiter = buildRateLimiter(
     scaffoldRateLimitWindowMs,
     "scaffold-download"
 );
-const mcpRateLimiter = buildRateLimiter(
-    mcpRateLimitMax,
-    mcpRateLimitWindowMs,
-    "mcp"
-);
+const mcpRateLimiter: express.RequestHandler = mcpRateLimitMax > 0
+    ? buildRateLimiter(mcpRateLimitMax, mcpRateLimitWindowMs, "mcp")
+    : (_req, _res, next) => next();
 const wishlistRateLimiter = buildRateLimiter(wishlistRateLimitMax, wishlistRateLimitWindowMs, "wishlist");
+
+function incrementDownloadCountersAfterSend(counterNames: string[]): void {
+    void incrementDownloadCounters(counterNames).catch((counterError: unknown) => {
+        console.error(
+            "[scaffolder] Failed to increment download counters:",
+            counterError instanceof Error ? counterError.message : counterError
+        );
+    });
+}
 
 app.get("/health", (_req, res) => {
     res.json({status: "ok"});
@@ -216,12 +223,7 @@ const handleScaffoldRequest: express.RequestHandler = async (req, res) => {
             }
 
             const counterNamesToIncrement = counterName ? [counterName] : moduleNames;
-            void incrementDownloadCounters(counterNamesToIncrement).catch((counterError: unknown) => {
-                console.error(
-                    "[scaffolder] Failed to increment download counters:",
-                    counterError instanceof Error ? counterError.message : counterError
-                );
-            });
+            incrementDownloadCountersAfterSend(counterNamesToIncrement);
         });
     } catch (error) {
         res.status(500).json({
@@ -285,9 +287,14 @@ const handleMcpArtifactDownload: express.RequestHandler = (req, res) => {
         return;
     }
     res.download(artifact.filePath, artifact.fileName, (downloadError) => {
-        if (downloadError && !res.headersSent) {
-            res.status(500).json({error: "Failed to send generated project"});
+        if (downloadError) {
+            if (!res.headersSent) {
+                res.status(500).json({error: "Failed to send generated project"});
+            }
+            return;
         }
+
+        incrementDownloadCountersAfterSend(artifact.moduleNames);
     });
 };
 

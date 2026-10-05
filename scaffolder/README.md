@@ -144,7 +144,7 @@ Optional MCP settings:
 
 - `MCP_PUBLIC_ORIGIN` — public origin used in ZIP download links; defaults to `https://open-knit.com`. For local development, set it to `http://127.0.0.1:7070` in `.env`.
 - `MCP_ALLOWED_ORIGINS` — comma-separated browser origins allowed to call MCP; requests without an `Origin` header are accepted for native MCP clients.
-- `MCP_RATE_LIMIT_MAX` and `MCP_RATE_LIMIT_WINDOW_MS` — request limit for the MCP endpoint (defaults: 30 requests per 60 seconds).
+- `MCP_RATE_LIMIT_MAX` and `MCP_RATE_LIMIT_WINDOW_MS` — optional IP-based limit for the MCP endpoint. It is disabled by default because hosted MCP clients may share egress IPs. Set `MCP_RATE_LIMIT_MAX` to a positive number to enable it; the window defaults to the API scaffold window.
 
 Database commands (Drizzle):
 

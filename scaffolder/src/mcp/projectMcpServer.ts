@@ -125,7 +125,7 @@ export function createProjectMcpServer(
             }
             throw error;
         });
-        const artifact = await artifactStore.create(archivePath);
+        const artifact = await artifactStore.create(archivePath, moduleNames);
         const downloadUrl = new URL(
             `/mcp/artifacts/${artifact.token}`,
             publicOrigin

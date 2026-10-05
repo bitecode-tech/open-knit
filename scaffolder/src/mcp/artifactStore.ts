@@ -8,6 +8,7 @@ const MAX_ACTIVE_ARTIFACTS = 100;
 interface StoredArtifact {
     filePath: string;
     fileName: string;
+    moduleNames: string[];
     expiresAt: number;
 }
 
@@ -20,7 +21,7 @@ export interface GeneratedArtifact {
 export class ArtifactStore {
     private readonly artifacts = new Map<string, StoredArtifact>();
 
-    async create(filePath: string): Promise<GeneratedArtifact> {
+    async create(filePath: string, moduleNames: string[]): Promise<GeneratedArtifact> {
         this.removeExpired();
         if (this.artifacts.size >= MAX_ACTIVE_ARTIFACTS) {
             const firstToken = this.artifacts.keys().next().value;
@@ -40,7 +41,12 @@ export class ArtifactStore {
         const artifactPath = path.join(artifactDirectory, `${token}.zip`);
         await fs.promises.mkdir(artifactDirectory, {recursive: true});
         await fs.promises.copyFile(filePath, artifactPath);
-        this.artifacts.set(token, {filePath: artifactPath, fileName, expiresAt});
+        this.artifacts.set(token, {
+            filePath: artifactPath,
+            fileName,
+            moduleNames: [...moduleNames],
+            expiresAt
+        });
 
         return {token, fileName, expiresAt: new Date(expiresAt).toISOString()};
     }
