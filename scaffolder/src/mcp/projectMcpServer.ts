@@ -1,7 +1,7 @@
 import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import {z} from "zod/v3";
-import artifactStore from "@/mcp/artifactStore";
-import {getProjectSetupRequirements} from "@/mcp/setupRequirements";
+import artifactStore from "./artifactStore";
+import {getProjectSetupRequirements} from "./setupRequirements";
 import type {PathsConfig} from "@/types/PathsConfig";
 
 export interface ProjectGenerationService {
