@@ -201,7 +201,7 @@ OAuth2 identity linking, and admin user/account operations.
 
 ### Configuration
 
-- `bitecode.security.jwt.*`: secret key and token expirations.
+- `bitecode.security.jwt.*`: access-token expiry is configured in milliseconds; short-session and remembered-device refresh-token expiries are configured separately in minutes with `BITECODE_JWT_SHORT_REFRESH_TOKEN_EXP_MINUTES` and `BITECODE_JWT_REMEMBER_DEVICE_REFRESH_TOKEN_EXP_MINUTES`.
 - `bitecode.app.frontend-url` / `bitecode.app.backend-url`: app URLs used for redirects and links.
 - `bitecode.app.user.confirm-email-url-path`: email confirmation frontend path.
 - `bitecode.app.user.user-invite-url-path`: invite frontend path.

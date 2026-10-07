@@ -25,9 +25,9 @@ bitecode:
   security:
     jwt:
       secret-key: ${BITECODE_JWT_SECRET_KEY:dsadsad1231324dsadsad1231324dsadsad1231324dsadsad1231324dsadsad1231324dsadsad1231324}
-      access-token-expiration: ${BITECODE_JWT_ACCESS_TOKEN_EXP:15}  # 15 minutes
-      refresh-token-expiration: ${BITECODE_JWT_REFRESH_TOKEN_EXP:525600}  # 365 days
-      short-refresh-token-expiration: ${BITECODE_JWT_REFRESH_TOKEN_EXP:60}  # 60 minutes
+      access-token-expiration: ${BITECODE_JWT_ACCESS_TOKEN_EXP:900000}  # milliseconds, 15 minutes
+      refresh-token-expiration: ${BITECODE_JWT_REMEMBER_DEVICE_REFRESH_TOKEN_EXP_MINUTES:525600}  # minutes, 365 days
+      short-refresh-token-expiration: ${BITECODE_JWT_SHORT_REFRESH_TOKEN_EXP_MINUTES:10080}  # minutes, 7 days
     no-auth-urls:
       GET:
         - /oauth2/authorization/**
