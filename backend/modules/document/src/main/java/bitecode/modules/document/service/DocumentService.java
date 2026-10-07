@@ -1,7 +1,7 @@
 package bitecode.modules.document.service;
 
 import bitecode.modules.document.config.properties.DocumentProperties;
-import bitecode.modules.document.model.data.DocumentContent;
+import bitecode.modules.document.model.data.DocumentDownload;
 import bitecode.modules.document.model.data.DocumentDetails;
 import bitecode.modules.document.model.entity.Document;
 import bitecode.modules.document.model.enums.DocumentStorageType;
@@ -21,7 +21,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
+import java.security.DigestInputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -98,42 +103,64 @@ public class DocumentService {
     }
 
     @Transactional(readOnly = true)
-    public DocumentContent downloadDocumentAsAdmin(UUID documentId) {
-        return toDocumentContent(resolveDocumentAsAdmin(documentId));
+    public DocumentDownload downloadDocumentAsAdmin(UUID documentId) {
+        return toDocumentDownload(resolveDocumentAsAdmin(documentId));
     }
 
     @Transactional(readOnly = true)
-    public DocumentContent downloadDocumentForUser(UUID documentId, UUID userId) {
-        return toDocumentContent(resolveDocumentForUser(documentId, userId));
+    public DocumentDownload downloadDocumentForUser(UUID documentId, UUID userId) {
+        return toDocumentDownload(resolveDocumentForUser(documentId, userId));
+    }
+
+    public void copyDocumentToStream(DocumentDownload documentDownload, OutputStream destination) {
+        resolveStorageAdapter(documentDownload.storageType())
+                .copyToStream(documentDownload.ownerUserId(), documentDownload.storedFilename(), destination);
     }
 
     private DocumentDetails uploadSingleDocument(UUID userId, MultipartFile file) {
         var originalFilename = extractOriginalFilename(file);
-        var fileContent = extractFileContent(file);
-        var storageType = documentProperties.getDefaultStorageType();
-        var document = new Document();
-
-        document.setUserId(userId);
-        document.setFilename(originalFilename);
-        document.setStoredFilename(originalFilename + "-" + document.getUuid());
-        document.setChecksum(createChecksum(fileContent));
-        document.setFileSize((long) fileContent.length);
-        document.setFileType(resolveFileType(file));
-        document.setStorageType(storageType);
-
-        var storeDocumentRequest = new StoreDocumentRequest(document.getUserId(), document.getStoredFilename(), fileContent);
-        var storageAdapter = resolveStorageAdapter(storageType);
-        storageAdapter.store(storeDocumentRequest);
+        var messageDigest = createMessageDigest();
+        Path stagedFile;
+        try {
+            stagedFile = Files.createTempFile("document-upload-", ".tmp");
+        } catch (IOException exception) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to prepare uploaded file");
+        }
 
         try {
-            return documentMapper.toDocumentDetails(documentRepository.save(document));
-        } catch (RuntimeException exception) {
-            try {
-                storageAdapter.delete(storeDocumentRequest);
-            } catch (RuntimeException deleteException) {
-                log.error("Failed to rollback stored document after DB error, userId={}, storedFilename={}", userId, document.getStoredFilename(), deleteException);
+            long fileSize;
+            try (var inputStream = new DigestInputStream(file.getInputStream(), messageDigest)) {
+                fileSize = Files.copy(inputStream, stagedFile, StandardCopyOption.REPLACE_EXISTING);
             }
-            throw exception;
+            var storageType = documentProperties.getDefaultStorageType();
+            var document = new Document();
+
+            document.setUserId(userId);
+            document.setFilename(originalFilename);
+            document.setStoredFilename(originalFilename + "-" + document.getUuid());
+            document.setChecksum(HexFormat.of().formatHex(messageDigest.digest()));
+            document.setFileSize(fileSize);
+            document.setFileType(resolveFileType(file));
+            document.setStorageType(storageType);
+
+            var storeDocumentRequest = new StoreDocumentRequest(document.getUserId(), document.getStoredFilename(), new byte[0]);
+            var storageAdapter = resolveStorageAdapter(storageType);
+            storageAdapter.storeFile(document.getUserId(), document.getStoredFilename(), stagedFile, fileSize);
+
+            try {
+                return documentMapper.toDocumentDetails(documentRepository.save(document));
+            } catch (RuntimeException exception) {
+                try {
+                    storageAdapter.delete(storeDocumentRequest);
+                } catch (RuntimeException deleteException) {
+                    log.error("Failed to rollback stored document after DB error, userId={}, storedFilename={}", userId, document.getStoredFilename(), deleteException);
+                }
+                throw exception;
+            }
+        } catch (IOException exception) {
+            throw new HttpClientErrorException(HttpStatus.NOT_ACCEPTABLE, "Failed to read uploaded file");
+        } finally {
+            deleteStagedFile(stagedFile);
         }
     }
 
@@ -143,10 +170,9 @@ public class DocumentService {
         documentRepository.delete(document);
     }
 
-    private DocumentContent toDocumentContent(Document document) {
-        var storeDocumentRequest = new StoreDocumentRequest(document.getUserId(), document.getStoredFilename(), new byte[0]);
-        var content = resolveStorageAdapter(document.getStorageType()).load(storeDocumentRequest);
-        return new DocumentContent(document.getFilename(), document.getFileType(), document.getFileSize(), content);
+    private DocumentDownload toDocumentDownload(Document document) {
+        return new DocumentDownload(document.getFilename(), document.getFileType(), document.getFileSize(),
+                document.getUserId(), document.getStoredFilename(), document.getStorageType());
     }
 
     private Document resolveDocumentAsAdmin(UUID documentId) {
@@ -193,19 +219,19 @@ public class DocumentService {
         return normalizedFilename;
     }
 
-    private byte[] extractFileContent(MultipartFile file) {
+    private MessageDigest createMessageDigest() {
         try {
-            return file.getBytes();
-        } catch (IOException e) {
-            throw new HttpClientErrorException(HttpStatus.NOT_ACCEPTABLE, "Failed to read uploaded file");
+            return MessageDigest.getInstance(CHECKSUM_ALGORITHM);
+        } catch (NoSuchAlgorithmException exception) {
+            throw new IllegalStateException("Checksum algorithm is not available: " + CHECKSUM_ALGORITHM, exception);
         }
     }
 
-    private String createChecksum(byte[] fileContent) {
+    private void deleteStagedFile(Path stagedFile) {
         try {
-            return HexFormat.of().formatHex(MessageDigest.getInstance(CHECKSUM_ALGORITHM).digest(fileContent));
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Checksum algorithm is not available: " + CHECKSUM_ALGORITHM, e);
+            Files.deleteIfExists(stagedFile);
+        } catch (IOException exception) {
+            log.warn("Failed to remove staged document upload file {}", stagedFile, exception);
         }
     }
 

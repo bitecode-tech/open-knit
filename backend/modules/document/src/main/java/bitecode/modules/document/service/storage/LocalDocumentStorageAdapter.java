@@ -5,8 +5,11 @@ import bitecode.modules.document.model.enums.DocumentStorageType;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 @Component
 public class LocalDocumentStorageAdapter implements DocumentStorageAdapter {
@@ -29,6 +32,32 @@ public class LocalDocumentStorageAdapter implements DocumentStorageAdapter {
             Files.write(documentPath, request.fileContent());
         } catch (IOException e) {
             throw new IllegalStateException("Failed to store document locally", e);
+        }
+    }
+
+    @Override
+    public void storeFile(UUID ownerUserId, String storedFilename, Path source, long byteSize) {
+        var destination = resolveDocumentPath(new StoreDocumentRequest(ownerUserId, storedFilename, new byte[0]));
+        try {
+            Files.createDirectories(destination.getParent());
+            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException exception) {
+            try {
+                Files.deleteIfExists(destination);
+            } catch (IOException cleanupFailure) {
+                exception.addSuppressed(cleanupFailure);
+            }
+            throw new IllegalStateException("Failed to store document locally", exception);
+        }
+    }
+
+    @Override
+    public void copyToStream(UUID ownerUserId, String storedFilename, OutputStream destination) {
+        var source = resolveDocumentPath(new StoreDocumentRequest(ownerUserId, storedFilename, new byte[0]));
+        try {
+            Files.copy(source, destination);
+        } catch (IOException exception) {
+            throw new IllegalStateException("Failed to stream document locally", exception);
         }
     }
 

@@ -91,6 +91,7 @@
 
 ## Commits & Pull Requests
 - Use Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, with optional scope, e.g., `feat(frontend): add invoices table`.
+- Promote production changes by merging `main` into `prod`; cherry-pick only when specifically requested.
 - PRs: include concise description, linked issues, API or UI screenshots where relevant, and notes on env/config changes.
 
 ## Security & Configuration

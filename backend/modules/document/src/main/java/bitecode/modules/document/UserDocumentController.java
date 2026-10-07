@@ -2,7 +2,7 @@ package bitecode.modules.document;
 
 import bitecode.modules._common.model.annotation.AdminOrUserAccess;
 import bitecode.modules._common.util.AuthUtils;
-import bitecode.modules.document.model.data.DocumentContent;
+import bitecode.modules.document.model.data.DocumentDownload;
 import bitecode.modules.document.model.data.DocumentDetails;
 import bitecode.modules.document.service.DocumentService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -44,7 +45,7 @@ public class UserDocumentController {
     }
 
     @GetMapping("/{documentId}/download")
-    public ResponseEntity<byte[]> downloadDocument(@PathVariable UUID documentId) {
+    public ResponseEntity<StreamingResponseBody> downloadDocument(@PathVariable UUID documentId) {
         return buildDownloadResponse(documentService.downloadDocumentForUser(documentId, AuthUtils.getUserId()));
     }
 
@@ -58,9 +59,10 @@ public class UserDocumentController {
         documentService.deleteDocumentForUser(documentId, AuthUtils.getUserId());
     }
 
-    private ResponseEntity<byte[]> buildDownloadResponse(DocumentContent documentContent) {
+    private ResponseEntity<StreamingResponseBody> buildDownloadResponse(DocumentDownload documentContent) {
         var mediaType = resolveMediaType(documentContent.fileType());
         var inlineDisposition = MediaType.APPLICATION_PDF.includes(mediaType);
+        StreamingResponseBody responseBody = outputStream -> documentService.copyDocumentToStream(documentContent, outputStream);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.builder(inlineDisposition ? "inline" : "attachment")
@@ -69,7 +71,7 @@ public class UserDocumentController {
                         .toString())
                 .contentType(mediaType)
                 .contentLength(documentContent.fileSize())
-                .body(documentContent.content());
+                .body(responseBody);
     }
 
     private MediaType resolveMediaType(String fileType) {

@@ -16,7 +16,7 @@ The document module stores uploaded files and their metadata. It owns physical s
 
 1. Upload document
     - Trigger: authenticated user or admin sends multipart upload to `/documents` or `/admin/documents`.
-    - Steps: resolve current user UUID, validate files, create document UUID, compute checksum, derive stored filename, store binary content through the configured adapter, persist metadata row.
+    - Steps: resolve current user UUID, validate files, stage each multipart upload to a temporary file while computing its checksum, derive stored filename, store the file through the configured adapter, persist metadata, and remove the temporary file.
     - Output: persisted `DocumentDetails` records for uploaded files.
     - Failure/edge cases: missing filename, empty file payload, missing storage adapter configuration, storage write failure, DB save failure after storage write triggers cleanup.
 2. List user documents
@@ -26,7 +26,7 @@ The document module stores uploaded files and their metadata. It owns physical s
     - Failure/edge cases: none beyond auth and pagination validation.
 3. Read or download document
     - Trigger: authenticated request to `/documents/{documentId}` or `/documents/{documentId}/download`, or admin request to `/admin/documents/{documentId}` or `/admin/documents/{documentId}/download`.
-    - Steps: resolve owner scope if needed, load metadata row, optionally load binary content through the matching adapter, return metadata or file response.
+    - Steps: resolve owner scope if needed, load metadata row, then stream binary content from the matching adapter to the HTTP response without materializing the full document in heap.
     - Output: `DocumentDetails` metadata or binary file content with inline PDF support.
     - Failure/edge cases: user access to another user's document returns `404`, missing document returns `404`, storage read failure aborts download.
 4. Admin list and delete documents
@@ -90,13 +90,13 @@ The document module stores uploaded files and their metadata. It owns physical s
 #### model/dto|command|event
 
 - `DocumentDetails`: API DTO for document metadata exposed to clients, excluding internal stored filename values.
-- `DocumentContent`: service DTO for downloaded document payloads.
+- `DocumentDownload`: internal download descriptor containing response metadata and storage coordinates; the file bytes are streamed separately.
 - `DocumentStorageType`: enum describing the active binary storage backend.
 - `StoreDocumentRequest`: storage adapter command payload with owner UUID, stored filename, and file bytes.
 
 #### shared contracts (if any)
 
-- `DocumentStorageAdapter`: contract implemented by each binary storage adapter for store, load, and delete operations.
+- `DocumentStorageAdapter`: contract implemented by each binary storage adapter for file-based storage, streaming downloads, and delete operations.
 
 #### utils (if any)
 
@@ -117,7 +117,7 @@ The document module stores uploaded files and their metadata. It owns physical s
 ### Testing notes
 
 - Main test classes: `DocumentControllerTest` in `src/test/integration` for admin and user endpoint coverage with local storage, `DocumentIntegrationTest` in `src/test/integration` for shared cleanup and test wiring, `S3DocumentStorageAdapterTest` in `src/test/unit` for mocked S3 adapter behavior.
-- Must-cover scenarios: upload metadata persistence, owner scoping, admin access control, cleanup on delete, cleanup of local test storage between runs, and S3 object key generation plus bucket validation.
+- Must-cover scenarios: streamed upload metadata and checksum persistence, streamed downloads for user and admin endpoints, owner scoping, admin access control, cleanup on delete and temporary files, cleanup of local test storage between runs, and S3 object key generation plus bucket validation.
 - Special setup: current integration tests use local storage only and require Docker/Testcontainers for PostgreSQL; S3 is covered by unit tests with mocked SDK behavior.
 
 ### Change log expectations

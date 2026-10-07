@@ -17,9 +17,9 @@ public class ThreadExecutorsConfig implements WebMvcConfigurer {
     @Bean(name = "mvcTaskExecutor")
     public AsyncTaskExecutor mvcTaskExecutor() {
         var executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(100);
-        executor.setQueueCapacity(500);
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(8);
+        executor.setQueueCapacity(16);
         executor.setThreadNamePrefix("mvc-async-");
         executor.initialize();
         return executor;
@@ -28,7 +28,7 @@ public class ThreadExecutorsConfig implements WebMvcConfigurer {
     @Override
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
         configurer.setTaskExecutor(mvcTaskExecutor());
-        configurer.setDefaultTimeout(30_000L);
+        configurer.setDefaultTimeout(600_000L);
     }
 
     @Bean

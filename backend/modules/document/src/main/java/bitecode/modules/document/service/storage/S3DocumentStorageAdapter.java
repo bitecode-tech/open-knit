@@ -8,14 +8,20 @@ import org.springframework.util.StringUtils;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Path;
+import java.util.UUID;
 
 @Component
 public class S3DocumentStorageAdapter implements DocumentStorageAdapter {
@@ -73,6 +79,16 @@ public class S3DocumentStorageAdapter implements DocumentStorageAdapter {
     }
 
     @Override
+    public void storeFile(UUID ownerUserId, String storedFilename, Path source, long byteSize) {
+        var objectKey = toObjectKey(new StoreDocumentRequest(ownerUserId, storedFilename, new byte[0]));
+        s3Client.putObject(PutObjectRequest.builder()
+                        .bucket(requireBucketName())
+                        .key(objectKey)
+                        .build(),
+                RequestBody.fromFile(source));
+    }
+
+    @Override
     public byte[] load(StoreDocumentRequest request) {
         var bucketName = requireBucketName();
         var objectKey = toObjectKey(request);
@@ -81,6 +97,17 @@ public class S3DocumentStorageAdapter implements DocumentStorageAdapter {
                         .key(objectKey)
                         .build())
                 .asByteArray();
+    }
+
+    @Override
+    public void copyToStream(UUID ownerUserId, String storedFilename, OutputStream destination) {
+        var objectKey = toObjectKey(new StoreDocumentRequest(ownerUserId, storedFilename, new byte[0]));
+        try (ResponseInputStream<GetObjectResponse> response = s3Client.getObject(
+                GetObjectRequest.builder().bucket(requireBucketName()).key(objectKey).build())) {
+            response.transferTo(destination);
+        } catch (IOException exception) {
+            throw new IllegalStateException("Failed to stream S3 document", exception);
+        }
     }
 
     @Override
