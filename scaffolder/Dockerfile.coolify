@@ -19,7 +19,7 @@ COPY backend/modules/ocr/AGENTS.md /app/backend/modules/ocr/AGENTS.md
 COPY backend/modules/payment/AGENTS.md /app/backend/modules/payment/AGENTS.md
 COPY backend/modules/transaction/AGENTS.md /app/backend/modules/transaction/AGENTS.md
 COPY backend/modules/wallet/AGENTS.md /app/backend/modules/wallet/AGENTS.md
-RUN pnpm install --no-frozen-lockfile
+RUN CI=true pnpm install --no-frozen-lockfile
 RUN pnpm run build
 RUN pnpm run build:server
 
@@ -35,9 +35,10 @@ RUN mkdir -p /app/scaffolder/output
 
 WORKDIR /app/scaffolder/ui
 COPY scaffolder/ui ./
-RUN pnpm install --prod --no-frozen-lockfile
+RUN CI=true pnpm install --prod --no-frozen-lockfile
 
 WORKDIR /app
+COPY .codex/skills/figma-focused-implementation/SKILL.md /app/.codex/skills/figma-focused-implementation/SKILL.md
 COPY backend ./backend
 COPY frontend ./frontend
 COPY .gitignore ./.gitignore
