@@ -14,5 +14,6 @@
 ## Scaffolder release version
 
 - Every deployment to `main` must bump the scaffolder version in `../package.json`; keep the version displayed in the UI sourced from that package version.
-- Follow semantic versioning: increment the patch for fixes, the minor version for backward-compatible features or minor product changes, and the major version for breaking changes. Reset lower-order segments when incrementing a higher segment.
+- For ordinary minor changes, bump only the minor version segment and reset the patch to `0` (for example, `0.2.4` to `0.3.0`); do not increment the patch segment on its own.
+- Treat a jump to a new minor version series (for example, `0.2.x` to `0.3.x`) as a major release only when the user explicitly identifies or directs it as major. Do not infer or make a major version jump independently.
 - The current starting version is `0.1.1`.

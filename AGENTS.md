@@ -3,6 +3,7 @@
 ## Project Structure & Modules
 - Root contains two submodules: `backend/` (Spring Boot, Gradle) and `frontend/` (React + Vite + TypeScript).
 - Initialize or update submodules: `git submodule update --init --recursive`.
+- When developing a feature in a separate workspace, create and use a workspace under the repository-root `.workspaces/` directory.
 - Keep frontend and backend modules clearly separated; every feature module must exist in both `backend/` and `frontend/`.
 - Modules connect only through their module boundary: the backend exposes a module controller, and the frontend uses a module HTTP client, with corresponding implementations on
   both sides.

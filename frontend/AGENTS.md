@@ -22,7 +22,8 @@ Use the shared frontend skills for general React/TypeScript guidance:
 - React Router v6
 - Axios for HTTP clients
 - Tailwind CSS and existing project UI components
-- Prefer Tailwind utility classes over direct `.css` files. Use `.css` only when Tailwind cannot reasonably express the required styling or when the user explicitly asks for CSS.
+- Tailwind is the required styling approach. Implement styling with Tailwind utility classes and existing project UI components by default.
+- Treat standalone `.css` files and inline style objects as last resorts. Use them only when Tailwind cannot reasonably express the required styling, or when the user explicitly requests CSS; keep any exception narrowly scoped and explain why it is needed.
 - ESLint and Prettier for code quality
 
 ## Run Locally
