@@ -1,5 +1,10 @@
 # Repository Guidelines
 
+## Agent Communication
+- Use simple, clear language.
+- Keep replies short and avoid walls of text.
+- Prefer short bullet lists when sharing several points.
+
 ## Project Structure & Modules
 - Root contains two submodules: `backend/` (Spring Boot, Gradle) and `frontend/` (React + Vite + TypeScript).
 - Initialize or update submodules: `git submodule update --init --recursive`.
