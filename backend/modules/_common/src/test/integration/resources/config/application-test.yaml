@@ -16,7 +16,7 @@ spring:
     enabled: true
     validate-on-migrate: true
   jackson:
-    property-naming-strategy: SNAKE_CASE
+    property-naming-strategy: LOWER_CAMEL_CASE
     default-property-inclusion: NON_NULL
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/internal-modules}

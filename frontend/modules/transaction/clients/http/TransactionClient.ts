@@ -5,6 +5,7 @@ import {PagedResponse} from "@common/model/PagedResponse.ts";
 import {TransactionDetails} from "@transaction/types/TransactionDetails.ts";
 import AuthService from "@identity/auth/services/AuthService.ts";
 import {axiosRequestConfigOf} from "@common/utils/PaginationUtils.ts";
+import {TransactionStatistics} from "@transaction/types/TransactionStatistics.ts";
 
 
 class AdminTransactionClient {
@@ -14,8 +15,8 @@ class AdminTransactionClient {
         this.axios = AuthService.createAuthenticatedClientInstance(adminBaseConfig, "/transactions");
     }
 
-    async getFilterStatistics() {
-        return await this.axios.get<any>('/statistics');
+    async getFilterStatistics(): Promise<AxiosResponse<TransactionStatistics>> {
+        return await this.axios.get<TransactionStatistics>('/statistics');
     }
 
     async getTransactions(page: PagedRequest<void>): Promise<AxiosResponse<PagedResponse<TransactionDetails>>> {

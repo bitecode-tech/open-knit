@@ -1,6 +1,6 @@
 import {SignInRequest} from "@identity/auth/types/request/SignInRequest.ts";
 import axios, {AxiosInstance} from "axios";
-import {addConverters, baseConfig} from "@common/config/AxiosConfig.ts";
+import {baseConfig, configureAxios} from "@common/config/AxiosConfig.ts";
 import {SignInResponse} from "@identity/auth/types/response/SignInResponse.ts";
 import {RefreshTokenResponse} from "@identity/auth/types/response/RefreshTokenResponse.ts";
 
@@ -9,7 +9,7 @@ class AuthClient {
     private axios: AxiosInstance;
 
     constructor() {
-        this.axios = addConverters(axios.create({...baseConfig, baseURL: baseConfig.baseURL + "/oauth"}));
+        this.axios = configureAxios(axios.create({...baseConfig, baseURL: baseConfig.baseURL + "/oauth"}));
     }
 
     async login(payload: SignInRequest): Promise<SignInResponse> {

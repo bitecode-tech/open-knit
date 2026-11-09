@@ -1,5 +1,5 @@
 import axios, {AxiosInstance} from "axios";
-import {addConverters, baseConfig} from "@common/config/AxiosConfig.ts";
+import {baseConfig, configureAxios} from "@common/config/AxiosConfig.ts";
 import {NoAuthAiAgent} from "@ai/types/NoAuthAiAgent.ts";
 import {AiAgentChatResponse} from "@ai/types/response/AiAgentChatResponse.ts";
 import {AudioTranscriptionResponse} from "@ai/types/response/AudioTranscriptionResponse.ts";
@@ -10,7 +10,7 @@ class NoAuthAiClient {
 
     constructor() {
         // For anonymous open endpoints used in iframes, do not send cookies across origins.
-        this.axios = addConverters(axios.create({
+        this.axios = configureAxios(axios.create({
             ...baseConfig,
             withCredentials: false,
             baseURL: baseConfig.baseURL + "/open/ai"
@@ -53,7 +53,7 @@ class NoAuthAiClient {
     }
 
     async createChatkitSession(clientSecretUrl: string, payload: Record<string, unknown>) {
-        return axiosCallWrapper<{ client_secret?: string; clientSecret?: string }>(() =>
+        return axiosCallWrapper<{ clientSecret?: string }>(() =>
             this.axios.post(clientSecretUrl, payload, {
                 withCredentials: true,
                 headers: {"Content-Type": "application/json"},

@@ -6,6 +6,7 @@ import bitecode.modules.auth.auth.config.properties.AuthProperties;
 import bitecode.modules.auth.auth.repository.RoleRepository;
 import bitecode.modules.auth.user.UserService;
 import bitecode.modules.auth.user.admin.model.request.InviteUserRequest;
+import bitecode.modules.auth.user.admin.model.response.AdminUserStatistics;
 import bitecode.modules.auth.user.model.data.FindUsersCriteria;
 import bitecode.modules.auth.user.model.entity.User;
 import bitecode.modules.auth.user.model.entity.UserData;
@@ -41,10 +42,11 @@ public class AdminUserService {
     }
 
     @Transactional
-    public Map<String, Long> getFiltersTotalElemsCount() {
-        return Map.of("ALL", userRepository.count(),
-                "REGISTRATION_COMPLETED", userRepository.countByEmailConfirmedIs(true),
-                "REGISTRATION_INCOMPLETE", userRepository.countByEmailConfirmedIs(false)
+    public AdminUserStatistics getFiltersTotalElemsCount() {
+        return new AdminUserStatistics(
+                userRepository.count(),
+                userRepository.countByEmailConfirmedIs(true),
+                userRepository.countByEmailConfirmedIs(false)
         );
     }
 

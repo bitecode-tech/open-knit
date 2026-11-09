@@ -2,7 +2,7 @@ import AuthClient from "@identity/auth/clients/http/AuthClient.ts";
 import {jwtDecode} from "jwt-decode";
 import axios, {AxiosInstance, CreateAxiosDefaults} from "axios";
 import {SignInState} from "@identity/auth/types/enums/SignInState.ts";
-import {addConverters} from "@common/config/AxiosConfig.ts";
+import {configureAxios} from "@common/config/AxiosConfig.ts";
 import {MfaMethod} from "@identity/user/types/model/MfaMethod.ts";
 import {User} from "@identity/user/types/model/User.ts";
 
@@ -88,8 +88,7 @@ class AuthService {
             }
             return config;
         })
-        addConverters(axios);
-        return axios;
+        return configureAxios(axios);
     }
 
     private setAccessTokenExpTime() {

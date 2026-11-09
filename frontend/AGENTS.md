@@ -68,6 +68,12 @@ Use the shared frontend skills for general React/TypeScript guidance:
 - Keep shared types in `types/` and reusable components in the appropriate shared module.
 - Do not import backend-driven concerns directly from other frontend modules.
 
+## HTTP JSON Naming
+
+- Internal REST request and response properties use camelCase, matching TypeScript models and Java DTOs. Do not transform internal HTTP JSON keys in shared Axios interceptors or module clients.
+- Cover client JSON responses with camelCase contract tests; check multipart and binary endpoints by their content type and returned metadata.
+- Provider-defined payloads (including Stripe, OpenAI, and Chatkit) may require snake_case. Keep those names local to the provider adapter and do not propagate them to internal REST models.
+
 ## Notes For Changes
 
 - Update the owning module `AGENTS.md` when you change a module’s responsibilities, flows, or reusable surface.

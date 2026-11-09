@@ -3,6 +3,7 @@ package bitecode.modules.auth.user.admin;
 import bitecode.modules._common.model.annotation.AdminAccess;
 import bitecode.modules._common.shared.identity.user.model.data.UserDetails;
 import bitecode.modules.auth.user.admin.model.request.InviteUserRequest;
+import bitecode.modules.auth.user.admin.model.response.AdminUserStatistics;
 import bitecode.modules.auth.user.model.data.FindUsersCriteria;
 import bitecode.modules.auth.user.model.mapper.UserMapper;
 import io.jsonwebtoken.lang.Collections;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -26,7 +26,7 @@ public class AdminUserController {
     private final UserMapper userMapper;
 
     @GetMapping("/statistics")
-    public Map<String, Long> getRequestFiltersTotalElems() {
+    public AdminUserStatistics getRequestFiltersTotalElems() {
 
         return adminUserService.getFiltersTotalElemsCount();
     }

@@ -54,9 +54,11 @@ public class DocumentControllerTest extends DocumentIntegrationTest {
                 .statusCode(200)
                 .body("content.size()", is(1))
                 .body("content[0].uuid", is(uploadedDocument.uuid().toString()))
-                .body("content[0].user_id", is(adminUserData.user().getUuid().toString()))
+                .body("content[0].userId", is(adminUserData.user().getUuid().toString()))
                 .body("content[0].filename", is("admin-notes.txt"))
-                .body("content[0].storage_type", is(DocumentStorageType.LOCAL.name()));
+                .body("content[0].storageType", is(DocumentStorageType.LOCAL.name()))
+                .body("content[0]", not(hasKey("user_id")))
+                .body("content[0]", not(hasKey("storage_type")));
         // @formatter:on
 
         // @formatter:off
@@ -68,7 +70,8 @@ public class DocumentControllerTest extends DocumentIntegrationTest {
                 .statusCode(200)
                 .body("uuid", is(uploadedDocument.uuid().toString()))
                 .body("filename", is("admin-notes.txt"))
-                .body("file_type", is("text/plain"));
+                .body("fileType", is("text/plain"))
+                .body("", not(hasKey("file_type")));
         // @formatter:on
 
         // @formatter:off
@@ -118,8 +121,9 @@ public class DocumentControllerTest extends DocumentIntegrationTest {
                 .statusCode(200)
                 .body("content.size()", is(1))
                 .body("content[0].uuid", is(firstUserDocument.uuid().toString()))
-                .body("content[0].user_id", is(firstUserData.user().getUuid().toString()))
-                .body("content[0].filename", is("first-user.txt"));
+                .body("content[0].userId", is(firstUserData.user().getUuid().toString()))
+                .body("content[0].filename", is("first-user.txt"))
+                .body("content[0]", not(hasKey("user_id")));
         // @formatter:on
 
         // @formatter:off
@@ -203,6 +207,9 @@ public class DocumentControllerTest extends DocumentIntegrationTest {
                 .post(path)
         .then()
                 .statusCode(201)
+                .body("[0].userId", notNullValue())
+                .body("[0].fileSize", notNullValue())
+                .body("[0]", not(hasKey("user_id")))
                 .extract()
                 .body()
                 .as(DocumentDetails[].class)[0];

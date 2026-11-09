@@ -11,7 +11,7 @@ export type {ChatMessage, ChatMessageResponse};
 
 export interface UserConfigurableChatProps extends DefaultUserConfigurableChatProps {
     /**
-     * Endpoint that returns a ChatKit `client_secret`.
+     * Endpoint that returns a ChatKit `clientSecret`.
      * When absent, the component will fall back to the legacy chat.
      */
     chatKitClientSecretUrl?: string;

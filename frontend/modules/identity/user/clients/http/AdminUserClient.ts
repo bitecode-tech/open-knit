@@ -1,4 +1,4 @@
-import {AxiosInstance} from "axios";
+import {AxiosInstance, AxiosResponse} from "axios";
 import {adminBaseConfig} from "@common/config/AxiosConfig";
 import AuthService from "@identity/auth/services/AuthService.ts";
 import {User} from "@identity/user/types/model/User.ts";
@@ -6,6 +6,7 @@ import {PagedResponse} from "@common/model/PagedResponse.ts";
 import {PagedRequest} from "@common/model/PagedRequest.ts";
 import {InviteUserRequest} from "@identity/user/types/admin/InviteUserRequest.ts";
 import {axiosCallWrapper} from "@common/config/AxiosUtil.ts";
+import {AdminUserStatistics} from "@identity/user/types/admin/AdminUserStatistics.ts";
 
 class AdminUserClient {
     private axios: AxiosInstance;
@@ -14,7 +15,7 @@ class AdminUserClient {
         this.axios = AuthService.createAuthenticatedClientInstance(adminBaseConfig, "/users");
     }
 
-    async getUsers(params: {}) {
+    async getUsers(params: Record<string, unknown>) {
         return this.axios.get<PagedResponse<User>>('', {params});
     }
 
@@ -22,8 +23,8 @@ class AdminUserClient {
         return axiosCallWrapper<void>(() => this.axios.post('/invite', req));
     }
 
-    async getFilterStatistics() {
-        return this.axios.get('/statistics');
+    async getFilterStatistics(): Promise<AxiosResponse<AdminUserStatistics>> {
+        return this.axios.get<AdminUserStatistics>('/statistics');
     }
 
     async getUserDetails(request: PagedRequest<void>) {

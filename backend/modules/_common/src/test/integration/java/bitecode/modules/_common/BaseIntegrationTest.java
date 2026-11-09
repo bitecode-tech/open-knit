@@ -85,7 +85,7 @@ public class BaseIntegrationTest {
                 .jackson2ObjectMapperFactory(
                 (cls, charset) -> {
                     ObjectMapper om = new ObjectMapper().findAndRegisterModules();
-                    om.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+                    om.setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
                     return om;
                 }
         ));

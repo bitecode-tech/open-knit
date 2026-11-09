@@ -4,6 +4,7 @@ import bitecode.modules._common.model.annotation.AdminAccess;
 import bitecode.modules._common.shared.transaction.model.enums.TransactionStatus;
 import bitecode.modules.transaction.model.data.TransactionCriteria;
 import bitecode.modules.transaction.model.data.TransactionDetails;
+import bitecode.modules.transaction.model.data.TransactionStatistics;
 import bitecode.modules.transaction.model.mapper.TransactionMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.Instant;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -51,7 +51,7 @@ public class AdminTransactionController {
     }
 
     @GetMapping("/statistics")
-    public Map<String, Long> getRequestFiltersTotalElems() {
+    public TransactionStatistics getRequestFiltersTotalElems() {
         return transactionService.getFiltersTotalElemsCount();
     }
 

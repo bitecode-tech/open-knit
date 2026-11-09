@@ -102,9 +102,9 @@ export default function ChatkitChat({
         if (!enableChatKit || !clientSecretUrl) return null;
         return async (existingClientSecret?: string | null) => {
             try {
-                const payload: Record<string, unknown> = existingClientSecret ? {client_secret: existingClientSecret} : {};
+                const payload: Record<string, unknown> = existingClientSecret ? {clientSecret: existingClientSecret} : {};
                 if (chatKitWorkflowId) {
-                    payload["workflow_id"] = chatKitWorkflowId;
+                    payload["workflowId"] = chatKitWorkflowId;
                 }
                 const {response, error} = await NoAuthAiClient.createChatkitSession(clientSecretUrl, payload);
 
@@ -113,9 +113,9 @@ export default function ChatkitChat({
                     throw new Error(status ? `Client secret request failed (${status})` : "Client secret request failed");
                 }
                 const data = response.data ?? {};
-                const secret: unknown = (data as any)?.client_secret ?? (data as any)?.clientSecret;
+                const secret: unknown = (data as {clientSecret?: unknown}).clientSecret;
                 if (!secret || typeof secret !== "string") {
-                    throw new Error("Missing client_secret in response");
+                    throw new Error("Missing ChatKit client secret in response");
                 }
                 setClientSecretError(null);
                 return secret;

@@ -135,6 +135,12 @@ This file is for repo-specific backend rules only. Use the shared skills for gen
 - Use distributed locks only if DB-based solutions are not enough.
 - `InMemoryLock` is only safe within a single JVM.
 
+## HTTP JSON Naming
+
+- Internal REST request and response properties use camelCase, matching Java DTO component names. Keep Spring Jackson naming at `LOWER_CAMEL_CASE`; do not add snake_case annotations or naming strategies for internal API fields.
+- Cover JSON property casing at controller HTTP boundaries. Multipart and binary endpoints should verify their media/content behavior and any JSON metadata separately.
+- Provider payloads such as Stripe, OpenAI, and Chatkit keep the exact external field names required by those providers; isolate those mappings at the integration boundary.
+
 ## Endpoints And Roles
 
 - Every endpoint must declare required role(s).

@@ -3,7 +3,7 @@ import {SignUpRequest} from "@identity/user/types/request/SignUpRequest.ts";
 import {User} from "@identity/user/types/model/User.ts";
 import {SetMfaRequest} from "@identity/user/types/request/SetMfaRequest.ts";
 import {ResetForgottenPasswordRequest} from "@identity/user/types/request/ResetForgottenPasswordRequest.ts";
-import {addConverters, baseConfig} from "@common/config/AxiosConfig";
+import {baseConfig, configureAxios} from "@common/config/AxiosConfig";
 import AuthService from "@identity/auth/services/AuthService.ts";
 import {ChangePasswordRequest} from "@identity/user/types/request/ChangePasswordRequest.ts";
 import {UpdateUserDataRequest} from "@identity/user/types/request/UpdateUserDataRequest.ts";
@@ -16,7 +16,7 @@ class UserClient {
     private noAuthAxios: AxiosInstance;
 
     constructor() {
-        this.noAuthAxios = addConverters(axios.create({...baseConfig, baseURL: baseConfig.baseURL + "/users"}));
+        this.noAuthAxios = configureAxios(axios.create({...baseConfig, baseURL: baseConfig.baseURL + "/users"}));
         this.axios = AuthService.createAuthenticatedClientInstance(baseConfig, "/users");
 
     }

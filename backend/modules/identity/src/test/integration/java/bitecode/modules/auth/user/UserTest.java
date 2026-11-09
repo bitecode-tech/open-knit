@@ -69,7 +69,7 @@ public class UserTest extends AuthIntegrationTest {
                 .statusCode(200)
                 .body("email", equalTo("testReg@email.com"))
                 .body("uuid", not(blankOrNullString()))
-                .body("email_confirmed", is(false))
+                .body("emailConfirmed", is(false))
                 .body("roles", contains("ROLE_USER"));
         // @formatter:on
 
@@ -122,10 +122,10 @@ public class UserTest extends AuthIntegrationTest {
                 .put(Paths.User.PUT.mfa)
         .then()
                 .statusCode(200)
-                .body("mfa_method", equalTo("EMAIL"))
+                .body("mfaMethod", equalTo("EMAIL"))
                 .body("completed", is(true))
-                .body("requires_confirmation", is(false))
-                .body("qr_code_image_uri", is(nullValue()));
+                .body("requiresConfirmation", is(false))
+                .body("qrCodeImageUri", is(nullValue()));
         // @formatter:on
 
         user = userService.findUserByUuid(user.getUuid()).get();
@@ -155,10 +155,10 @@ public class UserTest extends AuthIntegrationTest {
                 .put(Paths.User.PUT.mfa)
         .then()
                 .statusCode(200)
-                .body("mfa_method", equalTo("QR_CODE"))
+                .body("mfaMethod", equalTo("QR_CODE"))
                 .body("completed", is(false))
-                .body("requires_confirmation", is(true))
-                .body("qr_code_image_uri", is(not(blankString())));
+                .body("requiresConfirmation", is(true))
+                .body("qrCodeImageUri", is(not(blankString())));
         // @formatter:on
 
         user = userService.findUserByUuid(user.getUuid()).get();
@@ -183,10 +183,10 @@ public class UserTest extends AuthIntegrationTest {
                 .put(Paths.User.PUT.mfa)
         .then()
                 .statusCode(200)
-                .body("mfa_method", equalTo("QR_CODE"))
+                .body("mfaMethod", equalTo("QR_CODE"))
                 .body("completed", is(true))
-                .body("requires_confirmation", nullValue())
-                .body("qr_code_image_uri", nullValue());
+                .body("requiresConfirmation", nullValue())
+                .body("qrCodeImageUri", nullValue());
         // @formatter:on
 
         verify(totpService, atLeastOnce()).verify(eq(user.getId()), any());

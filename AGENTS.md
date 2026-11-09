@@ -29,6 +29,13 @@
 - Stack: **Vite + React + TypeScript**.
 - Modules: `frontend/modules/<module>/`, prefer shared `_common` utilities.
 
+## HTTP JSON Naming
+
+- Internal frontend-to-backend JSON request and response property names use camelCase, matching Java DTO properties and TypeScript types.
+- Do not add frontend key-case conversion interceptors or snake_case naming strategies for internal HTTP JSON. Keep Spring Jackson naming at `LOWER_CAMEL_CASE`.
+- Contract tests should assert camelCase JSON keys at HTTP boundaries for each endpoint that reads or writes JSON. Multipart and binary endpoints should assert their content type and separately verify any JSON metadata they return.
+- Preserve provider-defined wire formats (for example Stripe, OpenAI, and Chatkit) at external integration boundaries; isolate those names in provider adapters/DTOs and do not propagate them into internal frontend/backend contracts.
+
 ## Backend <-> Frontend Communication
 
 - Each module communicates via **HTTP controllers** on backend and **HTTP clients** on frontend.

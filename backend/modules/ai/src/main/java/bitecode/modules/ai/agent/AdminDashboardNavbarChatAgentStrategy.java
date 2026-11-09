@@ -238,8 +238,7 @@ public class AdminDashboardNavbarChatAgentStrategy implements AiAgentStrategy {
             while (rs.next()) {
                 Map<String, Object> rowMap = new HashMap<>();
                 for (int i = 1; i <= colCount; i++) {
-                    String colName = metaData.getColumnLabel(i);
-                    rowMap.put(colName, rs.getObject(i));
+                    SqlColumnLabelNaming.putInCamelCase(rowMap, metaData.getColumnLabel(i), rs.getObject(i));
                 }
                 List<Map<String, Object>> rowList = new ArrayList<>();
                 rowList.add(rowMap);

@@ -75,8 +75,8 @@ public class AuthTest extends AuthIntegrationTest {
         .then()
                 .statusCode(200)
                 .body("user", notNullValue())
-                .body("mfa_required", nullValue())
-                .body("access_token", not(blankOrNullString()))
+                .body("mfaRequired", nullValue())
+                .body("accessToken", not(blankOrNullString()))
                 .cookie("refreshTokenId", notNullValue())
                 .extract().response();
         // @formatter:on
@@ -119,11 +119,11 @@ public class AuthTest extends AuthIntegrationTest {
         .then()
                 .statusCode(200)
                 .body("user", nullValue())
-                .body("email_verification_required", nullValue())
-                .body("mfa_required", is(true))
-                .body("mfa_method", is(MfaMethod.EMAIL.toString()))
-                .body("refresh_token", nullValue())
-                .body("access_token", nullValue())
+                .body("emailVerificationRequired", nullValue())
+                .body("mfaRequired", is(true))
+                .body("mfaMethod", is(MfaMethod.EMAIL.toString()))
+                .body("refreshToken", nullValue())
+                .body("accessToken", nullValue())
                 .cookies(Map.of());
         // @formatter:on
 
@@ -146,10 +146,10 @@ public class AuthTest extends AuthIntegrationTest {
         .then()
                 .statusCode(200)
                 .body("user", notNullValue())
-                .body("mfa_required", nullValue())
-                .body("mfa_method", is(MfaMethod.EMAIL.toString()))
-                .body("email_verification_required", nullValue())
-                .body("access_token", not(blankOrNullString()))
+                .body("mfaRequired", nullValue())
+                .body("mfaMethod", is(MfaMethod.EMAIL.toString()))
+                .body("emailVerificationRequired", nullValue())
+                .body("accessToken", not(blankOrNullString()))
                 .cookie("refreshTokenId", notNullValue())
                 .extract().response();
         // @formatter:on
@@ -200,8 +200,8 @@ public class AuthTest extends AuthIntegrationTest {
         .then()
                 .statusCode(200)
                 .body("user", notNullValue())
-                .body("refresh_token", nullValue())
-                .body("access_token", notNullValue())
+                .body("refreshToken", nullValue())
+                .body("accessToken", notNullValue())
                 .cookies(Map.of())
                 .extract().body().as(AuthenticatedUserDetails.class);
         // @formatter:on
