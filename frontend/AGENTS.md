@@ -9,8 +9,14 @@ Use the shared frontend skills for general React/TypeScript guidance:
 
 ## Repo Structure
 
-- Feature code lives in `modules/<module>/`.
-- Shared primitives, utilities, and cross-module UI live in `modules/_common/`.
+- Each `modules/<module>/` directory is an ownership boundary. A module can be a single cohesive capability or contain multiple independent capabilities.
+- When a module contains independent capabilities, group code by capability before technical role. Keep each capability's UI, state, API clients/adapters, types, validation, and tests together when they belong to that capability. A cohesive single-capability module may organize its files by technical role at its root.
+- Add nested packages for meaningful subfeatures or compatibility boundaries. Use business language to name ownership. Do not create a package for every data object or add levels only to make trees uniform.
+- Keep domain-owned code with its owner even when several callers use it. Place genuinely shared concepts at the narrowest meaningful scope that owns them. A `common/` package serves generally applicable facilities of its scope; each child need not use every item. Put subset-specific shared behavior in a clearly named shared capability.
+- Use technical-role folders such as `components/`, `clients/`, `services/`, `types/`, `hooks/`, and `utils/` inside their owning capability when useful. Avoid module-wide role folders that scatter independent capabilities.
+- Shared primitives, utilities, and cross-module UI live in `modules/_common/`. Within a module, shared code belongs to the narrowest owner common to its consumers; shared packages must not depend on the features that consume them.
+- Features that interact across an ownership boundary use an intentional public export or contract. Keep app/module composition in a designated composition layer, avoid imports into another feature's internals, and prevent feature dependency cycles.
+- Keep matching frontend and backend business ownership aligned while allowing their package depth and technical organization to differ.
 - App shell code that is not module-specific lives in `src/`.
 - Keep module boundaries explicit. Avoid cross-module imports unless the code is clearly shared.
 - Add a module-local `AGENTS.md` only when that module has conventions that are not covered here. Do not create placeholder copies of this guidance.
@@ -63,10 +69,10 @@ Use the shared frontend skills for general React/TypeScript guidance:
 
 ## Module Rules
 
-- Keep module-specific UI, services, types, hooks, and pages inside the owning module.
-- Use `clients/` for HTTP clients and `services/` for module logic.
-- Keep shared types in `types/` and reusable components in the appropriate shared module.
-- Do not import backend-driven concerns directly from other frontend modules.
+- Keep module-specific code inside its owning module and capability.
+- Use `clients/` for HTTP clients and `services/` for logic when those folders help organize the owner; do not make them module-wide catchalls for independent capabilities.
+- Place generally applicable module types and reusable primitives in the module's shared scope. Keep subset-specific types or components with the shared capability that owns them.
+- Do not import feature internals from other frontend modules. Cross-module communication follows the HTTP module boundary; cross-module shared frontend code belongs in `_common`.
 
 ## HTTP JSON Naming
 

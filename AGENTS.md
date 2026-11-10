@@ -45,26 +45,33 @@
     - frontend: module HTTP client using that route
 - Avoid bypassing module boundaries; no direct cross-module imports.
 
-### Backend Module Template (strict)
+## Domain-oriented Package Organization
+
+- Treat a module as an ownership boundary. A module may itself be the owner when it contains one cohesive capability. When it contains independent capabilities, group code by those capabilities before grouping it by technical role.
+- Keep behavior, data, and tests with the capability that owns them. Use technical-role folders inside that owner when they make its implementation easier to navigate; do not scatter independent capabilities across module-wide technical folders.
+- Add nested packages when they represent a meaningful capability, subfeature, or compatibility boundary. Choose names from the product's domain language. Avoid adding a package for every data object or adding levels solely to make modules look alike.
+- Keep domain-owned code with its owner even when multiple callers use it. Place genuinely shared concepts at the narrowest meaningful scope that owns them. A scope's `common/` package is for generally applicable facilities of that scope; individual children need not use every item. Put subset-specific shared behavior in a clearly named shared capability. Shared packages must not depend on the features that consume them.
+- Make feature interfaces explicit where independently owned code interacts. Keep application or module composition at a designated boundary, prevent dependency cycles, and follow the repository's module communication rules.
+- Keep frontend and backend ownership aligned for the same business concepts while allowing each layer to use a suitable package structure and naming convention.
+
+### Backend Module Template
 
 - **Module root:** `backend/modules/<module>/`
-- **Java package:** `bitecode.modules.<module>/...`
-    - `config/` for module config
-    - `config/_modules/` for module init/seed/config entry points
-    - `model/` for entities/data/types
-    - `repository/` for Spring Data repositories
-    - `service/` for business logic
-    - `handler/` for command/event handlers (if used)
+- **Java package:** `bitecode.modules.<module>/...`; use lowercase package names.
+- Keep module configuration and module initialization at the module root, including `config/` and `config/_modules/` where required.
+- If the module owns one cohesive capability, organize its implementation into the technical packages it needs. If it contains independent capabilities, put each capability under the module first, then keep its API, model, repository, service, and handler packages within that owner as needed.
 - **Resources:** `src/main/resources/db/migration/<schema>/...`
 - **Demo inserts:** `src/main/resources/demo-inserts/`
     - `_common` references live in `_common` module only
     - module-specific demo scripts live at module root (no extra subfolders)
 
-### Frontend Module Template (strict)
+### Frontend Module Template
 
 - **Module root:** `frontend/modules/<module>/`
-- **Structure:** `components/`, `services/`, `clients/`, `types/`, `_scaffolder/` as needed
-- **Exports:** barrel files at module root; no cross-module imports except via shared `_common`
+- Organize by capability first when a module contains independent capabilities. A module that is itself one cohesive capability may keep its implementation at the module root.
+- Keep each capability's components, pages, state, clients, services, types, validation, and tests with that capability when they serve its behavior. Technical-role folders are local organization inside an owner, not the primary layout for several capabilities.
+- Use explicit public exports at module or feature boundaries where consumers need them. Do not require barrel files in every directory. Keep cross-module imports within the existing `_common` and module-boundary rules.
+- Keep shared cross-module primitives in `frontend/modules/_common/`; keep narrower shared behavior within the module and at the scope that owns it.
 
 ### Current Discrepancies (fix as needed)
 
